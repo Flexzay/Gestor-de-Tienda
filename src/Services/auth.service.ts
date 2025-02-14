@@ -1,11 +1,10 @@
 import { environment } from "../config/environmet";
 import { storageService } from "./storage.service";
 
-
 const API_URL = environment.baseUrl;
 
 export const authService = {
-  async login(phone: string) {
+  async login(phone) {
     try {
       const response = await fetch(`${API_URL}/auth/phone/send`, {
         method: "POST",
@@ -15,53 +14,35 @@ export const authService = {
 
       if (!response.ok) throw new Error(`Error ${response.status}`);
 
-      const data = await response.json();
-      return { status: response.status, data };
+      return { status: response.status, data: await response.json() };
     } catch (error) {
       console.error("Error en la autenticación:", error);
       return { status: 500, message: "Error en el servidor" };
     }
   },
 
-  async verifyCode({ userId, code }: { userId: string; code: string }) {
+  async verifyCode({ userId, code }) {
     try {
-      if (!userId) throw new Error("🚨 El `userId` es requerido para verificar el código.");
+      if (!userId) throw new Error("El `userId` es requerido para verificar el código.");
       
-      const url = `${API_URL}/auth/phone/verify/${userId}`; // Enviamos el ID como :user
-      const body = JSON.stringify({ pin: code });
-  
-      console.log("📡 Enviando solicitud a:", url);
-  
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/auth/phone/verify/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: body,
+        body: JSON.stringify({ pin: code }),
       });
-  
-      if (response.status === 404) {
-        throw new Error(`🚨 Error 404: La URL ${url} no existe.`);
-      }
-  
+
+      if (!response.ok) throw new Error(`Error ${response.status}`);
+
       const data = await response.json();
-      console.log("✅ Respuesta de la API:", data);
-  
-      if (data.token) {
-        storageService.setToken(data.token);
-        return { status: response.status, data };
-      }
-  
-      throw new Error("No se recibió un token válido.");
+      if (data.token) storageService.setToken(data.token);
+      
+      return { status: response.status, data };
     } catch (error) {
-      console.error("❌ Error verificando código:", error);
+      console.error("Error verificando código:", error);
       return { status: 500, message: error.message || "Error en el servidor" };
     }
   },
-  
-  isLoggedIn() {
-    return !!localStorage.getItem("token");
-  },
 
-  logout() {
-    localStorage.removeItem("token");
-  },
+  isLoggedIn: () => !!localStorage.getItem("token"),
+  logout: () => localStorage.removeItem("token"),
 };
