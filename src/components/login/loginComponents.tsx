@@ -1,5 +1,5 @@
 import React from "react";
-import useLogin from "../../hooks/login/useAuth";
+import useLogin from "../../hooks/login/useLogin";
 import domiduck from "../../assets/img/domiduck.svg";
 
 function LoginForm() {

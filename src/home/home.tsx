@@ -1,8 +1,10 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/login/useAuth"
 
 function Home() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth(); //aca verificamos si esta logueado
   return (
     <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
       <div className="relative py-3 sm:max-w-xl sm:mx-auto">
@@ -48,15 +50,21 @@ function Home() {
               </div>
               <div className="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7">
                 <p>¿Listo para comenzar?</p>
-                <p>
-                  {/* Enlace con color personalizado y efecto hover */}
+                {!isLoggedIn ? (
                   <button
-                    onClick={() => navigate('/login')} // Redirige a /login
+                    onClick={() => navigate('/login')}
                     className="mt-4 bg-[#ff204e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#84001a] transition-colors"
                   >
-                    Ir a Gestionar 🚀
+                    Ir a Iniciar Sesión 🚀
                   </button>
-                </p>
+                ) : (
+                  <button
+                    onClick={() => navigate('/dashboard')}
+                    className="mt-4 bg-[#34d399] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#059669] transition-colors"
+                  >
+                    Ir al Panel de Gestión 📊
+                  </button>
+                )}
               </div>
             </div>
           </div>

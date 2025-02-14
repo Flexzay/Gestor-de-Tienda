@@ -31,7 +31,7 @@ export const useVerifyCode = () => {
   
       if (response.status === 200) {
         console.log("✅ Código válido, redirigiendo...");
-        navigate("/dashboard");
+        navigate("/dashboard",{replace: true}); // borramos historial 
       } else {
         setMessage("Código inválido");
         setInvalidCode(true);

@@ -1,9 +1,11 @@
 import React from "react";
-import useLogin from "../../hooks/login/useAuth";
+import useLogin from "../../hooks/login/useLogin";
 import domiduck from "../../assets/img/domiduck.svg";
+import useBlockBack from "../../hooks/bashboard/useBlockBack"
 
 function LoginForm() {
-  
+
+  useBlockBack();
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 p-4">
