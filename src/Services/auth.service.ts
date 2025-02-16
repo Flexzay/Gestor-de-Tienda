@@ -43,6 +43,7 @@ export const authService = {
     }
   },
 
+
   isLoggedIn: () => !!localStorage.getItem("token"),
   logout: () => localStorage.removeItem("token"),
 };
