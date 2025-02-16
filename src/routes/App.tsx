@@ -5,7 +5,7 @@ import Login from '../pages/login/login';
 import NotFoundPage from '../pages/404/404-Pages';
 import PrivateRoute from "./PrivateRoute"; // Rutas protegidas
 import VerifyCodeComponent from '../components/login/verify-codeComponents'; // Importa tu componente de verificación de código
-import Dashboard from '../components/dashboard/CardDataStats'
+import  Dashboard from "../pages/dashboard/dashboard-page"
 
 const App = () => {
   return (
