@@ -1,4 +1,5 @@
 import type React from "react";
+import { Utensils } from "lucide-react"; // Importamos el ícono de comida (utensilios)
 import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
 import { Home, BarChart2, Users, Settings, Layers, Menu } from "lucide-react";
 import { useState } from "react";
@@ -27,7 +28,7 @@ const Sidebar: React.FC = () => {
             {[ // Enlaces de navegación
               { icon: Home, label: "Home", path: "/dashboard" },
               { icon: Users, label: "Personal", path: "/Staff" },
-              { icon: BarChart2, label: "Productos", path: "/Products" },
+              { icon: Utensils, label: "Productos", path: "/Products" },
               { icon: Settings, label: "Settings", path: "/settings" },
             ].map((item) => (
               <li key={item.path}>
