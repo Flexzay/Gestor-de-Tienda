@@ -21,6 +21,7 @@ const StaffComponent: React.FC = () => {
   const [newRole, setNewRole] = useState("");
   const [error, setError] = useState("");
   const [roleError, setRoleError] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // To display image preview
 
   const filteredStaff = staff.filter((member) =>
     member.name.toLowerCase().includes(search.toLowerCase())
@@ -33,6 +34,7 @@ const StaffComponent: React.FC = () => {
     }
     setStaff([...staff, { ...newMember, id: staff.length + 1 }]);
     setNewMember({ name: "", role: "", image: "" });
+    setImagePreview(null);
     setError("");
     setShowStaffModal(false);
   };
@@ -59,6 +61,14 @@ const StaffComponent: React.FC = () => {
       return;
     }
     setRoles(roles.filter((role) => role !== roleToDelete));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewMember({ ...newMember, image: URL.createObjectURL(file) });
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   return (
@@ -110,7 +120,7 @@ const StaffComponent: React.FC = () => {
 
       {/* Modal para Crear y Eliminar Roles */}
       {showRoleModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div className="fixed inset-0 flex items-center justify-center  bg-opacity-50 backdrop-blur-sm">
           <motion.div className="bg-white p-6 rounded-xl shadow-xl w-96 text-center relative">
             <button onClick={() => setShowRoleModal(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
               <X size={24} />
@@ -146,20 +156,44 @@ const StaffComponent: React.FC = () => {
 
       {/* Modal para Agregar Personal */}
       {showStaffModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div className="fixed inset-0 flex items-center justify-center  bg-opacity-50 backdrop-blur-sm">
           <motion.div className="bg-white p-6 rounded-xl shadow-xl w-96 text-center relative">
             <button onClick={() => setShowStaffModal(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
               <X size={24} />
             </button>
             <h3 className="text-2xl font-bold mb-4">Agregar Personal</h3>
             {error && <p className="text-red-500">{error}</p>}
-            <input type="text" placeholder="Nombre" className="w-full p-3 mb-4 border rounded-xl" value={newMember.name} onChange={(e) => setNewMember({ ...newMember, name: e.target.value })} />
-            <select className="w-full p-3 mb-4 border rounded-xl" value={newMember.role} onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}>
+            <input 
+              type="text" 
+              placeholder="Nombre" 
+              className="w-full p-3 mb-4 border rounded-xl" 
+              value={newMember.name} 
+              onChange={(e) => {
+                setNewMember({ ...newMember, name: e.target.value });
+                setError(""); // Clear error when typing
+              }} 
+            />
+            <select 
+              className="w-full p-3 mb-4 border rounded-xl" 
+              value={newMember.role} 
+              onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
+            >
               <option value="">Seleccione un rol</option>
               {roles.map(role => <option key={role} value={role}>{role}</option>)}
             </select>
-            <input type="file" accept="image/*" className="w-full p-3 mb-4 border rounded-xl"  />
-            <button onClick={handleAddMember} className="px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-green-700 transition">Agregar</button>
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="w-full p-3 mb-4 border rounded-xl"  
+              onChange={handleImageChange} 
+            />
+            {imagePreview && <img src={imagePreview} alt="Vista previa" className="w-28 h-28 mx-auto rounded-full mb-4" />}
+            <button 
+              onClick={handleAddMember} 
+              className="px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-green-700 transition"
+            >
+              Agregar
+            </button>
           </motion.div>
         </div>
       )}
