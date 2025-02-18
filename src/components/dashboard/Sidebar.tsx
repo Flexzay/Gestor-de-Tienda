@@ -26,8 +26,8 @@ const Sidebar: React.FC = () => {
           <ul className="space-y-2">
             {[ // Enlaces de navegación
               { icon: Home, label: "Home", path: "/dashboard" },
-              { icon: BarChart2, label: "Analytics", path: "/analytics" },
               { icon: Users, label: "Personal", path: "/Staff" },
+              { icon: BarChart2, label: "Productos", path: "/Products" },
               { icon: Settings, label: "Settings", path: "/settings" },
             ].map((item) => (
               <li key={item.path}>

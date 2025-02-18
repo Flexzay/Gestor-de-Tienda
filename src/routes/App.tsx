@@ -18,7 +18,7 @@ const App = () => {
       <Route path="*" element={<NotFoundPage />} /> {/* Captura rutas no definidas, al identificar una ruta que no existe me muestre el error 404 */}
 
       <Route path='/dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path='/Staff' element={<Staff />} />
+      <Route path='/Staff' element={<PrivateRoute><Staff /></PrivateRoute>} />
 
     </Routes>
   );
