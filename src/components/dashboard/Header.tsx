@@ -1,9 +1,15 @@
 import type React from "react";
-import { Bell, User, Search, Menu } from "lucide-react";
+import { Bell, User, Search, Menu, LogOut } from "lucide-react";  // Importamos el ícono LogOut
 import { useState } from "react";
+import { authService } from "../../Services/auth.service"; // Asegúrate de importar el servicio de autenticación
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    authService.logout(); // Elimina el token
+    window.location.href = "/login"; // Redirige al usuario a la página de login o al lugar que desees
+  };
 
   return (
     <header className="bg-white shadow-md p-4 flex justify-between items-center w-full">
@@ -25,12 +31,15 @@ const Header: React.FC = () => {
         <button className="relative p-2 text-gray-600 hover:text-[#ff204e] transition-colors">
           <Bell size={24} />
           <span className="absolute top-0 right-0 h-4 w-4 bg-[#ff204e] rounded-full text-xs text-white flex items-center justify-center">
-            3
+            8
           </span>
         </button>
-        <button className="flex items-center space-x-2 bg-gray-100 rounded-full p-2 hover:bg-gray-200 transition-colors">
-          <User size={24} className="text-[#ff204e]" />
-          <span className="font-medium text-gray-700 hidden md:inline">Profile</span>
+        <button
+          onClick={handleLogout} // Llama a la función para cerrar sesión cuando se haga clic
+          className="flex items-center space-x-2 bg-gray-100 rounded-full p-2 hover:bg-gray-200 transition-colors"
+        >
+          <LogOut size={24} className="text-[#ff204e]" /> {/* Icono de salida */}
+          <span className="font-medium text-gray-700 hidden md:inline">Cerrar sesión</span>
         </button>
       </div>
     </header>
