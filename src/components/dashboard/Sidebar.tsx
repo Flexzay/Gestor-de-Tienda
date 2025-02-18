@@ -1,10 +1,14 @@
 import type React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
 import { Home, BarChart2, Users, Settings, Layers, Menu } from "lucide-react";
 import { useState } from "react";
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation(); // Obtenemos la ubicación actual
+
+  // Función para verificar si la ruta es activa
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="flex">
@@ -20,8 +24,8 @@ const Sidebar: React.FC = () => {
         </div>
         <nav>
           <ul className="space-y-2">
-            {[
-              { icon: Home, label: "Home", path: "/" },
+            {[ // Enlaces de navegación
+              { icon: Home, label: "Home", path: "/dashboard" },
               { icon: BarChart2, label: "Analytics", path: "/analytics" },
               { icon: Users, label: "Personal", path: "/Staff" },
               { icon: Settings, label: "Settings", path: "/settings" },
@@ -29,7 +33,8 @@ const Sidebar: React.FC = () => {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className="flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 ease-in-out hover:bg-[#ff204e] hover:shadow-lg hover:shadow-[#ff204e]/50"
+                  className={`flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 ease-in-out 
+                    ${isActive(item.path) ? 'bg-[#ff204e] text-white' : 'hover:bg-[#ff204e] hover:shadow-lg hover:shadow-[#ff204e]/50'}`} // Agregamos la lógica para el estado activo
                   onClick={() => setIsOpen(false)}
                 >
                   <item.icon size={20} />
@@ -40,7 +45,7 @@ const Sidebar: React.FC = () => {
           </ul>
         </nav>
       </aside>
-      
+
       {/* Toggle Button for Mobile */}
       <button
         className="md:hidden p-2 text-white bg-[#ff204e] fixed top-4 left-4 rounded-lg z-50"

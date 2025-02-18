@@ -1,5 +1,5 @@
 import type React from "react";
-import { Bell, User, Search, Menu, LogOut } from "lucide-react";  // Importamos el ícono LogOut
+import { Bell, Search, Menu, LogOut } from "lucide-react";  // Importamos el ícono LogOut
 import { useState } from "react";
 import { authService } from "../../Services/auth.service"; // Asegúrate de importar el servicio de autenticación
 
