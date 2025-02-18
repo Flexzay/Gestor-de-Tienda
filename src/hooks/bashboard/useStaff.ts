@@ -1,0 +1,98 @@
+import { useState } from "react";
+
+export const useStaffLogic = () => {
+  const initialStaff = [
+    { id: 1, name: "Alice Johnson", role: "Project Manager", image: "https://personapersonapersona.com/wp-content/uploads/2022/04/20240910_Polas_Persona00049-265x398.jpg" },
+    { id: 2, name: "Bob Smith", role: "UI/UX Designer", image: "https://personapersonapersona.com/wp-content/uploads/2023/10/DSCF9644-17-5-265x398.jpg" },
+    { id: 3, name: "Charlie Brown", role: "Frontend Developer", image: "https://personapersonapersona.com/wp-content/uploads/2024/07/DSCF1613-33-265x398.jpg" },
+  ];
+
+  const initialRoles = ["Project Manager", "UI/UX Designer", "Frontend Developer"];
+
+  const [search, setSearch] = useState("");
+  const [staff, setStaff] = useState(initialStaff);
+  const [roles, setRoles] = useState(initialRoles);
+  const [showStaffModal, setShowStaffModal] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [newMember, setNewMember] = useState({ name: "", role: "", image: "" });
+  const [newRole, setNewRole] = useState("");
+  const [error, setError] = useState("");
+  const [roleError, setRoleError] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const filteredStaff = staff.filter((member) =>
+    member.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleAddMember = () => {
+    if (!newMember.name || !newMember.role || !newMember.image) {
+      setError("Todos los campos son requeridos.");
+      return;
+    }
+    setStaff([...staff, { ...newMember, id: staff.length + 1 }]);
+    setNewMember({ name: "", role: "", image: "" });
+    setImagePreview(null);
+    setError("");
+    setShowStaffModal(false);
+  };
+
+  const handleAddRole = () => {
+    if (!newRole) {
+      setRoleError("El nombre del rol es obligatorio.");
+      return;
+    }
+    if (roles.includes(newRole)) {
+      setRoleError("Este rol ya existe.");
+      return;
+    }
+    setRoles([...roles, newRole]);
+    setNewRole("");
+    setRoleError("");
+    setShowRoleModal(false);
+  };
+
+  const handleDeleteRole = (roleToDelete: string) => {
+    const isRoleInUse = staff.some((member) => member.role === roleToDelete);
+    if (isRoleInUse) {
+      setRoleError(`El rol "${roleToDelete}" está en uso y no puede ser eliminado.`);
+      return;
+    }
+    setRoles(roles.filter((role) => role !== roleToDelete));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewMember({ ...newMember, image: URL.createObjectURL(file) });
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleGoToDashboard = () => {
+    window.location.href = "/dashboard";
+  };
+
+  return {
+    search,
+    setSearch,
+    staff,
+    roles,
+    showStaffModal,
+    setShowStaffModal,
+    showRoleModal,
+    setShowRoleModal,
+    newMember,
+    setNewMember,
+    newRole,
+    setNewRole,
+    error,
+    roleError,
+    imagePreview,
+    filteredStaff,
+    handleAddMember,
+    handleAddRole,
+    handleDeleteRole,
+    handleImageChange,
+    handleGoToDashboard
+  };
+};
