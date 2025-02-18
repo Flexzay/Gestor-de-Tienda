@@ -1,6 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Home } from "lucide-react";
 import { PlusCircle, Trash2, Edit, X } from "lucide-react";
 
 const initialStaff = [
@@ -71,23 +72,34 @@ const StaffComponent: React.FC = () => {
     }
   };
 
+  const handleGoToDashboard = () => {
+    // Aquí puedes manejar la navegación a tu página de Dashboard
+    window.location.href = "/dashboard";  // Si usas una ruta relativa como ejemplo
+  };
+
   return (
     <div className="p-6 min-h-screen bg-[#F8F8F8] text-gray-800">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 space-y-4 md:space-y-0">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 space-y-4 md:space-y-0 w-full md:w-auto">
         <h2 className="text-4xl font-bold text-[#301940]">Miembros del Personal</h2>
-        <div className="flex space-x-4">
-          <button 
-            onClick={() => setShowRoleModal(true)} 
-            className="bg-blue-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-blue-700 transition"
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 md:ml-auto w-full sm:w-auto"> {/* Flex en columna en pantallas pequeñas y en fila en pantallas grandes */}
+          <button
+            onClick={() => setShowRoleModal(true)}
+            className="flex items-center bg-blue-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-blue-700 transition w-full sm:w-auto"
           >
-            Crear Rol
+            <PlusCircle size={24} className="mr-2" /> Crear Rol
           </button>
-          <button 
-            onClick={() => setShowStaffModal(true)} 
-            className="flex items-center bg-[#FF2C59] text-white px-6 py-3 rounded-xl shadow-md hover:bg-[#F29A2E] transition"
+          <button
+            onClick={() => setShowStaffModal(true)}
+            className="flex items-center bg-[#FF2C59] text-white px-6 py-3 rounded-xl shadow-md hover:bg-[#F29A2E] transition w-full sm:w-auto"
           >
             <PlusCircle size={24} className="mr-2" /> Agregar Personal
+          </button>
+          <button
+            onClick={handleGoToDashboard}
+            className="flex items-center bg-[#301940] text-white px-6 py-3 rounded-xl shadow-md hover:bg-[#FF2C59] transition w-full sm:w-auto"
+          >
+            <Home size={24} className="mr-2" /> Volver al Dashboard
           </button>
         </div>
       </div>
@@ -104,11 +116,11 @@ const StaffComponent: React.FC = () => {
       {/* Grid de Staff */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredStaff.map((member) => (
-          <motion.div 
-            key={member.id} 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.3 }} 
+          <motion.div
+            key={member.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
             className="bg-white rounded-xl shadow-lg p-6 text-center border border-gray-300 hover:shadow-2xl hover:scale-105 transition"
           >
             <img src={member.image} alt={member.name} className="w-28 h-28 mx-auto rounded-full mb-4 shadow-md" />
@@ -127,12 +139,12 @@ const StaffComponent: React.FC = () => {
             </button>
             <h3 className="text-2xl font-bold mb-4">Administrar Roles</h3>
             {roleError && <p className="text-red-500">{roleError}</p>}
-            <input 
-              type="text" 
-              placeholder="Nombre del Rol" 
-              className="w-full p-3 mb-4 border rounded-xl" 
-              value={newRole} 
-              onChange={(e) => setNewRole(e.target.value)} 
+            <input
+              type="text"
+              placeholder="Nombre del Rol"
+              className="w-full p-3 mb-4 border rounded-xl"
+              value={newRole}
+              onChange={(e) => setNewRole(e.target.value)}
             />
             <button onClick={handleAddRole} className="px-6 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-700 transition">
               Guardar Rol
@@ -140,9 +152,9 @@ const StaffComponent: React.FC = () => {
             <ul className="mt-4 text-left">
               {roles.map((role) => (
                 <li key={role} className="flex justify-between items-center p-2 border-b">
-                  {role} 
-                  <button 
-                    onClick={() => handleDeleteRole(role)} 
+                  {role}
+                  <button
+                    onClick={() => handleDeleteRole(role)}
                     className="text-red-500 hover:text-red-700"
                   >
                     <Trash2 size={18} />
@@ -163,33 +175,33 @@ const StaffComponent: React.FC = () => {
             </button>
             <h3 className="text-2xl font-bold mb-4">Agregar Personal</h3>
             {error && <p className="text-red-500">{error}</p>}
-            <input 
-              type="text" 
-              placeholder="Nombre" 
-              className="w-full p-3 mb-4 border rounded-xl" 
-              value={newMember.name} 
+            <input
+              type="text"
+              placeholder="Nombre"
+              className="w-full p-3 mb-4 border rounded-xl"
+              value={newMember.name}
               onChange={(e) => {
                 setNewMember({ ...newMember, name: e.target.value });
                 setError(""); // Clear error when typing
-              }} 
+              }}
             />
-            <select 
-              className="w-full p-3 mb-4 border rounded-xl" 
-              value={newMember.role} 
+            <select
+              className="w-full p-3 mb-4 border rounded-xl"
+              value={newMember.role}
               onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
             >
               <option value="">Seleccione un rol</option>
               {roles.map(role => <option key={role} value={role}>{role}</option>)}
             </select>
-            <input 
-              type="file" 
-              accept="image/*" 
-              className="w-full p-3 mb-4 border rounded-xl"  
-              onChange={handleImageChange} 
+            <input
+              type="file"
+              accept="image/*"
+              className="w-full p-3 mb-4 border rounded-xl"
+              onChange={handleImageChange}
             />
             {imagePreview && <img src={imagePreview} alt="Vista previa" className="w-28 h-28 mx-auto rounded-full mb-4" />}
-            <button 
-              onClick={handleAddMember} 
+            <button
+              onClick={handleAddMember}
               className="px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-green-700 transition"
             >
               Agregar
@@ -197,6 +209,9 @@ const StaffComponent: React.FC = () => {
           </motion.div>
         </div>
       )}
+
+
+
     </div>
   );
 };
