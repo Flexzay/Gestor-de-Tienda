@@ -77,6 +77,7 @@ const StaffComponent: React.FC = () => {
             <img src={member.image} alt={member.name} className="w-28 h-28 mx-auto rounded-full mb-4 shadow-md" />
             <h3 className="text-xl font-semibold text-[#301940]">{member.name}</h3>
             <p className="text-gray-600 text-lg">{member.role}</p>
+            <p className="text-gray-600 text-lg">{member.phone}</p>
           </motion.div>
         ))}
       </div>
@@ -136,6 +137,21 @@ const StaffComponent: React.FC = () => {
                 setError(""); // Clear error when typing
               }}
             />
+
+            <input
+              type="text"
+              placeholder="Teléfono"
+              className="w-full p-3 mb-4 border rounded-xl"
+              value={newMember.phone}
+              onChange={(e) => {
+                const numericValue = e.target.value.replace(/\D/g, ""); // Elimina cualquier carácter que no sea número
+                if (numericValue.length <= 10) {
+                  setNewMember({ ...newMember, phone: numericValue });
+                }
+              }}
+              maxLength={10} // Asegura que el campo no tenga más de 10 caracteres
+            />
+
             <select
               className="w-full p-3 mb-4 border rounded-xl"
               value={newMember.role}

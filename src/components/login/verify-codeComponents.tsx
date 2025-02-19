@@ -2,7 +2,7 @@ import React from "react";
 import { useVerifyCode } from "../../hooks/login/useVerifyCode";
 import domiduck from "../../assets/img/domiduck.svg";
 
-const VerifyCodeComponent = () => {
+export function VerifyCodeComponent (){
   const {
     register,
     handleSubmit,

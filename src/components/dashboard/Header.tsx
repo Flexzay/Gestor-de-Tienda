@@ -3,7 +3,7 @@ import { Bell, Search, Menu, LogOut } from "lucide-react";  // Importamos el íc
 import { useState } from "react";
 import { authService } from "../../Services/auth.service"; // Asegúrate de importar el servicio de autenticación
 
-const Header: React.FC = () => {
+function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {

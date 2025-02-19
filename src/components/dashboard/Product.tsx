@@ -1,17 +1,8 @@
 import type React from "react"
 import { useState } from "react"
 import { Package, X, PlusCircle } from "lucide-react"
+import ProductFormData from "../../interface/product"
 
-interface ProductFormData {
-  name: string
-  category: string
-  brand: string
-  stock: number
-  expirationDate: string
-  price: number
-  description: string
-  sku: string
-}
 
 const AddProductForm: React.FC<{ onClose: () => void; onSubmit: (data: ProductFormData) => void }> = ({
   onClose,

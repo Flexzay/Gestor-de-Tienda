@@ -1,10 +1,10 @@
 import type React from "react";
 import { Utensils } from "lucide-react"; // Importamos el ícono de comida (utensilios)
 import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
-import { Home, BarChart2, Users, Settings, Layers, Menu } from "lucide-react";
+import { Home, Users, Settings, Layers, Menu } from "lucide-react";
 import { useState } from "react";
 
-const Sidebar: React.FC = () => {
+function  Sidebar () {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation(); // Obtenemos la ubicación actual
 

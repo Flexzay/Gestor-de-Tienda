@@ -2,9 +2,9 @@ import { useState } from "react";
 
 export const useStaffLogic = () => {
   const initialStaff = [
-    { id: 1, name: "Alice Johnson", role: "Project Manager", image: "https://personapersonapersona.com/wp-content/uploads/2022/04/20240910_Polas_Persona00049-265x398.jpg" },
-    { id: 2, name: "Bob Smith", role: "UI/UX Designer", image: "https://personapersonapersona.com/wp-content/uploads/2023/10/DSCF9644-17-5-265x398.jpg" },
-    { id: 3, name: "Charlie Brown", role: "Frontend Developer", image: "https://personapersonapersona.com/wp-content/uploads/2024/07/DSCF1613-33-265x398.jpg" },
+    { id: 1, name: "Alice Johnson", role: "Project Manager", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2022/04/20240910_Polas_Persona00049-265x398.jpg" },
+    { id: 2, name: "Bob Smith", role: "UI/UX Designer", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2023/10/DSCF9644-17-5-265x398.jpg" },
+    { id: 3, name: "Charlie Brown", role: "Frontend Developer", phone: "3143920230",  image: "https://personapersonapersona.com/wp-content/uploads/2024/07/DSCF1613-33-265x398.jpg" },
   ];
 
   const initialRoles = ["Project Manager", "UI/UX Designer", "Frontend Developer"];
@@ -14,7 +14,7 @@ export const useStaffLogic = () => {
   const [roles, setRoles] = useState(initialRoles);
   const [showStaffModal, setShowStaffModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
-  const [newMember, setNewMember] = useState({ name: "", role: "", image: "" });
+  const [newMember, setNewMember] = useState({ name: "", role: "", image: "", phone:"" });
   const [newRole, setNewRole] = useState("");
   const [error, setError] = useState("");
   const [roleError, setRoleError] = useState("");
@@ -25,12 +25,12 @@ export const useStaffLogic = () => {
   );
 
   const handleAddMember = () => {
-    if (!newMember.name || !newMember.role || !newMember.image) {
+    if (!newMember.name || !newMember.role || !newMember.image || !newMember.phone) {
       setError("Todos los campos son requeridos.");
       return;
     }
     setStaff([...staff, { ...newMember, id: staff.length + 1 }]);
-    setNewMember({ name: "", role: "", image: "" });
+    setNewMember({ name: "", role: "", image: "", phone:"" });
     setImagePreview(null);
     setError("");
     setShowStaffModal(false);
@@ -93,6 +93,6 @@ export const useStaffLogic = () => {
     handleAddRole,
     handleDeleteRole,
     handleImageChange,
-    handleGoToDashboard
-  };
+    handleGoToDashboard,
+  }
 };
