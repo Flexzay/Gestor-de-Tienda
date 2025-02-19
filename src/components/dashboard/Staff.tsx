@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Home, PlusCircle, Trash2, X } from "lucide-react";
 import { useStaffLogic } from "../../hooks/bashboard/useStaff";
 
-const StaffComponent: React.FC = () => {
+function StaffComponent () {
   const {
     search,
     setSearch,
