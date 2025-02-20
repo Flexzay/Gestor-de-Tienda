@@ -1,4 +1,4 @@
-import type React from "react";
+
 import { Bell, Search, Menu, LogOut } from "lucide-react";  // Importamos el ícono LogOut
 import { useState } from "react";
 import { authService } from "../../Services/auth.service"; // Asegúrate de importar el servicio de autenticación
@@ -17,7 +17,7 @@ function Header() {
         <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
           <Menu size={24} className="text-gray-800" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-800">Welcome, User!</h1>
+        <h1 className="text-2xl font-bold text-gray-800"> Bienvenido </h1>
       </div>
       <div className="relative hidden md:block w-full max-w-md">
         <input

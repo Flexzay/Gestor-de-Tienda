@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Home, PlusCircle, Trash2, X } from "lucide-react";
+import { Home, PlusCircle, Trash2, X , Edit2} from "lucide-react";
 import { useStaffLogic } from "../../hooks/bashboard/useStaff";
 
 function StaffComponent () {
@@ -25,7 +25,9 @@ function StaffComponent () {
     handleAddRole,
     handleDeleteRole,
     handleImageChange,
-    handleGoToDashboard
+    handleGoToDashboard,
+    handleEditMember,
+    handleDeleteMember
   } = useStaffLogic();
 
   return (
@@ -78,6 +80,14 @@ function StaffComponent () {
             <h3 className="text-xl font-semibold text-[#301940]">{member.name}</h3>
             <p className="text-gray-600 text-lg">{member.role}</p>
             <p className="text-gray-600 text-lg">{member.phone}</p>
+            <div className="flex justify-center mt-4 space-x-4">
+              <button onClick={() => handleEditMember(member)} className="text-blue-500 hover:text-blue-700">
+                <Edit2 size={18} />
+              </button>
+              <button onClick={() => handleDeleteMember(member.id)} className="text-red-500 hover:text-red-700">
+                <Trash2 size={18} />
+              </button>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -134,7 +144,6 @@ function StaffComponent () {
               value={newMember.name}
               onChange={(e) => {
                 setNewMember({ ...newMember, name: e.target.value });
-                setError(""); // Clear error when typing
               }}
             />
 

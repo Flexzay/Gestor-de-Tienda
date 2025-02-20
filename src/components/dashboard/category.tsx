@@ -6,7 +6,7 @@ import Category from "../../interface/category"
 
 
 
-const Categories: React.FC = () => {
+export function Categories () {
   const [categories, setCategories] = useState<Category[]>([
     { id: 1, name: "Electrónica" },
     { id: 2, name: "Ropa" },
