@@ -26,7 +26,8 @@ const AddProductForm: React.FC<{ onClose: () => void; onSubmit: (data: ProductFo
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "stock" || name === "price" ? Number.parseFloat(value) : value,
+      [name]: name === "stock" || name === "price" ? Number(value) ||  '': value,
+
     }))
   }
 
