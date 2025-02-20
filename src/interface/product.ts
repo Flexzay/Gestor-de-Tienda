@@ -6,7 +6,6 @@
     expirationDate: string
     price: number
     description: string
-    sku: string
   }
   
   export default ProductFormData;

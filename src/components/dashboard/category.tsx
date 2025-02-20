@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Pencil, Trash2, Plus, Search, Tag } from "lucide-react"
+import { Pencil, Trash2, Plus, Search, Tag, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Link } from "react-router-dom"
 import type Category from "../../interface/category"
 
 export function Categories() {
@@ -48,6 +49,16 @@ export function Categories() {
 
   return (
     <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          to="/dashboard"
+          className="flex items-center text-gray-600 hover:text-[#ff204e] transition-colors duration-300"
+        >
+          <ArrowLeft size={24} className="mr-2" />
+          <span className="font-medium">Volver al Dashboard</span>
+        </Link>
+      </div>
+
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-3xl font-semibold text-gray-800">Categorías</h2>
         <Tag size={24} className="text-[#ff204e]" />
