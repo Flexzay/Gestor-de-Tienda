@@ -1,7 +1,6 @@
 import type React from "react";
-import { Utensils } from "lucide-react"; // Importamos el ícono de comida (utensilios)
 import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
-import { Home, Users, Settings, Layers, Menu,Tags } from "lucide-react";
+import { Home, Users, Settings, Layers, Menu,Tags,Boxes } from "lucide-react";
 import { useState } from "react";
 
 function  Sidebar () {
@@ -29,6 +28,7 @@ function  Sidebar () {
               { icon: Home, label: "Home", path: "/dashboard" },
               { icon: Users, label: "Personal", path: "/Staff" },
               { icon: Tags, label: "Categoria", path: "/category" },
+              { icon: Boxes, label: "Provedores", path: "/suppliers" },
               { icon: Settings, label: "Settings", path: "/settings" },
             ].map((item) => (
               <li key={item.path}>
