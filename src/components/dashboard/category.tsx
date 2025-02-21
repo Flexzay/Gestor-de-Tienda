@@ -106,13 +106,13 @@ export function Categories() {
               </div>
               <div className="flex space-x-2">
                 {editingCategory && editingCategory.id === category.id ? (
-                  <button onClick={saveEdit} className="text-[#ff204e] hover:text-[#ff3b60] transition-colors">
+                  <button onClick={saveEdit} className="text-[#7B9400] hover:text-[#7B9400] transition-colors">
                     Guardar
                   </button>
                 ) : (
                   <button
                     onClick={() => startEditing(category)}
-                    className="text-gray-500 hover:text-[#ff204e] transition-colors"
+                    className="text-gray-500 hover:text-[#05f2f2] transition-colors"
                   >
                     <Pencil size={18} />
                   </button>

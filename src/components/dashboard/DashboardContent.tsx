@@ -1,8 +1,9 @@
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddProductForm from "./Product";
-import { Package, Pencil, Trash2 } from "lucide-react";
-import type { ProductFormData } from "../../interface/product";
+import { Package, Pencil, Trash2, Truck } from "lucide-react";
+import { ProductFormData } from "../../interface/product";
+import  Provider  from "../../interface/suppliets";
 
 const DashboardCard: React.FC<{ title: string; value: string; icon: React.ReactNode }> = ({
   title,
@@ -22,6 +23,14 @@ const DashboardContent: React.FC = () => {
   const [products, setProducts] = useState<ProductFormData[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
+  
+  const [providers, setProviders] = useState<Provider[]>([
+    { id: 1, name: "TechSupply Co.", products: 25 },
+    { id: 2, name: "Global Gadgets", products: 18 },
+    { id: 3, name: "Eco Essentials", products: 30 },
+    { id: 4, name: "Quality Electronics", products: 22 },
+    { id: 5, name: "Innovative Imports", products: 15 },
+  ]);
 
   const handleAddProduct = (newProduct: ProductFormData) => {
     if (selectedProduct) {
@@ -61,8 +70,12 @@ const DashboardContent: React.FC = () => {
         />
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md-grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* Tarjeta Total Productos */}
         <DashboardCard title="Total Productos" value={products.length.toString()} icon={<Package className="text-[#ff204e]" size={24} />} />
+
+        {/* Tarjeta Total Proveedores */}
+        <DashboardCard title="Total Proveedores" value={providers.length.toString()} icon={<Truck className="text-[#ff204e]" size={24} />} />
       </div>
 
       <div className="mt-8 bg-white rounded-xl shadow-lg p-6 w-full">
@@ -76,8 +89,8 @@ const DashboardContent: React.FC = () => {
               <div>
                 <p className="font-medium text-gray-800">{product.name}</p>
                 <p className="text-sm text-gray-500">Categoría: {product.category} - Precio: ${product.price}</p>
-                <p className="text-sm text-gray-500">Stock: {product.stock}  - Marca: {product.brand} </p>
-                <p className="text-sm text-gray-500">Fecha de vencimiento: {product.expirationDate} </p> 
+                <p className="text-sm text-gray-500">Stock: {product.stock} - Marca: {product.brand}</p>
+                <p className="text-sm text-gray-500">Fecha de vencimiento: {product.expirationDate}</p> 
               </div>
               <button onClick={() => handleEditProduct(product)} className="text-gray-500 hover:text-[#ff204e] transition-colors">
                 <Pencil size={18} />
