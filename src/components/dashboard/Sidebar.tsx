@@ -1,6 +1,6 @@
 import type React from "react";
 import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
-import { Home, Users, Settings, Layers, Menu,Tags,Boxes } from "lucide-react";
+import { Home, Users, Settings, Layers, Menu,Tags,Boxes,Wallet} from "lucide-react";
 import { useState } from "react";
 
 function  Sidebar () {
@@ -29,9 +29,11 @@ function  Sidebar () {
               { icon: Users, label: "Personal", path: "/Staff" },
               { icon: Tags, label: "Categoria", path: "/category" },
               { icon: Boxes, label: "Provedores", path: "/suppliers" },
+              { icon: Wallet , label: "Metodos de Pago", path: "/payment-methods" },
               { icon: Settings, label: "Settings", path: "/settings" },
+              
             ].map((item) => (
-              <li key={item.path}>
+              <li key={item.path}> 
                 <Link
                   to={item.path}
                   className={`flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 ease-in-out 
