@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import AddProductForm from "./Product";
-import { Package, Pencil, Trash2, Truck } from "lucide-react";
+import { Package, Pencil, Trash2, Truck , Wallet} from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import  Provider  from "../../interface/suppliets";
 
@@ -76,7 +76,12 @@ const DashboardContent: React.FC = () => {
 
         {/* Tarjeta Total Proveedores */}
         <DashboardCard title="Total Proveedores" value={providers.length.toString()} icon={<Truck className="text-[#ff204e]" size={24} />} />
+
+        {/* Tarjeta Total Metodos de pago */}
+        <DashboardCard title="Total Metodos de Pago" value={providers.length.toString()} icon={<Wallet className="text-[#ff204e]" size={24} />} />
       </div>
+
+      
 
       <div className="mt-8 bg-white rounded-xl shadow-lg p-6 w-full">
         <h3 className="text-xl font-semibold mb-4 text-gray-800">Productos Agregados</h3>
