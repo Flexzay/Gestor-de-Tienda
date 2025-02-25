@@ -22,7 +22,7 @@ const App = () => {
 
       <Route path='/dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       <Route path='/staff' element={<PrivateRoute><Staff /></PrivateRoute>} />
-      <Route path='/categories' element={<PrivateRoute><CategoryPage /></PrivateRoute>} />
+      <Route path='/category' element={<PrivateRoute><CategoryPage /></PrivateRoute>} />
       <Route path='/suppliers' element={<PrivateRoute><SuppliersPage /></PrivateRoute>} />
       <Route path='/payment-methods' element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
 

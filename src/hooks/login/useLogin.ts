@@ -16,23 +16,29 @@ function useLogin() {
   async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
     setError("");
-
+  
     if (!validatePhone(phone)) {
       setError("Introduzca un número de celular válido");
       return;
     }
-
+  
     setLoading(true);
     const response = await authService.login(phone);
-
-    if (response.status === 200) {
-      localStorage.setItem("phone", phone);  // Guardar el teléfono
-      localStorage.setItem("userId", response.data.id);  // guardar el ID
-      navigate("/verify-code"); // Redirigir a la pantalla de verificación de código
+  
+    console.log("📩 Respuesta del login:", response); // 🔍 Verifica la respuesta completa
+  
+    const userId = response.data?.data?.id; // ⚠️ Asegurar que extraemos el ID correcto
+  
+    if (response.status === 200 && userId) {
+      localStorage.setItem("phone", phone);
+      localStorage.setItem("userId", String(userId)); 
+      console.log("✅ Login exitoso, redirigiendo...");
+      navigate("/verify-code"); // 🔄 Redirigir a la verificación de código
     } else {
-      setError("Número de celular inválido o no tienes tienda");
+      console.error("🚨 Error en login:", response);
+      setError(`Error: ${response.message || "Número de celular inválido o no tienes tienda"}`);
     }
-
+  
     setLoading(false);
   }
 

@@ -1,4 +1,3 @@
-"use client"
 
 import { useState, useEffect } from "react"
 import { Pencil, Trash2, Plus, Search, Tag, ArrowLeft } from "lucide-react"

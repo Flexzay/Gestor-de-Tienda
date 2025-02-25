@@ -180,7 +180,7 @@ function StaffComponent () {
               onClick={handleAddMember}
               className="px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-green-700 transition"
             >
-              Agregar
+              Agregar Personal
             </button>
           </motion.div>
         </div>

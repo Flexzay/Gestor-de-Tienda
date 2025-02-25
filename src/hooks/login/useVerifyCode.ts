@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IFormInput } from "../../interface/verifyCode";
@@ -21,29 +22,48 @@ export const useVerifyCode = () => {
     setLoading(true);
     setInvalidCode(false);
   
-    const userId = localStorage.getItem("userId"); // Recuperamos el userId
+    const userId = localStorage.getItem("userId");
+  
+    if (!userId || isNaN(Number(userId))) {
+      setMessage("Error: No se encontró un usuario válido. Inicia sesión nuevamente.");
+      setInvalidCode(true);
+      setLoading(false);
+      return;
+    }
   
     try {
       const response = await authService.verifyCode({
-        userId: userId || "",
+        userId: Number(userId), // Convertimos a número
         code: data.pin,
       });
   
-      if (response.status === 200) {
+      console.log("📩 Respuesta de verifyCode:", response);
+  
+      if (response.status === 200 && response.data?.data?.token) {
         console.log("✅ Código válido, redirigiendo...");
-        navigate("/dashboard",{replace: true}); // borramos historial 
+  
+        localStorage.setItem("token", response.data.data.token);
+        console.log("🔑 Token guardado en localStorage:", response.data.data.token);
+  
+        setTimeout(() => {
+          console.log("🚀 Intentando `navigate()`...");
+          navigate("/dashboard", { replace: true });
+        }, 500);
       } else {
-        setMessage("Código inválido");
+        console.warn("⚠️ Código inválido o error en la respuesta:", response);
+        setMessage("Código inválido. Inténtalo de nuevo.");
         setInvalidCode(true);
       }
+  
     } catch (err) {
       setMessage("Ocurrió un error al validar el código");
       setInvalidCode(true);
-      console.error(err);
+      console.error("❌ Error en verifyCode:", err);
     } finally {
       setLoading(false);
     }
   };
+
 
   const backLogin = () => {
     navigate("/login");
@@ -60,3 +80,6 @@ export const useVerifyCode = () => {
     backLogin,
   };
 };
+
+
+
