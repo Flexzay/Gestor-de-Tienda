@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IFormInput } from "../../interface/verifyCode";
 import { authService } from "../../Services/auth.service";
 
 export const useVerifyCode = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [invalidCode, setInvalidCode] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [invalidCode, setInvalidCode] = useState(false);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>({
@@ -21,52 +20,36 @@ export const useVerifyCode = () => {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setLoading(true);
     setInvalidCode(false);
-  
+
     const userId = localStorage.getItem("userId");
-  
+
     if (!userId || isNaN(Number(userId))) {
-      setMessage("Error: No se encontró un usuario válido. Inicia sesión nuevamente.");
+      setMessage("No se encontró un usuario válido. Inicia sesión nuevamente.");
       setInvalidCode(true);
       setLoading(false);
       return;
     }
-  
+
     try {
       const response = await authService.verifyCode({
-        userId: Number(userId), // Convertimos a número
+        userId: Number(userId),
         code: data.pin,
       });
-  
-      console.log("📩 Respuesta de verifyCode:", response);
-  
+
       if (response.status === 200 && response.data?.data?.token) {
-        console.log("✅ Código válido, redirigiendo...");
-  
         localStorage.setItem("token", response.data.data.token);
-        console.log("🔑 Token guardado en localStorage:", response.data.data.token);
-  
-        setTimeout(() => {
-          console.log("🚀 Intentando `navigate()`...");
-          navigate("/dashboard", { replace: true });
-        }, 500);
+        setTimeout(() => navigate("/dashboard", { replace: true }), 500);
       } else {
-        console.warn("⚠️ Código inválido o error en la respuesta:", response);
         setMessage("Código inválido. Inténtalo de nuevo.");
         setInvalidCode(true);
       }
-  
-    } catch (err) {
-      setMessage("Ocurrió un error al validar el código");
+    } catch (error) {
+      setMessage("Ocurrió un error al validar el código.");
       setInvalidCode(true);
-      console.error("❌ Error en verifyCode:", err);
+      console.error("Error en verifyCode:", error);
     } finally {
       setLoading(false);
     }
-  };
-
-
-  const backLogin = () => {
-    navigate("/login");
   };
 
   return {
@@ -77,9 +60,6 @@ export const useVerifyCode = () => {
     invalidCode,
     message,
     onSubmit,
-    backLogin,
+    backLogin: () => navigate("/login"),
   };
 };
-
-
-

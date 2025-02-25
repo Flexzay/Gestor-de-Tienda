@@ -1,54 +1,45 @@
 import { authService } from "../../Services/auth.service";
 import { useNavigate } from "react-router-dom";
-import { useState } from 'react';
-
+import { useState } from "react";
 
 function useLogin() {
-  const [phone, setPhone] = useState<string>(""); // Asegúrate de tipar el estado
-  const [error, setError] = useState<string>(""); // Tipado de error
-  const [loading, setLoading] = useState<boolean>(false); // Tipado de loading
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  function validatePhone(phone: string): boolean {
-    return /^3\d{9}$/.test(phone);  // Validación de teléfono
-  }
+  const validatePhone = (phone: string): boolean => /^3\d{9}$/.test(phone);
 
-  async function handleSubmit(e: React.FormEvent): Promise<void> {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError("");
-  
+
     if (!validatePhone(phone)) {
       setError("Introduzca un número de celular válido");
       return;
     }
-  
-    setLoading(true);
-    const response = await authService.login(phone);
-  
-    console.log("📩 Respuesta del login:", response); // 🔍 Verifica la respuesta completa
-  
-    const userId = response.data?.data?.id; // ⚠️ Asegurar que extraemos el ID correcto
-  
-    if (response.status === 200 && userId) {
-      localStorage.setItem("phone", phone);
-      localStorage.setItem("userId", String(userId)); 
-      console.log("✅ Login exitoso, redirigiendo...");
-      navigate("/verify-code"); // 🔄 Redirigir a la verificación de código
-    } else {
-      console.error("🚨 Error en login:", response);
-      setError(`Error: ${response.message || "Número de celular inválido o no tienes tienda"}`);
-    }
-  
-    setLoading(false);
-  }
 
-  return {
-    phone,
-    setPhone,
-    error,
-    loading,
-    handleSubmit,
+    setLoading(true);
+    try {
+      const response = await authService.login(phone);
+      const userId = response.data?.data?.id;
+
+      if (response.status === 200 && userId) {
+        localStorage.setItem("phone", phone);
+        localStorage.setItem("userId", String(userId));
+        navigate("/verify-code");
+      } else {
+        setError(response.message || "Número de celular inválido o no tienes tienda");
+      }
+    } catch (error) {
+      setError("Error en la autenticación. Inténtalo de nuevo.");
+      console.error("Error en login:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  return { phone, setPhone, error, loading, handleSubmit };
 }
 
 export default useLogin;
