@@ -33,7 +33,6 @@ function useLogin() {
       }
     } catch (error) {
       setError("Error en la autenticación. Inténtalo de nuevo.");
-      console.error("Error en login:", error);
     } finally {
       setLoading(false);
     }

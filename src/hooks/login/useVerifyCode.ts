@@ -46,7 +46,6 @@ export const useVerifyCode = () => {
     } catch (error) {
       setMessage("Ocurrió un error al validar el código.");
       setInvalidCode(true);
-      console.error("Error en verifyCode:", error);
     } finally {
       setLoading(false);
     }
