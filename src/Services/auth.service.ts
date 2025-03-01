@@ -4,6 +4,9 @@ import { storageService } from "./storage.service";
 const API_URL = environment.baseUrl;
 
 export const authService = {
+  /**
+   *  Iniciar sesión con número de teléfono
+   */
   async login(phone: string) {
     try {
       const response = await fetch(`${API_URL}/auth/phone/send`, {
@@ -17,15 +20,17 @@ export const authService = {
 
       return { status: response.status, data };
     } catch (error: any) {
-      console.error("Error en la autenticación:", error.message);
       return { status: 500, message: error.message || "Error en el servidor" };
     }
   },
 
+  /**
+   * Verificar código y guardar token + shop_id
+   */
   async verifyCode({ userId, code }: { userId: number; code: string }) {
     try {
-      if (!userId || isNaN(userId)) throw new Error("El `userId` es requerido y debe ser un número válido.");
-      if (!code) throw new Error("El `code` es requerido para verificar el código.");
+      if (!userId || isNaN(userId)) throw new Error("❌ `userId` debe ser un número válido.");
+      if (!code) throw new Error("❌ `code` es requerido.");
 
       const response = await fetch(`${API_URL}/auth/phone/verify/${userId}`, {
         method: "POST",
@@ -36,17 +41,26 @@ export const authService = {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
 
-      const token = data.data?.token;
+      const { token, shop } = data.data || {};
       if (token) storageService.setToken(token);
-      else console.warn("⚠️ No se recibió token en la respuesta.");
+      if (shop?.id) storageService.setShopId(shop.id.toString());
 
       return { status: response.status, data };
     } catch (error: any) {
-      console.error("Error verificando código:", error.message);
       return { status: 500, message: error.message || "Error en el servidor" };
     }
   },
 
+  /**
+   *  Verificar si el usuario está autenticado
+   */
   isLoggedIn: () => !!storageService.getToken(),
-  logout: () => storageService.removeToken(),
+
+  /**
+   * 🚪 Cerrar sesión eliminando credenciales
+   */
+  logout: () => {
+    storageService.removeToken();
+    storageService.removeShopId();
+  },
 };

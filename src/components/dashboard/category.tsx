@@ -1,58 +1,85 @@
-
-import { useState, useEffect } from "react"
-import { Pencil, Trash2, Plus, Search, Tag, ArrowLeft } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Link } from "react-router-dom"
-import type Category from "../../interface/category"
+import { useState, useEffect } from "react";
+import { Pencil, Trash2, Plus, Search, Tag, ArrowLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { categoriesService } from "../../Services/categories.service";
+import type Category from "../../interface/category";
 
 export function Categories() {
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 1, name: "Electrónica", count: 15 },
-    { id: 2, name: "Ropa", count: 23 },
-    { id: 3, name: "Hogar", count: 10 },
-    { id: 4, name: "Deportes", count: 8 },
-    { id: 5, name: "Libros", count: 30 },
-  ])
-  const [newCategory, setNewCategory] = useState("")
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredCategories, setFilteredCategories] = useState(categories)
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [newCategory, setNewCategory] = useState("");
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
+  //  Obtener categorías desde la API
   useEffect(() => {
-    const results = categories.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    setFilteredCategories(results)
-  }, [categories, searchTerm])
+    const fetchCategories = async () => {
+      try {
+        const response = await categoriesService.getCategories();
+        if (response.status === 200 && Array.isArray(response.data.data)) {
+          setCategories(response.data.data);
+        }
+      } catch (error) {
+        console.error("❌ Error al obtener categorías");
+      }
+    };
+    fetchCategories();
+  }, []);
 
-  const addCategory = () => {
-    if (newCategory.trim() !== "") {
-      const newCat = { id: Date.now(), name: newCategory, count: 0 }
-      setCategories([...categories, newCat])
-      setNewCategory("")
+  //  Filtrar categorías en tiempo real
+  const filteredCategories = categories.filter((cat) =>
+    cat.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  //  Agregar nueva categoría
+  const addCategory = async () => {
+    if (!newCategory.trim()) return;
+    try {
+      const response = await categoriesService.createCategory(newCategory);
+      if (response.status === 200) {
+        setCategories((prev) => [...prev, response.data.data]); // Actualizar lista
+        setNewCategory("");
+      }
+    } catch (error) {
+      console.error("❌ Error al añadir categoría");
     }
-  }
+  };
 
-  const startEditing = (category: Category) => {
-    setEditingCategory(category)
-  }
+  //  Iniciar edición
+  const startEditing = (category: Category) => setEditingCategory(category);
 
-  const saveEdit = () => {
-    if (editingCategory) {
-      setCategories(categories.map((cat) => (cat.id === editingCategory.id ? editingCategory : cat)))
-      setEditingCategory(null)
+  //  Guardar edición
+  const saveEdit = async () => {
+    if (!editingCategory) return;
+    try {
+      const response = await categoriesService.updateCategory(editingCategory.id, editingCategory.name);
+      if (response.status === 200) {
+        setCategories((prev) =>
+          prev.map((cat) => (cat.id === editingCategory.id ? editingCategory : cat))
+        );
+        setEditingCategory(null);
+      }
+    } catch (error) {
+      console.error("❌ Error al editar categoría");
     }
-  }
+  };
 
-  const deleteCategory = (id: number) => {
-    setCategories(categories.filter((cat) => cat.id !== id))
-  }
+  //  Eliminar categoría
+  const deleteCategory = async (id: number) => {
+    try {
+      const response = await categoriesService.deleteCategory(id);
+      if (response.status === 200) {
+        setCategories((prev) => prev.filter((cat) => cat.id !== id));
+      }
+    } catch (error) {
+      console.error("❌ Error al eliminar categoría");
+    }
+  };
 
   return (
     <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
       <div className="flex items-center justify-between mb-6">
-        <Link
-          to="/dashboard"
-          className="flex items-center text-gray-600 hover:text-[#ff204e] transition-colors duration-300"
-        >
+        <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-[#ff204e] transition-colors duration-300">
           <ArrowLeft size={24} className="mr-2" />
           <span className="font-medium">Volver al Dashboard</span>
         </Link>
@@ -63,7 +90,7 @@ export function Categories() {
         <Tag size={24} className="text-[#ff204e]" />
       </div>
 
-      {/* Barra de búsqueda */}
+      {/*  Barra de búsqueda */}
       <div className="relative mb-8">
         <input
           type="text"
@@ -75,7 +102,7 @@ export function Categories() {
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
       </div>
 
-      {/* Lista de categorías */}
+      {/*  Lista de categorías */}
       <ul className="space-y-4 mb-8">
         <AnimatePresence>
           {filteredCategories.map((category) => (
@@ -89,9 +116,9 @@ export function Categories() {
             >
               <div className="flex items-center space-x-4">
                 <span className="text-lg font-semibold text-[#ff204e] bg-red-100 px-3 py-1 rounded-full">
-                  {category.count}
+                  {category.count_products || 0}
                 </span>
-                {editingCategory && editingCategory.id === category.id ? (
+                {editingCategory?.id === category.id ? (
                   <input
                     type="text"
                     value={editingCategory.name}
@@ -104,22 +131,16 @@ export function Categories() {
                 )}
               </div>
               <div className="flex space-x-2">
-                {editingCategory && editingCategory.id === category.id ? (
+                {editingCategory?.id === category.id ? (
                   <button onClick={saveEdit} className="text-[#7B9400] hover:text-[#7B9400] transition-colors">
                     Guardar
                   </button>
                 ) : (
-                  <button
-                    onClick={() => startEditing(category)}
-                    className="text-gray-500 hover:text-[#05f2f2] transition-colors"
-                  >
+                  <button onClick={() => startEditing(category)} className="text-gray-500 hover:text-[#05f2f2] transition-colors">
                     <Pencil size={18} />
                   </button>
                 )}
-                <button
-                  onClick={() => deleteCategory(category.id)}
-                  className="text-gray-500 hover:text-[#ff204e] transition-colors"
-                >
+                <button onClick={() => deleteCategory(category.id)} className="text-gray-500 hover:text-[#ff204e] transition-colors">
                   <Trash2 size={18} />
                 </button>
               </div>
@@ -128,7 +149,7 @@ export function Categories() {
         </AnimatePresence>
       </ul>
 
-      {/* Formulario para añadir nueva categoría */}
+      {/*  Formulario para añadir nueva categoría */}
       <div className="flex space-x-2">
         <input
           type="text"
@@ -146,8 +167,7 @@ export function Categories() {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default Categories
-
+export default Categories;
