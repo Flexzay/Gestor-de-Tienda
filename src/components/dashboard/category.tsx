@@ -1,85 +1,31 @@
-import { useState, useEffect } from "react";
 import { Pencil, Trash2, Plus, Search, Tag, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { categoriesService } from "../../Services/categories.service";
-import type Category from "../../interface/category";
+import { useCategories } from "../../hooks/bashboard/useCategories";
 
 export function Categories() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [newCategory, setNewCategory] = useState("");
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  //  Obtener categorías desde la API
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await categoriesService.getCategories();
-        if (response.status === 200 && Array.isArray(response.data.data)) {
-          setCategories(response.data.data);
-        }
-      } catch (error) {
-        console.error("❌ Error al obtener categorías");
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  //  Filtrar categorías en tiempo real
-  const filteredCategories = categories.filter((cat) =>
-    cat.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  //  Agregar nueva categoría
-  const addCategory = async () => {
-    if (!newCategory.trim()) return;
-    try {
-      const response = await categoriesService.createCategory(newCategory);
-      if (response.status === 200) {
-        setCategories((prev) => [...prev, response.data.data]); // Actualizar lista
-        setNewCategory("");
-      }
-    } catch (error) {
-      console.error("❌ Error al añadir categoría");
-    }
-  };
-
-  //  Iniciar edición
-  const startEditing = (category: Category) => setEditingCategory(category);
-
-  //  Guardar edición
-  const saveEdit = async () => {
-    if (!editingCategory) return;
-    try {
-      const response = await categoriesService.updateCategory(editingCategory.id, editingCategory.name);
-      if (response.status === 200) {
-        setCategories((prev) =>
-          prev.map((cat) => (cat.id === editingCategory.id ? editingCategory : cat))
-        );
-        setEditingCategory(null);
-      }
-    } catch (error) {
-      console.error("❌ Error al editar categoría");
-    }
-  };
-
-  //  Eliminar categoría
-  const deleteCategory = async (id: number) => {
-    try {
-      const response = await categoriesService.deleteCategory(id);
-      if (response.status === 200) {
-        setCategories((prev) => prev.filter((cat) => cat.id !== id));
-      }
-    } catch (error) {
-      console.error("❌ Error al eliminar categoría");
-    }
-  };
+  const {
+    categories,
+    filteredCategories,
+    newCategory,
+    setNewCategory,
+    editingCategory,
+    setEditingCategory,
+    searchTerm,
+    setSearchTerm,
+    addCategory,
+    startEditing,
+    saveEdit,
+    deleteCategory,
+  } = useCategories();
 
   return (
     <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
       <div className="flex items-center justify-between mb-6">
-        <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-[#ff204e] transition-colors duration-300">
+        <Link
+          to="/dashboard"
+          className="flex items-center text-gray-600 hover:text-[#ff204e] transition-colors duration-300"
+        >
           <ArrowLeft size={24} className="mr-2" />
           <span className="font-medium">Volver al Dashboard</span>
         </Link>
@@ -90,7 +36,6 @@ export function Categories() {
         <Tag size={24} className="text-[#ff204e]" />
       </div>
 
-      {/*  Barra de búsqueda */}
       <div className="relative mb-8">
         <input
           type="text"
@@ -99,10 +44,12 @@ export function Categories() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-3 pl-12 text-gray-700 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ff204e] transition-all duration-300"
         />
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <Search
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+          size={20}
+        />
       </div>
 
-      {/*  Lista de categorías */}
       <ul className="space-y-4 mb-8">
         <AnimatePresence>
           {filteredCategories.map((category) => (
@@ -122,7 +69,9 @@ export function Categories() {
                   <input
                     type="text"
                     value={editingCategory.name}
-                    onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                    onChange={(e) =>
+                      setEditingCategory({ ...editingCategory, name: e.target.value })
+                    }
                     className="border-b-2 border-gray-300 px-2 py-1 focus:outline-none focus:border-[#ff204e]"
                     autoFocus
                   />
@@ -132,15 +81,24 @@ export function Categories() {
               </div>
               <div className="flex space-x-2">
                 {editingCategory?.id === category.id ? (
-                  <button onClick={saveEdit} className="text-[#7B9400] hover:text-[#7B9400] transition-colors">
+                  <button
+                    onClick={saveEdit}
+                    className="text-[#7B9400] hover:text-[#7B9400] transition-colors"
+                  >
                     Guardar
                   </button>
                 ) : (
-                  <button onClick={() => startEditing(category)} className="text-gray-500 hover:text-[#05f2f2] transition-colors">
+                  <button
+                    onClick={() => startEditing(category)}
+                    className="text-gray-500 hover:text-[#05f2f2] transition-colors"
+                  >
                     <Pencil size={18} />
                   </button>
                 )}
-                <button onClick={() => deleteCategory(category.id)} className="text-gray-500 hover:text-[#ff204e] transition-colors">
+                <button
+                  onClick={() => deleteCategory(category.id)}
+                  className="text-gray-500 hover:text-[#ff204e] transition-colors"
+                >
                   <Trash2 size={18} />
                 </button>
               </div>
@@ -149,7 +107,6 @@ export function Categories() {
         </AnimatePresence>
       </ul>
 
-      {/*  Formulario para añadir nueva categoría */}
       <div className="flex space-x-2">
         <input
           type="text"
