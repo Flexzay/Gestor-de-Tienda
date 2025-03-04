@@ -8,7 +8,7 @@ import VerifyCodeComponent from '../components/login/verify-codeComponents'; // 
 import Dashboard from "../pages/dashboard/dashboard-page"
 import Staff from "../pages/dashboard/Staff-pages"
 import CategoryPage from '../pages/dashboard/category-page';
-import SuppliersPage from '../pages/dashboard/suppliers-page';
+import SuppliersPage from '../pages/dashboard/Providers';
 import PaymentMethodPage from '../pages/dashboard/paymentMetthod-page';
 
 const App = () => {
