@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { categoriesService } from "../../Services/categories.service";
-import type Category from "../../interface/category";
+import  Category from "../../interface/category";
 
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -14,11 +14,14 @@ export function useCategories() {
         const response = await categoriesService.getCategories();
         if (response.status === 200 && Array.isArray(response.data.data)) {
           setCategories(response.data.data);
+        } else {
+          console.error("⚠️ Respuesta inesperada:", response);
         }
       } catch (error) {
-        console.error("❌ Error al obtener categorías");
+        console.error("❌ Error al obtener categorías:", error);
       }
     };
+
     fetchCategories();
   }, []);
 
@@ -28,14 +31,16 @@ export function useCategories() {
 
   const addCategory = async () => {
     if (!newCategory.trim()) return;
+    const formattedCategory = newCategory.charAt(0).toUpperCase() + newCategory.slice(1);
+
     try {
-      const response = await categoriesService.createCategory(newCategory);
+      const response = await categoriesService.createCategory(formattedCategory);
       if (response.status === 200) {
         setCategories((prev) => [...prev, response.data.data]);
         setNewCategory("");
       }
     } catch (error) {
-      console.error("❌ Error al añadir categoría");
+      console.error("❌ Error al añadir categoría:", error);
     }
   };
 
@@ -57,7 +62,7 @@ export function useCategories() {
         setEditingCategory(null);
       }
     } catch (error) {
-      console.error("❌ Error al editar categoría");
+      console.error("❌ Error al editar categoría:", error);
     }
   };
 
@@ -68,7 +73,7 @@ export function useCategories() {
         setCategories((prev) => prev.filter((cat) => cat.id !== id));
       }
     } catch (error) {
-      console.error("❌ Error al eliminar categoría");
+      console.error("❌ Error al eliminar categoría:", error);
     }
   };
 

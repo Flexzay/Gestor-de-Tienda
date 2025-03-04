@@ -1,7 +1,8 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { Package, X } from "lucide-react";
-import type { ProductFormData } from "../../interface/product";
+import { ProductFormData } from "../../interface/product";
+import { useCategories } from "../../hooks/bashboard/useCategories";
 
 interface AddProductFormProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface AddProductFormProps {
 }
 
 const AddProductForm: React.FC<AddProductFormProps> = ({ onClose, onSubmit, initialData }) => {
+  const { categories } = useCategories();
   const [formData, setFormData] = useState<ProductFormData>(
     initialData || {
       name: "",
@@ -52,61 +54,53 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onClose, onSubmit, init
           {initialData ? "Editar Producto" : "Agregar Nuevo Producto"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nombre */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre</label>
             <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required 
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]" />
           </div>
 
-          {/* Categoría */}
           <div>
             <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categoría</label>
             <select id="category" name="category" value={formData.category} onChange={handleChange} required
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]">
               <option value="">Selecciona una categoría</option>
-              <option value="Bebidas">Bebidas</option>
-              <option value="Alimentos">Alimentos</option>
-              <option value="Limpieza">Limpieza</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.name}>{cat.name}</option>
+              ))}
             </select>
           </div>
 
-          {/* Marca */}
           <div>
             <label htmlFor="brand" className="block text-sm font-medium text-gray-700">Marca</label>
             <input type="text" id="brand" name="brand" value={formData.brand} onChange={handleChange} required
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]" />
           </div>
 
-          {/* Stock */}
           <div>
             <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Stock</label>
             <input type="number" id="stock" name="stock" value={formData.stock} onChange={handleChange} required
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]" />
           </div>
 
-          {/* Fecha de vencimiento */}
           <div>
             <label htmlFor="expirationDate" className="block text-sm font-medium text-gray-700">Fecha de Vencimiento</label>
             <input type="date" id="expirationDate" name="expirationDate" value={formData.expirationDate} onChange={handleChange} required
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]" />
           </div>
 
-          {/* Precio */}
           <div>
             <label htmlFor="price" className="block text-sm font-medium text-gray-700">Precio</label>
             <input type="number" id="price" name="price" value={formData.price} onChange={handleChange} required
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]" />
           </div>
 
-          {/* Descripción */}
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descripción</label>
             <textarea id="description" name="description" value={formData.description} onChange={handleChange} required
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]"></textarea>
           </div>
 
-          {/* Botones */}
           <div className="flex justify-end">
             <button type="button" onClick={onClose} className="mr-2 px-4 py-2 text-gray-700 bg-gray-100 rounded-md">Cancelar</button>
             <button type="submit" className="px-4 py-2 text-white bg-[#ff204e] rounded-md">{initialData ? "Actualizar Producto" : "Agregar Producto"}</button>

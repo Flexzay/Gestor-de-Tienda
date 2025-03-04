@@ -62,9 +62,6 @@ export function Categories() {
               className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center space-x-4">
-                <span className="text-lg font-semibold text-[#ff204e] bg-red-100 px-3 py-1 rounded-full">
-                  {category.count_products || 0}
-                </span>
                 {editingCategory?.id === category.id ? (
                   <input
                     type="text"
