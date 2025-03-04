@@ -1,7 +1,8 @@
-import { Pencil, Trash2, Plus, Search, Tag, ArrowLeft } from "lucide-react";
+import { Pencil, Trash2, Plus, Tag, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useCategories } from "../../hooks/bashboard/useCategories";
+import { SearchBar } from "./SearchBar";
 
 export function Categories() {
   const {
@@ -21,6 +22,7 @@ export function Categories() {
 
   return (
     <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
+      {/* Botón de regreso */}
       <div className="flex items-center justify-between mb-6">
         <Link
           to="/dashboard"
@@ -31,25 +33,16 @@ export function Categories() {
         </Link>
       </div>
 
+      {/* Título */}
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-3xl font-semibold text-gray-800">Categorías</h2>
         <Tag size={24} className="text-[#ff204e]" />
       </div>
 
-      <div className="relative mb-8">
-        <input
-          type="text"
-          placeholder="Buscar categorías..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-3 pl-12 text-gray-700 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ff204e] transition-all duration-300"
-        />
-        <Search
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-          size={20}
-        />
-      </div>
+      {/* Componente reutilizable de búsqueda */}
+      <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Buscar categorías..." />
 
+      {/* Lista de categorías */}
       <ul className="space-y-4 mb-8">
         <AnimatePresence>
           {filteredCategories.map((category) => (
@@ -104,6 +97,7 @@ export function Categories() {
         </AnimatePresence>
       </ul>
 
+      {/* Input y botón para añadir nueva categoría */}
       <div className="flex space-x-2">
         <input
           type="text"
