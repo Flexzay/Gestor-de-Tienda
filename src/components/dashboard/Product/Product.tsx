@@ -1,8 +1,8 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { Package, X } from "lucide-react";
-import { ProductFormData } from "../../interface/product";
-import { useCategories } from "../../hooks/bashboard/useCategories";
+import { ProductFormData } from "../../../interface/product";
+import { useCategories } from "../../../hooks/bashboard/useCategories";
 
 interface AddProductFormProps {
   onClose: () => void;

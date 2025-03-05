@@ -1,6 +1,6 @@
 import type React from "react";
 import { useState, useEffect } from "react";
-import AddProductForm from "./Product";
+import AddProductForm from "./Product/Product";
 import { Package, Pencil, Trash2, Truck , Wallet} from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import  Provider  from "../../interface/suppliets";
