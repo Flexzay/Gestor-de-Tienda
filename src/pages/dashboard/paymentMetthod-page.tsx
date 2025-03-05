@@ -1,4 +1,4 @@
-import PaymentMethods from "../../components/dashboard/payment-methods"
+import PaymentMethods from "../../components/dashboard/payment methods/payment-methods"
 
 function PaymentMethodPage() {
   return (

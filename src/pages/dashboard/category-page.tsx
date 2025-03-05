@@ -1,5 +1,5 @@
 import type React from "react"
-import Categories from "../../components/dashboard/category";
+import Categories from "../../components/dashboard/category/category";
 
 function categoryPage() {
     return (

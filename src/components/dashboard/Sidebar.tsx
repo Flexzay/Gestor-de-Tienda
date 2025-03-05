@@ -1,6 +1,7 @@
 import type React from "react";
 import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
-import { Home, Users, Settings, Layers, Menu, Tags, Boxes, Wallet, Coins, ReceiptText, FileChartLine } from "lucide-react";
+import { Home, Users, Settings, Layers,
+ Menu, Tags, Boxes, Wallet, Coins, ReceiptText, FileChartLine } from "lucide-react";
 import { useState } from "react";
 
 function Sidebar() {
