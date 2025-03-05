@@ -56,17 +56,21 @@ export function EditableListWithAdd<T extends { id: number; name: string }>({
               </div>
               <div className="flex space-x-2">
                 {editingItem?.id === item.id ? (
-                  <Button onClick={saveEdit} className="text-[#7B9400] hover:text-[#5e7200]">
-                    Guardar
-                  </Button>
+                  <Button variant="primary" text="Guardar" onClick={saveEdit} />
                 ) : (
-                  <Button onClick={() => startEditing(item)} className="text-gray-500 hover:text-[#05f2f2]">
+                  <button 
+                    onClick={() => startEditing(item)} 
+                    className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 text-gray-500 hover:text-[#7B9400] hover:border-[#7B9400] transition-colors"
+                  >
                     <Pencil size={18} />
-                  </Button>
+                  </button>
                 )}
-                <Button onClick={() => deleteItem(item.id)} className="text-gray-500 hover:text-[#ff204e]">
+                <button 
+                  onClick={() => deleteItem(item.id)} 
+                  className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 text-gray-500 hover:text-[#ff204e] hover:border-[#ff204e] transition-colors"
+                >
                   <Trash2 size={18} />
-                </Button>
+                </button>
               </div>
             </motion.li>
           ))}
@@ -82,10 +86,12 @@ export function EditableListWithAdd<T extends { id: number; name: string }>({
           placeholder={placeholder}
           className="flex-grow px-4 py-3 text-gray-700 bg-white rounded-l-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ff204e] transition-all duration-300"
         />
-        <Button onClick={addItem} className="bg-[#ff204e] text-white rounded-r-lg hover:bg-[#ff3b60]">
-          <Plus size={20} className="mr-2" />
-          Añadir
-        </Button>
+        <Button 
+          variant="primary" 
+          icon={Plus} 
+          text="Añadir" 
+          onClick={addItem} 
+        />
       </div>
     </div>
   );

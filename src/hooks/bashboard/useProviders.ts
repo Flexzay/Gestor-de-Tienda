@@ -3,11 +3,11 @@ import Provider from "../../interface/proviter"
 
 export function useProviders() {
   const [providers, setProviders] = useState<Provider[]>([
-    { id: 1, name: "TechSupply Co.", products: 25 },
-    { id: 2, name: "Global Gadgets", products: 18 },
-    { id: 3, name: "Eco Essentials", products: 30 },
-    { id: 4, name: "Quality Electronics", products: 22 },
-    { id: 5, name: "Innovative Imports", products: 15 }
+    { id: 1, name: "Alpina", products: 25 },
+    { id: 2, name: "Colombia", products: 18 },
+    { id: 3, name: "Familia", products: 30 },
+    { id: 4, name: "El Rey", products: 22 },
+    { id: 5, name: "Coca-Cola", products: 15 }
   ])
   
   const [newProvider, setNewProvider] = useState("")

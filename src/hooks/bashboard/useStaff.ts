@@ -2,12 +2,12 @@ import { useState } from "react";
 
 export const useStaffLogic = () => {
   const initialStaff = [
-    { id: 1, name: "Alice Johnson", role: "Project Manager", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2022/04/20240910_Polas_Persona00049-265x398.jpg" },
-    { id: 2, name: "Bob Smith", role: "UI/UX Designer", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2023/10/DSCF9644-17-5-265x398.jpg" },
-    { id: 3, name: "Charlie Brown", role: "Frontend Developer", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2024/07/DSCF1613-33-265x398.jpg" },
+    { id: 1, name: "Andres Duarte", role: "Contador", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2022/04/20240910_Polas_Persona00049-265x398.jpg" },
+    { id: 2, name: "Maycol Mendez", role: "Cajero", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2023/10/DSCF9644-17-5-265x398.jpg" },
+    { id: 3, name: "Charlie Brown", role: "Surtidor", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2024/07/DSCF1613-33-265x398.jpg" },
   ];
 
-  const initialRoles = ["Project Manager", "UI/UX Designer", "Frontend Developer"];
+  const initialRoles = ["Contador", "Cajero", "Surtidor"];
 
   const [search, setSearch] = useState("");
   const [staff, setStaff] = useState(initialStaff);

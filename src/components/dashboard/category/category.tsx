@@ -1,13 +1,12 @@
-import { Tag } from "lucide-react";
+import { Tag, Plus } from "lucide-react";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
 import { SearchBar } from "../SearchBar";
 import { EditableListWithAdd } from "../EditableList";
-import {BackButton} from "../back_button";
+import { BackButton } from "../back_button";
 
 
 export function Categories() {
   const {
-    categories,
     filteredCategories,
     newCategory,
     setNewCategory,
@@ -25,7 +24,7 @@ export function Categories() {
     <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
       
       {/* Botón de regreso */}
-      <BackButton/>
+      <BackButton />
 
       {/* Título */}
       <div className="flex items-center justify-between mb-8">
@@ -33,10 +32,14 @@ export function Categories() {
         <Tag size={24} className="text-[#ff204e]" />
       </div>
 
-      {/* Componente reutilizable de búsqueda */}
-      <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Buscar categorías..." />
+      {/* Barra de búsqueda */}
+      <SearchBar 
+        value={searchTerm} 
+        onChange={(e) => setSearchTerm(e.target.value)} 
+        placeholder="Buscar categorías..." 
+      />
 
-      {/* Lista reutilizable */}
+      {/* Lista de categorías */}
       <EditableListWithAdd
         items={filteredCategories}
         editingItem={editingCategory}
@@ -48,7 +51,11 @@ export function Categories() {
         setNewItem={setNewCategory}
         addItem={addCategory}
         placeholder="Nueva categoría"
-      />
+      /> 
+
+      
+
+
     </div>
   );
 }

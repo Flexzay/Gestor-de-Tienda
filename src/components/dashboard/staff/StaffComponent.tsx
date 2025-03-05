@@ -59,7 +59,7 @@ export function StaffComponent() {
 
       </div>
 
-      <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
+      <SearchBar value={search} placeholder="Buscar Personal" onChange={(e) => setSearch(e.target.value)} />
       <StaffList staff={filteredStaff} onEdit={handleEditMember} onDelete={handleDeleteMember} />
 
       <RoleModal
