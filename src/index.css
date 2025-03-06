@@ -1,9 +1,14 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'rocko-ultra-flf';
-  src: url('/public/fonts/rocko-ultra-flf.woff2') format('woff2');
+    font-family: 'Roboto-Regular';
+    src: url('/fonts/Roboto-Regular.woff2') format('woff2'); 
     font-weight: normal;
     font-style: normal;
     font-display: swap;
-}
+  }
+  
+  body {
+    font-family: 'Roboto-Regular', sans-serif;
+  }
+  
