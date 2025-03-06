@@ -31,7 +31,7 @@ function Sidebar() {
               { icon: Tags, label: "Categoria", path: "/category" },
               { icon: Boxes, label: "Provedores", path: "/suppliers" },
               { icon: Wallet, label: "Metodos de Pago", path: "/payment-methods" },
-              { icon: Coins, label: "Gastos - Ingresos", path: "/icome" },
+              { icon: Coins, label: "Gastos - Ingresos", path: "/income" },
               { icon: ReceiptText, label: "Facturas - Recibos", path: "/invoices" },
               { icon: FileChartLine, label: "Reporte de Ventas", path: "/sales-report" },
               { icon: Settings, label: "Settings", path: "/settings" },
