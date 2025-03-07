@@ -35,7 +35,7 @@ function Home() {
                 onClick={() => navigate(isLoggedIn ? '/dashboard' : '/login')}
                 className="mt-6 w-full bg-[#ff204e] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#84001a] transition-colors text-lg sm:text-xl"
               >
-                {isLoggedIn ? "Ir al Panel de Gestión 📊" : "Ir a Iniciar Sesión 🚀"}
+                {isLoggedIn ? "Ir al Panel de Gestión " : "Ir a Iniciar Sesión "}
               </button>
             </div>
           </div>

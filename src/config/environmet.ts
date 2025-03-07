@@ -1,5 +1,5 @@
 export const environment = {
-    baseUrl: "https://domiduck.com/store",
+    baseUrl: "https://dev.domiduck.com/store",
   };
   
   
