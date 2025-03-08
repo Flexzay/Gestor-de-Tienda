@@ -85,7 +85,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onClose, onSubmit, init
 
           <div>
             <label htmlFor="expirationDate" className="block text-sm font-medium text-gray-700">Fecha de Vencimiento</label>
-            <input type="date" id="expirationDate" name="expirationDate" value={formData.expirationDate} onChange={handleChange} required
+            <input type="date" id="expirationDate" name="expirationDate" value={formData.expirationDate} onChange={handleChange} 
               className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e]" />
           </div>
 

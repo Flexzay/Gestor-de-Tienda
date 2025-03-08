@@ -3,7 +3,7 @@ export interface ProductFormData {
   category: string;
   brand: string;
   stock: number;
-  expirationDate: string;
+  expirationDate?: string;
   price: number;
   description: string;
 }
