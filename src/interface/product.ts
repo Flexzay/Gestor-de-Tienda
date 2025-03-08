@@ -6,6 +6,7 @@ export interface ProductFormData {
   expirationDate?: string;
   price: number;
   description: string;
+  image: string | null;
 }
 
 export default ProductFormData;

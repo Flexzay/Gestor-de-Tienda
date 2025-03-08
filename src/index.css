@@ -1,14 +1,32 @@
 @import "tailwindcss";
 
 @font-face {
-    font-family: 'Roboto-Regular';
-    src: url('/fonts/Roboto-Regular.woff2') format('woff2'); 
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-  }
-  
-  body {
-    font-family: 'Roboto-Regular', sans-serif;
-  }
-  
+  font-family: 'Roboto-Regular';
+  src: url('/fonts/Roboto-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Roboto-Regular', sans-serif;
+}
+
+
+/* estilos de los input,label,botones  de el formulario de agregar producto */
+
+.input-field {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-[#ff204e] focus:ring-[#ff204e] focus:ring-1 bg-white;
+}
+
+.label {
+  @apply text-gray-700 font-medium block mb-1;
+}
+
+.btn-primary {
+  @apply px-5 py-3 text-white bg-[#ff204e] rounded-lg shadow-md hover:bg-[#e01b3e] transition-all;
+}
+
+.btn-secondary {
+  @apply px-5 py-3 text-gray-700 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300 transition-all;
+}
