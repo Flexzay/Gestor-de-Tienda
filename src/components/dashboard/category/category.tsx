@@ -26,7 +26,7 @@ export function Categories() {
       {/* Sidebar fijo a la izquierda */}
       <Sidebar />
 
-      {/* Contenido principal SIN margin-left extra */}
+      {/* Contenido principal  */}
       <div className="flex-1 p-8"> 
         {/* Botón de regreso */}
         <BackButton />
