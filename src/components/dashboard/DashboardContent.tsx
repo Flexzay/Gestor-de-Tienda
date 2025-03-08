@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AddProductForm from "./Product/Product";
 import DashboardCard from "./DashboardCard";
-import ProductList from "./ProductList";
+import ProductList from "./Product/ProductList";
 import { Package, Truck, Wallet } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import Provider from "../../interface/suppliets";

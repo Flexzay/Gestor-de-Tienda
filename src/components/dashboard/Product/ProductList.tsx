@@ -1,6 +1,6 @@
 import React from "react";
 import { Pencil, Trash2, Package } from "lucide-react";
-import { ProductFormData } from "../../interface/product";
+import { ProductFormData } from "../../../interface/product";
 
 interface ProductListProps {
   products: ProductFormData[];
@@ -18,20 +18,28 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete })
           key={index}
           className="relative bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transform transition duration-300 hover:shadow-2xl hover:-translate-y-2"
         >
-          {/* Decoración en la esquina superior derecha */}
-          <div className="absolute top-0 right-0 w-16 h-16 bg-[#ff204e] dark:bg-[#ff3b61] rounded-bl-full opacity-20"></div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="p-4 rounded-lg bg-[#ff204e] dark:bg-[#ff3b61] text-white shadow-md">
-              <Package size={28} />
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-white">{product.name}</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Categoría: {product.category}</p>
-            </div>
+          {/* Imagen del producto */}
+          <div className="w-full h-40 flex items-center justify-center">
+            {product.image ? (
+              <img 
+                src={product.image} 
+                alt={product.name} 
+                className="w-full h-full object-cover rounded-lg shadow-md"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+                <Package size={48} className="text-gray-400" />
+              </div>
+            )}
           </div>
 
-          <div className="mt-4">
+          {/* Información del Producto */}
+          <div className="mt-4 text-center">
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-white">{product.name}</h4>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Categoría: {product.category}</p>
+          </div>
+
+          <div className="mt-4 space-y-1">
             <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Precio:</strong> ${product.price}</p>
             <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Stock:</strong> {product.stock}</p>
             <p className="text-sm text-gray-600 dark:text-gray-300"><strong>Marca:</strong> {product.brand}</p>
