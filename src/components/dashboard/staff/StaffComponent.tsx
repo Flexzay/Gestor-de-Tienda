@@ -55,12 +55,7 @@ export function StaffComponent() {
               Agregar Personal
             </button>
 
-            <button
-              onClick={handleGoToDashboard}
-              className="px-6 py-2 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition-all"
-            >
-              Volver al Dashboard
-            </button>
+
           </div>
         </div>
 
