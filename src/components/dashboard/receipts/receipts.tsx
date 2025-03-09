@@ -95,15 +95,7 @@ export function ExpensesIncome() {
       <Sidebar />
 
       <div className="flex-1  p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
-        <div className="flex items-center justify-between mb-6">
-          <Link
-            to="/dashboard"
-            className="flex items-center text-gray-600 hover:text-[#ff204e] transition-colors duration-300"
-          >
-            <ArrowLeft size={24} className="mr-2" />
-            <span className="font-medium">Volver al Dashboard</span>
-          </Link>
-        </div>
+        
 
         <h2 className="text-3xl font-semibold mb-8 text-center text-gray-800">Gastos e Ingresos</h2>
 
