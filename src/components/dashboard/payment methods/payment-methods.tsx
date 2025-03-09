@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState } from "react"
 import { Plus, Edit2, Trash2, Check, CreditCard } from "lucide-react"
