@@ -2,8 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { ArrowLeft, Plus, Edit2, Trash2, Check, CreditCard } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Plus, Edit2, Trash2, Check, CreditCard } from "lucide-react"
 import type PaymentMethod from "../../../interface/paymentMethod"
 import Sidebar from "../Sidebar"
 

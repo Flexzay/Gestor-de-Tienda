@@ -2,8 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { ArrowLeft, Plus, Edit2, Trash2, TrendingUp, TrendingDown } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Plus, Edit2, Trash2, TrendingUp, TrendingDown } from "lucide-react"
 import type Transaction from "../../../interface/transaction"
 import Sidebar from "../Sidebar"
 
