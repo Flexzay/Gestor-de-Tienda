@@ -2,7 +2,6 @@ import { Tag } from "lucide-react";
 import { useProviders } from "../../../hooks/bashboard/useProviders";
 import { SearchBar } from "../SearchBar";
 import { EditableListWithAdd } from "../EditableList";
-import { BackButton } from "../back_button";
 import Sidebar from "../Sidebar";
 
 export function ProviderList() {
@@ -27,9 +26,6 @@ export function ProviderList() {
 
       {/* Contenido principal */}
       <div className="flex-1 p-8">
-        {/* Botón de regreso */}
-        <BackButton />
-
         {/* Título */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-semibold text-gray-800">Proveedores</h2>
