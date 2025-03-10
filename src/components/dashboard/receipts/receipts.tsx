@@ -250,12 +250,7 @@ export function ExpensesIncome() {
                   >
                     Descripción
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Acciones
-                  </th>
+
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -278,20 +273,6 @@ export function ExpensesIncome() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.category}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.date}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.description}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => editTransaction(transaction)}
-                        className="text-indigo-600 hover:text-indigo-900 mr-2"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => deleteTransaction(transaction.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
