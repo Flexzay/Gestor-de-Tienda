@@ -1,4 +1,3 @@
-import type React from "react";
 import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
 import { Home, Users, Settings, Layers,
  Menu, Tags, Boxes, Wallet, Coins, ReceiptText, FileChartLine } from "lucide-react";
@@ -26,15 +25,15 @@ function Sidebar() {
         <nav>
           <ul className="space-y-2">
             {[ // Enlaces de navegación
-              { icon: Home, label: "Home", path: "/dashboard" },
+              { icon: Home, label: "Home", path: "/Dashboard" },
               { icon: Users, label: "Personal", path: "/Staff" },
-              { icon: Tags, label: "Categoria", path: "/category" },
-              { icon: Boxes, label: "Provedores", path: "/suppliers" },
-              { icon: Wallet, label: "Metodos de Pago", path: "/payment-methods" },
-              { icon: Coins, label: "Gastos - Ingresos", path: "/income" },
-              { icon: ReceiptText, label: "Facturas - Recibos", path: "/invoices" },
-              { icon: FileChartLine, label: "Reporte de Ventas", path: "/sales-report" },
-              { icon: Settings, label: "Settings", path: "/settings" },
+              { icon: Tags, label: "Categoria", path: "/Category" },
+              { icon: Boxes, label: "Provedores", path: "/Suppliers" },
+              { icon: Wallet, label: "Metodos de Pago", path: "/Payment-methods" },
+              { icon: Coins, label: "Gastos - Ingresos", path: "#" }, // /Income
+              { icon: ReceiptText, label: "Facturas - Recibos", path: "#" }, // /Bills
+              { icon: FileChartLine, label: "Reporte de Ventas", path: "#" }, // /Sales-report
+              { icon: Settings, label: "Settings", path: "#" }, // /Settings
 
             ].map((item) => (
               <li key={item.path}>
