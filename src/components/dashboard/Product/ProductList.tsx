@@ -11,7 +11,7 @@ interface ProductListProps {
 const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete }) => (
   <div className="mt-8 w-full">
     <h3 className="text-2xl font-bold mb-6 text-gray-900">📦 Productos Agregados</h3>
-    
+
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {products.map((product, index) => (
         <div
@@ -21,9 +21,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete })
           {/* Imagen del producto */}
           <div className="w-full h-40 flex items-center justify-center">
             {product.image ? (
-              <img 
-                src={product.image} 
-                alt={product.name} 
+              <img
+                src={product.image}
+                alt={product.name}
                 className="w-full h-full object-cover rounded-lg shadow-md"
               />
             ) : (
@@ -60,6 +60,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete })
             >
               <Trash2 size={16} className="mr-2" /> Eliminar
             </button>
+
           </div>
         </div>
       ))}

@@ -1,9 +1,7 @@
-import type React from "react"
-import AddProductForm from "../../components/dashboard/Product/Product"
+import ProductComponents from "../../components/dashboard/Product/ProductComponents";
 
-const Product: React.FC = () => {
-  return <AddProductForm />
-}
+const ProductPage: React.FC = () => {
+  return <ProductComponents />;
+};
 
-export default Product
-
+export default ProductPage;
