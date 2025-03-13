@@ -1,10 +1,6 @@
 import { Search } from "lucide-react";
+import SearchBarProps from "../../interface/searchbar";
 
-interface SearchBarProps {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-}
 
 export function SearchBar({ value, onChange, placeholder = "Buscar..." }: SearchBarProps) {
   return (

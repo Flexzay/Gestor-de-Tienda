@@ -1,11 +1,6 @@
 import React from "react";
+import PaginatorProps from "../../interface/paginator"
 
-interface PaginatorProps {
-  currentPage: number;
-  totalItems: number;
-  itemsPerPage: number;
-  onPageChange: (newPage: number) => void;
-}
 
 const Paginator: React.FC<PaginatorProps> = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
