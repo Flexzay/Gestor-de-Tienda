@@ -53,6 +53,30 @@ export const productService = {
   },
 
   /**
+   * Actualizar un producto existente
+   */
+  async updateProduct(productId: string | number, productData: FormData) {
+    try {
+      const token = storageService.getToken();
+      if (!token) throw new Error("No hay un token de autenticación válido.");
+
+      const response = await fetch(`${API_URL}/${productId}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+        body: productData,
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+
+      return { status: response.status, data };
+    } catch (error: any) {
+      return { status: 500, message: error.message || "Error al actualizar el producto" };
+    }
+  },
+
+
+  /**
    * Desactivar un producto (no eliminar)
    */
   async disableProduct(productId: number) {

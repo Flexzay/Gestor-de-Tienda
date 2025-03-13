@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { productService } from "../../../Services/product.service";
-import { useCategories } from "../../../hooks/bashboard/useCategories"; 
+import { useCategories } from "../../../hooks/bashboard/useCategories";
 
 interface ProductFormProps {
   onClose: () => void;
@@ -10,14 +10,14 @@ interface ProductFormProps {
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialData }) => {
-  const { filteredCategories } = useCategories(); // Obtenemos las categorías disponibles
+  const { filteredCategories } = useCategories(); // Obtener categorías
 
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     description: initialData?.description || "",
     price: initialData?.price || "",
     category: initialData?.category || "",
-    available: initialData?.available || true,
+    available: initialData?.available ?? true,
     image: null as File | null,
   });
 
@@ -52,7 +52,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "image" && value instanceof File) {
         formDataObj.append(key, value);
-      } else {
+      } else if (value !== null && value !== undefined) {
         formDataObj.append(key, value.toString());
       }
     });
@@ -79,11 +79,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-700">
           <X size={24} />
         </button>
-  
+
         <h2 className="text-2xl font-semibold mb-6 text-gray-900">
           {initialData ? "✏️ Editar Producto" : "➕ Agregar Nuevo Producto"}
         </h2>
-  
+
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -95,7 +95,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
             required
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff2c59] outline-none text-gray-900"
           />
-  
+
           <textarea
             name="description"
             placeholder="Descripción"
@@ -104,7 +104,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
             required
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff2c59] outline-none h-24 text-gray-900"
           ></textarea>
-  
+
           <div className="grid grid-cols-2 gap-4">
             <input
               type="number"
@@ -116,7 +116,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff2c59] outline-none text-gray-900"
             />
 
-            {/* Selector de Categoría */}
             <select
               name="category"
               value={formData.category}
@@ -132,7 +131,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
               ))}
             </select>
           </div>
-  
+
           <label className="w-full flex flex-col items-center p-3 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer hover:border-[#ff2c59] transition">
             <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
             <div className="flex flex-col items-center justify-center text-gray-500">
@@ -140,26 +139,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
               <span className="text-sm mt-2">Subir imagen</span>
             </div>
           </label>
-  
+
           {preview && (
             <div className="w-full flex justify-center mt-4">
               <img src={preview} alt="Vista previa" className="w-32 h-32 object-cover rounded-lg shadow-lg border border-gray-300" />
             </div>
           )}
-  
+
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-[#ff2c59] hover:bg-[#e0264f] text-white font-semibold p-3 rounded-lg flex items-center justify-center transition duration-300"
           >
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin mr-2" size={20} />
-                Guardando...
-              </>
-            ) : (
-              "Guardar Producto"
-            )}
+            {loading ? <Loader2 className="animate-spin mr-2" size={20} /> : "Guardar Producto"}
           </button>
         </form>
       </div>
