@@ -19,7 +19,7 @@ function Sidebar() {
         <div className="flex items-center space-x-2 mb-8">
           <Layers size={32} className="text-[#ff204e]" />
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#ff204e] to-pink-500">
-            Dashboard
+            Panel de Control
           </span>
         </div>
         <nav>
