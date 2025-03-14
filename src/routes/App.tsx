@@ -10,7 +10,7 @@ import CategoryPage from '../pages/dashboard/category-page';
 import SuppliersPage from '../pages/dashboard/Providers';
 import PaymentMethodPage from '../pages/dashboard/paymentMetthod-page';
 import ExpensesIncomePage from '../pages/dashboard/receipts-page';
-import BillsPage from '../pages/dashboard/bills-page'
+import SalesPage from '../pages/dashboard/sales-page';
 
 const App = () => {
   return (
@@ -27,7 +27,7 @@ const App = () => {
       <Route path='/Suppliers' element={<PrivateRoute><SuppliersPage /></PrivateRoute>} />
       <Route path='/Payment-methods' element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
       <Route path='/Income' element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
-      <Route path='/Bills' element={<PrivateRoute><BillsPage /></PrivateRoute>} />
+      <Route path='/Sales' element={<PrivateRoute><SalesPage /></PrivateRoute>} />
 
     </Routes>
   );
