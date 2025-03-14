@@ -18,7 +18,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete })
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
   return (
-    <div className="mt-8 w-full pb-20">
+    <div className="mt-8 w-full pb-30">
       <h3 className="text-2xl font-bold mb-6 text-gray-900">📦 Productos Agregados</h3>
 
 
