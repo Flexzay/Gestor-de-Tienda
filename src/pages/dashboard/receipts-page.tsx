@@ -1,4 +1,4 @@
-import ExpensesIncome from "../../components/dashboard/receipts/receipts"
+import ExpensesIncome from "../../components/dashboard/Transaction/receipts"
 
 function ExpensesIncomePage() {
   return (

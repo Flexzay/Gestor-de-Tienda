@@ -30,7 +30,7 @@ function Sidebar() {
               { icon: Tags, label: "Categoria", path: "/Category" },
               { icon: Boxes, label: "Provedores", path: "/Suppliers" },
               { icon: Wallet, label: "Metodos de Pago", path: "/Payment-methods" },
-              // { icon: Coins, label: "Gastos - Ingresos", path: "/Income" }, 
+               { icon: Coins, label: "Gastos - Ingresos", path: "/Income" }, 
               // { icon: ReceiptText, label: "Facturas - Recibos", path: "/Bills" }, 
               // { icon: FileChartLine, label: "Reporte de Ventas", path: "/Sales-report" }, 
               // { icon: Settings, label: "Settings", path: "/Settings" }, 
