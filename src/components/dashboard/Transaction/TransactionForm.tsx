@@ -27,7 +27,7 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
 
     onSubmit({
       id: editingTransaction ? editingTransaction.id : Date.now(),
-      type: formData.type as "income" | "expense",
+      type: formData.type as "Ingresos" | "Gastos",
       amount: parseFloat(formData.amount),
       category: formData.category,
       description: formData.description,
@@ -45,8 +45,8 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
         <div>
           <label className="block text-sm font-medium text-gray-700">Tipo</label>
           <select name="type" value={formData.type} onChange={handleInputChange} className="w-full p-3 border rounded-lg shadow-sm focus:ring-[#ff204e] focus:border-[#ff204e]">
-            <option value="income">Ingreso</option>
-            <option value="expense">Gasto</option>
+            <option value="Ingresos">Ingreso</option>
+            <option value="Gastos">Gasto</option>
           </select>
         </div>
         <div>

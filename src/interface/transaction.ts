@@ -1,6 +1,6 @@
 export interface Transaction {
     id: number
-    type: "income" | "expense"
+    type: "Gastos" | "Ingresos"
     amount: number
     category: string
     description: string
