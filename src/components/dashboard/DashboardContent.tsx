@@ -55,7 +55,8 @@ const DashboardContent: React.FC = () => {
   };
 
   return (
-    <main className="p-6 bg-gray-100 w-full overflow-hidden">
+    <main className="p-6 bg-gray-100 w-full h-screen overflow-y-auto">
+
       <button onClick={() => setIsAdding(true)} className="mb-4 px-4 py-2 text-white bg-[#ff204e] rounded-md hover:bg-[#ff3b61]">
         {selectedProduct ? "Editar Producto" : "Agregar Producto"}
       </button>
