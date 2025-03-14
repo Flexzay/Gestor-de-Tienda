@@ -667,7 +667,7 @@ export function Sales() {
               </h3>
 
               {/* Selección de cliente */}
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium text-gray-700">Cliente</label>
                   <button
@@ -726,7 +726,7 @@ export function Sales() {
                     </div>
                   </div>
                 )}
-              </div>
+              </div> */}
 
               {/* Lista de productos en el carrito */}
               <div className="mb-4">
