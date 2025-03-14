@@ -35,6 +35,13 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
           {new Intl.DateTimeFormat("es-CO", { dateStyle: "medium" }).format(new Date(transaction.date))}
         </span>
       </div>
+      {/* Nueva sección para la descripción en móviles */}
+      {transaction.description && (
+        <div className="mt-2 text-sm text-gray-500 md:hidden">
+          <span className="font-semibold text-gray-600">Descripción: </span>
+          {transaction.description}
+        </div>
+      )}
     </div>
   );
 }
@@ -49,7 +56,7 @@ function TransactionList({ transactions }: TransactionListProps) {
         <table className="w-full bg-white shadow-xl rounded-xl overflow-hidden">
           <thead className="bg-gradient-to-r from-[#ec013066] to-[#ff204e80] text-white">
             <tr>
-              {["Tipo", "Monto", "Categoría", "Fecha"].map((header) => (
+              {["Tipo", "Monto", "Categoría", "Fecha", "Descripción"].map((header) => (
                 <th key={header} className="px-6 py-3 text-left text-xs font-medium uppercase">
                   {header}
                 </th>
@@ -76,6 +83,7 @@ function TransactionList({ transactions }: TransactionListProps) {
                 <td className="px-6 py-4 text-gray-500">
                   {new Intl.DateTimeFormat("es-CO", { dateStyle: "medium" }).format(new Date(transaction.date))}
                 </td>
+                <td className="px-6 py-4 text-gray-700">{transaction.description || "—"}</td>
               </tr>
             ))}
           </tbody>
