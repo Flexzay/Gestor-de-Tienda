@@ -19,16 +19,12 @@ export function VerifyCodeComponent() {
   const phoneNumber = localStorage.getItem("phone") || "";
 
   useEffect(() => {
-    if (!invalidCode) {
-      setShowAlert(false);
-    } else {
-      setShowAlert(true);
-    }
+    setShowAlert(invalidCode);
   }, [invalidCode]);
 
   return (
     <div className="flex min-h-screen">
-      {/* Sección izquierda con imagen */}
+      {/* Sección izquierda con imagen (oculta en móviles) */}
       <div className="hidden md:flex items-center justify-center w-1/2 bg-[#FF2C59] relative">
         <div className="text-center p-10 text-white">
           <img src={domiduck} alt="DomiDuck" className="w-32 mx-auto animate-fadeIn" />
@@ -43,7 +39,10 @@ export function VerifyCodeComponent() {
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-10">
         <div className="bg-white shadow-xl rounded-3xl p-8 w-full max-w-md animate-fadeIn">
 
-          {/* Alerta de código inválido (Ahora está arriba del título) */}
+          {/* 🔹 Logo SOLO visible en móviles */}
+          <img src={domiduck} alt="DomiDuck" className="w-24 mx-auto mb-4 md:hidden" />
+
+          {/* Alerta de código inválido */}
           {showAlert && (
             <div className="flex items-center bg-red-100 text-[#F21628] px-4 py-3 rounded-md text-lg mb-4">
               <Ban className="w-5 h-5 mr-2" />
@@ -81,7 +80,6 @@ export function VerifyCodeComponent() {
                   className={`w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-[#FF2C59] focus:outline-none transition-all appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${errors.pin ? "border-red-500" : ""
                     }`}
                 />
-
               </div>
               {errors.pin && <p className="text-red-500 text-sm mt-2">{errors.pin.message}</p>}
             </div>

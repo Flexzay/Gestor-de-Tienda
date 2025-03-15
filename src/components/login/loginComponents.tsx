@@ -8,7 +8,7 @@ function LoginForm() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sección izquierda con imagen y fondo rojo */}
+      {/* Sección izquierda con imagen y fondo rojo (oculta en móviles) */}
       <div className="hidden md:flex items-center justify-center w-1/2 bg-[#FF2C59] relative">
         <div className="text-center p-10 text-white">
           <img src={domiduck} alt="DomiDuck" className="w-32 mx-auto animate-fadeIn" />
@@ -22,6 +22,10 @@ function LoginForm() {
       {/* Sección derecha con formulario */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-12">
         <div className="bg-white shadow-xl rounded-3xl p-10 w-full max-w-lg animate-fadeIn">
+          
+          {/* 🔹 Logo SOLO visible en móviles */}
+          <img src={domiduck} alt="DomiDuck" className="w-24 mx-auto mb-4 md:hidden" />
+
           <h2 className="text-4xl font-bold text-gray-800 text-center mb-6">Iniciar Sesión</h2>
           <p className="text-gray-500 text-center mb-8">Ingresa tu número de celular para continuar</p>
 
@@ -73,3 +77,4 @@ function LoginForm() {
 }
 
 export default LoginForm;
+
