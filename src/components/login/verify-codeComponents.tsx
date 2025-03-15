@@ -42,7 +42,7 @@ export function VerifyCodeComponent() {
       {/* Sección derecha con formulario */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-10">
         <div className="bg-white shadow-xl rounded-3xl p-8 w-full max-w-md animate-fadeIn">
-          
+
           {/* Alerta de código inválido (Ahora está arriba del título) */}
           {showAlert && (
             <div className="flex items-center bg-red-100 text-[#F21628] px-4 py-3 rounded-md text-lg mb-4">
@@ -67,7 +67,7 @@ export function VerifyCodeComponent() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
-                  type="text"
+                  type="number"
                   {...register("pin", {
                     required: "Código es requerido",
                     pattern: {
@@ -78,10 +78,10 @@ export function VerifyCodeComponent() {
                   placeholder="1234"
                   maxLength={4}
                   inputMode="numeric"
-                  className={`w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-[#FF2C59] focus:outline-none transition-all ${
-                    errors.pin ? "border-red-500" : ""
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-[#FF2C59] focus:outline-none transition-all appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${errors.pin ? "border-red-500" : ""
+                    }`}
                 />
+
               </div>
               {errors.pin && <p className="text-red-500 text-sm mt-2">{errors.pin.message}</p>}
             </div>
