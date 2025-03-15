@@ -27,7 +27,8 @@ export function Categories() {
       {/* Contenido principal */}
       <div className="flex-1 p-4 md:p-8 w-full">
         {/* Título */}
-        <div className="flex items-center justify-between mb-6 md:mb-8">
+
+        <div className="flex items-center justify-between mb-6 md:mb-8 pl-12 md:pl-0">
           <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">Categorías</h2>
           <Tag size={24} className="text-[#ff204e]" />
         </div>
