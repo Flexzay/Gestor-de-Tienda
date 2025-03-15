@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom"; // Importamos useLocation
-import { Home, Users, Settings, Layers,
- Menu, Tags, Boxes, Wallet, Coins, BadgeDollarSign } from "lucide-react";
+import {
+  Home, Users, Settings, Layers,
+  Menu, Tags, Boxes, Wallet, Coins, BadgeDollarSign
+} from "lucide-react";
 import { useState } from "react";
 
 function Sidebar() {
@@ -30,8 +32,8 @@ function Sidebar() {
               { icon: Tags, label: "Categoria", path: "/Category" },
               { icon: Boxes, label: "Provedores", path: "/Suppliers" },
               { icon: Wallet, label: "Metodos de Pago", path: "/Payment-methods" },
-              { icon: Coins, label: "Gastos - Ingresos", path: "/Income" }, 
-              { icon: BadgeDollarSign , label: "Ventas", path: "/Sales" },
+              { icon: Coins, label: "Gastos - Ingresos", path: "/Income" },
+              { icon: BadgeDollarSign, label: "Ventas", path: "/Sales" },
               // { icon: Settings, label: "Settings", path: "/Settings" }, 
 
             ].map((item) => (
@@ -52,12 +54,15 @@ function Sidebar() {
       </aside>
 
       {/* Toggle Button for Mobile */}
-      <button
-        className="md:hidden p-2 text-white bg-[#ff204e] fixed top-4 left-4 rounded-lg z-50"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <Menu size={24} />
-      </button>
+      {!isOpen && (
+        <button
+          className="md:hidden p-2 text-white bg-[#ff204e] fixed top-4 left-4 rounded-lg z-50"
+          onClick={() => setIsOpen(true)}
+        >
+          <Menu size={24} />
+        </button>
+      )}
+
     </div>
   );
 };
