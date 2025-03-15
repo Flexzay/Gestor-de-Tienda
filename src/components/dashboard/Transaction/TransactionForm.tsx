@@ -33,7 +33,10 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.amount || !formData.category || !formData.date) return alert("Por favor, complete todos los campos obligatorios.");
+    if (!formData.amount || !formData.category || !formData.date) {
+      alert("Por favor, complete todos los campos obligatorios.");
+      return;
+    }
 
     onSubmit({
       id: editingTransaction ? editingTransaction.id : Date.now(),
@@ -48,7 +51,7 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-lg space-y-6 border border-gray-200">
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-xl space-y-6 border border-gray-200">
       <h3 className="text-2xl font-semibold text-gray-800 text-center">
         {editingTransaction ? "Editar" : "Añadir"} Transacción
       </h3>
@@ -60,7 +63,7 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
             name="type"
             value={formData.type}
             onChange={handleInputChange}
-            className="w-full p-3 border rounded-lg shadow-sm focus:ring-[#ff204e] focus:border-[#ff204e]"
+            className="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#ff204e] focus:border-[#ff204e] transition duration-300 bg-gray-50"
           >
             <option value="Ingresos">Ingreso</option>
             <option value="Gastos">Gasto</option>
@@ -71,13 +74,13 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
           <input
             type="number"
             name="amount"
-            placeholder="Monto"
+            placeholder="Ej: 50000"
             value={formData.amount}
             onChange={handleInputChange}
             min="0.01"
             step="0.01"
             required
-            className="w-full p-3 border rounded-lg shadow-sm focus:ring-[#ff204e] focus:border-[#ff204e]"
+            className="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#ff204e] focus:border-[#ff204e] transition duration-300 bg-gray-50"
           />
         </div>
       </div>
@@ -89,7 +92,7 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
           value={formData.category}
           onChange={handleInputChange}
           required
-          className="w-full p-3 border rounded-lg shadow-sm focus:ring-[#ff204e] focus:border-[#ff204e]"
+          className="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#ff204e] focus:border-[#ff204e] transition duration-300 bg-gray-50"
         >
           <option value="">Seleccione una categoría</option>
           {categories.map((category) => (
@@ -104,11 +107,11 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
         <label className="block text-sm font-medium text-gray-700">Descripción (Opcional)</label>
         <textarea
           name="description"
-          placeholder="Descripción"
+          placeholder="Añade una nota sobre la transacción"
           value={formData.description}
           onChange={handleInputChange}
           rows={3}
-          className="w-full p-3 border rounded-lg shadow-sm focus:ring-[#ff204e] focus:border-[#ff204e]"
+          className="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#ff204e] focus:border-[#ff204e] transition duration-300 bg-gray-50"
         ></textarea>
       </div>
 
@@ -120,14 +123,14 @@ const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) 
           value={formData.date}
           onChange={handleInputChange}
           required
-          className="w-full p-3 border rounded-lg shadow-sm focus:ring-[#ff204e] focus:border-[#ff204e]"
+          className="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-[#ff204e] focus:border-[#ff204e] transition duration-300 bg-gray-50"
         />
       </div>
 
       <div className="flex justify-center">
         <button
           type="submit"
-          className="px-6 py-3 bg-[#ff204e] text-white font-medium rounded-lg hover:bg-[#ff3b60] transition-colors duration-300 flex items-center justify-center shadow-md"
+          className="px-6 py-3 bg-[#ff204e] text-white font-medium rounded-lg hover:bg-[#ff3b60] transition-all duration-300 transform hover:scale-105 flex items-center justify-center shadow-md"
         >
           <Plus size={20} className="mr-2" />
           {editingTransaction ? "Actualizar" : "Añadir"} Transacción
