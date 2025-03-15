@@ -21,7 +21,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   editingMethod,
 }) => {
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 space-y-6">
+    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 space-y-6 w-full max-w-full px-4 sm:px-8">
       <h3 className="text-xl font-semibold text-gray-800 text-center">
         {editingMethod ? "Editar Medio de Pago" : "Agregar Nuevo Medio de Pago"}
       </h3>

@@ -30,7 +30,7 @@ export function PaymentMethods() {
       <Sidebar />
       <div className="flex-1 p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
         <h2 className="text-3xl font-semibold mb-8 text-center text-gray-800">Medios de Pago</h2>
-        
+
         <PaymentForm
           formData={formData}
           imageSelected={imageSelected}
@@ -40,13 +40,16 @@ export function PaymentMethods() {
           handleSubmit={handleSubmit}
           editingMethod={editingMethod}
         />
-        
-        <PaymentList
-          paymentMethods={paymentMethods}
-          toggleActive={toggleActive}
-          editPaymentMethod={editPaymentMethod}
-          deletePaymentMethod={deletePaymentMethod}
-        />
+
+        <div className="mt-4">
+          <PaymentList
+            paymentMethods={paymentMethods}
+            toggleActive={toggleActive}
+            editPaymentMethod={editPaymentMethod}
+            deletePaymentMethod={deletePaymentMethod}
+          />
+        </div>
+
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Tag } from "lucide-react";
+import { Truck } from "lucide-react";
 import { useProviders } from "../../../hooks/bashboard/useProviders";
 import { SearchBar } from "../SearchBar";
 import { EditableListWithAdd } from "../EditableList";
@@ -29,7 +29,7 @@ export function ProviderList() {
         {/* Título */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-semibold text-gray-800">Proveedores</h2>
-          <Tag size={24} className="text-[#ff204e]" />
+          <Truck size={24} className="text-[#ff204e]" />
         </div>
 
         {/* Barra de búsqueda */}
