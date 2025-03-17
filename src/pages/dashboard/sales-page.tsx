@@ -1,10 +1,10 @@
 import type React from "react"
-import Sales from "../../components/dashboard/sales/sales"
+import SalesSystem from "../../components/dashboard/sales/SalesSystem"
 
 
 const SalesPage: React.FC = () => {
   return (
-    <Sales />
+    <SalesSystem />
   )
 }
 
