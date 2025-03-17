@@ -6,9 +6,10 @@ interface FormProps {
   onSubmit: (transaction: Transaction) => void;
   editingTransaction?: Transaction | null;
 }
+const incomeCategories = ["Trabajo", "Inversiones", "Regalos", "Ventas", "Otros"];
+const expenseCategories = ["Comida", "Transporte", "Vivienda", "Entretenimiento", "Educación", "Salud", "Otros"];
 
-const incomeCategories = ["Sueldo", "Inversión", "Otros"];
-const expenseCategories = ["Alimentación", "Transporte", "Otros"];
+
 
 const TransactionForm: React.FC<FormProps> = ({ onSubmit, editingTransaction }) => {
   const [formData, setFormData] = useState({

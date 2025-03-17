@@ -1,11 +1,8 @@
 import { useState } from "react";
-import  Transaction from "../../interface/transaction";
+import Transaction from "../../interface/transaction";
 
 const useTransactions = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: 1, type: "Ingresos", amount: 1000, category: "Salario", description: "Salario mensual", date: "2023-05-01" },
-    { id: 2, type: "Ingresos", amount: 50, category: "Comida", description: "Almuerzo", date: "2023-05-02" },
-  ]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const addTransaction = (transaction: Transaction) => {
     setTransactions([...transactions, transaction]);
