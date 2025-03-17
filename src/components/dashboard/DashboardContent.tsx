@@ -18,17 +18,16 @@ const DashboardContent: React.FC = () => {
   const fetchProducts = async () => {
     try {
       const response = await productService.getProducts();
-      if (response.status === 200 && response.data?.data) {
-        setProducts(response.data.data);
+      if (response.status === 200 && response.data) {
+        setProducts(Array.isArray(response.data) ? response.data : response.data.data || []);
       } else {
-        console.error("⚠️ La API no devolvió productos en 'data.data':", response);
         setProducts([]);
       }
     } catch (error) {
-      console.error("Error al obtener productos:", error);
       setProducts([]);
     }
   };
+  
 
   const handleAddProduct = async () => {
     await fetchProducts();
