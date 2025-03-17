@@ -28,20 +28,6 @@ export function Sales() {
   const [activeTab, setActiveTab] = useState<"newSale" | "history">("newSale")
   const [products, setProducts] = useState<Product[]>([
     {
-      id: 1,
-      name: "Laptop HP Pavilion",
-      description: 'Laptop HP Pavilion 15.6", 8GB RAM, 512GB SSD',
-      price: 899.99,
-      stock: 15,
-      category: "Electrónica",
-      sku: "LAP-HP-001",
-      barcode: "789012345678",
-      cost: 750,
-      taxRate: 19,
-      isActive: true,
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
       id: 2,
       name: 'Monitor LG 24"',
       description: 'Monitor LG 24" Full HD IPS',
