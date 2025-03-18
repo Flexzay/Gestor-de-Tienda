@@ -1,7 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Package, Search } from "lucide-react";
+import { productService } from "../../../Services/product.service";
+import { ProductFormData } from "../../../interface/product";
+import Paginator from "../Paginator";
+import ProductList from "../Product/ProductList";
 
 const ProductCatalog = () => {
+  const [products, setProducts] = useState<ProductFormData[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await productService.getProducts();
+      if (response.status === 200 && response.data) {
+        setProducts(Array.isArray(response.data) ? response.data : response.data.data || []);
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      setProducts([]);
+    }
+  };
+
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mb-6">
       <h3 className="text-xl font-semibold mb-4 text-gray-800 flex items-center">
@@ -26,8 +55,15 @@ const ProductCatalog = () => {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Aquí irían los productos */}
+      <div className="mt-8 w-full pb-30">
+        <ProductList products={currentProducts} showTitle={false} showActions={false} />
+
+        <Paginator 
+          currentPage={currentPage} 
+          totalItems={products.length} 
+          itemsPerPage={itemsPerPage} 
+          onPageChange={setCurrentPage} 
+        />
       </div>
     </div>
   );

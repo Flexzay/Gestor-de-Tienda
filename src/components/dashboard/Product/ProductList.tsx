@@ -5,11 +5,13 @@ import Paginator from "../Paginator";
 
 interface ProductListProps {
   products: ProductFormData[];
-  onEdit: (product: ProductFormData) => void;
-  onDelete: (product: ProductFormData) => void;
+  onEdit?: (product: ProductFormData) => void;
+  onDelete?: (product: ProductFormData) => void;
+  showTitle?: boolean;
+  showActions?: boolean;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete }) => {
+const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, showTitle = true, showActions = true }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
@@ -33,7 +35,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete })
 
   return (
     <div className="mt-8 w-full pb-30">
-      <h3 className="text-2xl font-bold mb-6 text-gray-900">📦 Productos Agregados</h3>
+      {showTitle && <h3 className="text-2xl font-bold mb-6 text-gray-900">📦 Productos Agregados</h3>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {currentProducts.map((product, index) => (
@@ -76,25 +78,26 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete })
               </div>
             </div>
 
-            <div className="flex justify-between items-center mt-2">
-              <button
-                onClick={() => onEdit(product)}
-                className="flex items-center px-3 py-1 text-xs font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-[#ff204e] hover:text-white transition duration-300"
-              >
-                <Pencil size={14} className="mr-1" /> Editar
-              </button>
-              <button
-                onClick={() => onDelete(product)}
-                className="flex items-center px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition duration-300"
-              >
-                <Trash2 size={14} className="mr-1" /> Eliminar
-              </button>
-            </div>
+            {showActions && (
+              <div className="flex justify-between items-center mt-2">
+                <button
+                  onClick={() => onEdit && onEdit(product)}
+                  className="flex items-center px-3 py-1 text-xs font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-[#ff204e] hover:text-white transition duration-300"
+                >
+                  <Pencil size={14} className="mr-1" /> Editar
+                </button>
+                <button
+                  onClick={() => onDelete && onDelete(product)}
+                  className="flex items-center px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition duration-300"
+                >
+                  <Trash2 size={14} className="mr-1" /> Eliminar
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
-      {/* Paginador reutilizable */}
       <Paginator
         currentPage={currentPage}
         totalItems={products.length}
