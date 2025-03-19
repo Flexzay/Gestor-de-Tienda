@@ -25,6 +25,18 @@ export const useStaffLogic = () => {
     member.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const resetModal = () => {
+    setNewMember({ id: 0, name: "", role: "", image: "", phone: "" });
+    setImagePreview(null);
+    setError("");
+    setIsEditing(false);
+  };
+
+  const handleCloseStaffModal = () => {
+    resetModal();
+    setShowStaffModal(false);
+  };
+
   const handleAddMember = () => {
     if (!newMember.name || !newMember.role || !newMember.image || !newMember.phone) {
       setError("Todos los campos son requeridos.");
@@ -37,11 +49,8 @@ export const useStaffLogic = () => {
       setStaff([...staff, { ...newMember, id: staff.length + 1 }]);
     }
 
-    setNewMember({ id: 0, name: "", role: "", image: "", phone: "" });
-    setImagePreview(null);
-    setError("");
+    resetModal();
     setShowStaffModal(false);
-    setIsEditing(false);
   };
 
   const handleDeleteMember = (id: number) => {
@@ -114,6 +123,7 @@ export const useStaffLogic = () => {
     handleImageChange,
     handleGoToDashboard,
     handleDeleteMember,
-    handleEditMember
+    handleEditMember,
+    handleCloseStaffModal, 
   };
 };

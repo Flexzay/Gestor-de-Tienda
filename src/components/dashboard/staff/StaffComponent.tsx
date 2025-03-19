@@ -27,8 +27,9 @@ export function StaffComponent() {
     handleDeleteRole,
     handleImageChange,
     handleGoToDashboard,
-    handleEditMember,
     handleDeleteMember,
+    handleEditMember,
+    handleCloseStaffModal, // Asegúrate de que esté aquí
   } = useStaffLogic();
 
   return (
@@ -75,7 +76,7 @@ export function StaffComponent() {
 
         <StaffModal
           show={showStaffModal}
-          onClose={() => setShowStaffModal(false)}
+          onClose={handleCloseStaffModal} // Usa handleCloseStaffModal aquí
           newMember={newMember}
           setNewMember={setNewMember}
           roles={roles}
