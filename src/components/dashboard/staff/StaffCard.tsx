@@ -16,8 +16,8 @@ export function StaffCard({ member, onEdit, onDelete }: StaffCardProps) {
       <div className="relative w-28 h-28 mx-auto mb-4">
         <div className="absolute inset-0 bg-[#FF2C59] rounded-full p-1">
           <img 
-            src={member.image} 
-            alt={member.name} 
+            src={member.image || "/default-avatar.png"} 
+            alt={`Foto de perfil de ${member.name}`} 
             className="w-full h-full object-cover rounded-full border-4 border-white shadow-md"
           />
         </div>
@@ -25,25 +25,31 @@ export function StaffCard({ member, onEdit, onDelete }: StaffCardProps) {
 
       {/* Información del miembro */}
       <h3 className="text-2xl font-semibold text-gray-900">{member.name}</h3>
-      <p className=" text-[#FF2C59] text-sm font-medium uppercase tracking-wide">{member.role}</p>
+      <p className="text-[#FF2C59] text-sm font-medium uppercase tracking-wide">{member.role}</p>
       <p className="text-gray-600 font-medium mt-2 text-lg">{member.phone}</p>
 
       {/* Acciones */}
       <div className="flex justify-center mt-5 space-x-5">
-        <button 
-          onClick={() => onEdit(member)} 
+        <motion.button 
+          onClick={() => onEdit(member)}
+          whileTap={{ scale: 0.95 }}
+          aria-label={`Editar a ${member.name}`}
           className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg 
-                     hover:bg-indigo-700 transition shadow-md text-sm font-medium"
+                     hover:bg-indigo-700 transition shadow-md text-sm font-medium focus:ring-2 
+                     focus:ring-indigo-400 focus:ring-offset-2"
         >
           <Edit2 size={20} /> Editar
-        </button>
-        <button 
-          onClick={() => onDelete(member.id)} 
+        </motion.button>
+        <motion.button 
+          onClick={() => onDelete(member.id)}
+          whileTap={{ scale: 0.95 }}
+          aria-label={`Eliminar a ${member.name}`}
           className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg 
-                     hover:bg-red-700 transition shadow-md text-sm font-medium"
+                     hover:bg-red-700 transition shadow-md text-sm font-medium focus:ring-2 
+                     focus:ring-red-400 focus:ring-offset-2"
         >
           <Trash2 size={20} /> Eliminar
-        </button>
+        </motion.button>
       </div>
     </motion.div>
   );

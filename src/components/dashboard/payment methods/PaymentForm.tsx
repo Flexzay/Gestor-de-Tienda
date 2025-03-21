@@ -11,6 +11,9 @@ interface PaymentFormProps {
   editingMethod: any;
 }
 
+/**
+ * Componente de formulario para agregar o editar métodos de pago.
+ */
 const PaymentForm: React.FC<PaymentFormProps> = ({
   formData,
   imageSelected,
@@ -22,10 +25,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 }) => {
   return (
     <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 space-y-6 w-full max-w-full px-4 sm:px-8">
+      {/* Título del formulario */}
       <h3 className="text-xl font-semibold text-gray-800 text-center">
         {editingMethod ? "Editar Medio de Pago" : "Agregar Nuevo Medio de Pago"}
       </h3>
 
+      {/* Mensaje de error */}
       {formError && (
         <div className="bg-red-100 text-red-700 p-3 rounded-md text-center font-semibold border border-red-400">
           {formError}
@@ -33,7 +38,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Nombre de Cuenta */}
+        {/* Campo: Nombre de la Cuenta */}
         <div>
           <label className="block font-medium text-gray-700 mb-1">Nombre de la Cuenta</label>
           <input
@@ -46,7 +51,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           />
         </div>
 
-        {/* Entidad Bancaria */}
+        {/* Campo: Entidad Bancaria */}
         <div>
           <label className="block font-medium text-gray-700 mb-1">Entidad Bancaria</label>
           <input
@@ -61,7 +66,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Tipo de Cuenta */}
+        {/* Campo: Tipo de Cuenta */}
         <div>
           <label className="block font-medium text-gray-700 mb-1">Tipo de Cuenta</label>
           <select
@@ -77,7 +82,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           </select>
         </div>
 
-        {/* NIT/CC */}
+        {/* Campo: NIT/CC */}
         <div>
           <label className="block font-medium text-gray-700 mb-1">NIT/CC</label>
           <input
@@ -92,7 +97,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Número de Cuenta */}
+        {/* Campo: Número de Cuenta */}
         <div>
           <label className="block font-medium text-gray-700 mb-1">Número de Cuenta</label>
           <input
@@ -104,7 +109,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           />
         </div>
 
-        {/* Link de Pago */}
+        {/* Campo: Link de Pago */}
         <div>
           <label className="block font-medium text-gray-700 mb-1">Link de Pago</label>
           <input
@@ -118,7 +123,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         </div>
       </div>
 
-      {/* QR Code */}
+      {/* Código QR */}
       <div className="flex flex-col items-center">
         <label className="block font-medium text-gray-700 mb-1">Código QR</label>
         <div className="w-36 h-36 flex items-center justify-center border rounded-lg overflow-hidden bg-gray-50">

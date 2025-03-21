@@ -1,23 +1,57 @@
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { StaffModalProps } from "../../../interface/staff";
+import { useEffect, useRef } from "react";
 
-export function StaffModal({ 
-  show, 
-  onClose, 
-  newMember, 
-  setNewMember, 
-  roles, 
-  handleAddMember, 
-  handleImageChange, 
-  imagePreview, 
-  error 
+export function StaffModal({
+  show,
+  onClose,
+  newMember,
+  setNewMember,
+  roles,
+  handleAddMember,
+  handleImageChange,
+  imagePreview,
+  error
 }: StaffModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Cerrar modal con "Escape"
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (show) window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [show, onClose]);
+
+  // Manejo de cambios en inputs
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewMember((prev) => ({
+      ...prev,
+      [name]: name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value
+    }));
+  };
+
+  // Cerrar al hacer clic fuera del modal
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      onClose();
+    }
+  };
+
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center  bg-opacity-50 backdrop-blur-md">
+    <div
+      className="fixed inset-0 flex items-center justify-center  bg-opacity-40 backdrop-blur-md"
+      onClick={handleOutsideClick}
+      aria-modal="true"
+      role="dialog"
+    >
       <motion.div
+        ref={modalRef}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
@@ -28,6 +62,7 @@ export function StaffModal({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+          aria-label="Cerrar modal"
         >
           <X size={24} />
         </button>
@@ -36,45 +71,35 @@ export function StaffModal({
         <h3 className="text-2xl font-bold text-gray-800 text-center mb-6">Agregar Personal</h3>
 
         {/* Mensaje de error */}
-        {error && <p className="text-red-500 text-center text-sm mb-4">{error}</p>}
+        {error && <p className="text-red-500 text-center text-sm mb-4" aria-live="polite">{error}</p>}
 
-        {/* Campo de entrada: Nombre */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Nombre</label>
-          <input
-            type="text"
-            placeholder="Ingrese el nombre"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
-            value={newMember.name}
-            onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
-          />
-        </div>
-
-        {/* Campo de entrada: Teléfono */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Teléfono</label>
-          <input
-            type="text"
-            placeholder="Ingrese el teléfono"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
-            value={newMember.phone}
-            onChange={(e) => {
-              const numericValue = e.target.value.replace(/\D/g, "");
-              if (numericValue.length <= 10) {
-                setNewMember({ ...newMember, phone: numericValue });
-              }
-            }}
-            maxLength={10}
-          />
-        </div>
+        {/* Campos de entrada */}
+        {[
+          { label: "Nombre", name: "name", type: "text", placeholder: "Ingrese el nombre" },
+          { label: "Teléfono", name: "phone", type: "text", placeholder: "Ingrese el teléfono", maxLength: 10 }
+        ].map(({ label, name, type, placeholder, maxLength }) => (
+          <div className="mb-4" key={name}>
+            <label className="block text-gray-700 font-medium mb-2">{label}</label>
+            <input
+              type={type}
+              name={name}
+              placeholder={placeholder}
+              maxLength={maxLength}
+              value={(newMember as any)[name]}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
+            />
+          </div>
+        ))}
 
         {/* Selector de rol */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">Rol</label>
           <select
+            name="role"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
             value={newMember.role}
-            onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
+            onChange={handleChange}
           >
             <option value="">Seleccione un rol</option>
             {roles.map((role) => (

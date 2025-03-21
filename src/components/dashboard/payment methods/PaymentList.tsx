@@ -3,10 +3,10 @@ import { Edit2, Trash2, Check } from "lucide-react";
 import type { PaymentMethod } from "../../../interface/paymentMethod";
 
 interface PaymentListProps {
-  paymentMethods: PaymentMethod[];
-  toggleActive: (method: PaymentMethod) => void;
-  editPaymentMethod: (method: PaymentMethod) => void;
-  deletePaymentMethod: (id: number) => void;
+  paymentMethods: PaymentMethod[]; // Lista de métodos de pago disponibles
+  toggleActive: (method: PaymentMethod) => void; // Función para activar/desactivar un método de pago
+  editPaymentMethod: (method: PaymentMethod) => void; // Función para editar un método de pago
+  deletePaymentMethod: (id: number) => void; // Función para eliminar un método de pago
 }
 
 const PaymentList: React.FC<PaymentListProps> = ({
@@ -19,7 +19,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">💳 Métodos de Pago</h2>
 
-      {/* Contenedor con scroll horizontal en pantallas pequeñas */}
+      {/* Tabla para mostrar métodos de pago en pantallas grandes */}
       <div className="overflow-x-auto">
         <table className="w-full hidden md:table border-collapse">
           <thead>
@@ -40,6 +40,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
                   <td className="p-3 text-gray-700">{method.type_account}</td>
                   <td className="p-3 text-gray-700">{method.nit_cc}</td>
                   <td className="p-3 flex justify-center gap-2">
+                    {/* Botón para activar/desactivar el método de pago */}
                     <button
                       onClick={() => toggleActive(method)}
                       className={`p-2 rounded-md flex items-center gap-1 transition ${
@@ -52,6 +53,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
                       {method.status ? "Activo" : "Inactivo"}
                     </button>
 
+                    {/* Botón para editar el método de pago */}
                     <button
                       onClick={() => editPaymentMethod(method)}
                       className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center gap-1 transition"
@@ -60,6 +62,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
                       Editar
                     </button>
 
+                    {/* Botón para eliminar el método de pago */}
                     <button
                       onClick={() => deletePaymentMethod(method.id)}
                       className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-md flex items-center gap-1 transition"
@@ -81,7 +84,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
         </table>
       </div>
 
-      {/* Vista en formato tarjeta para móviles */}
+      {/* Vista en formato tarjeta para dispositivos móviles */}
       <div className="md:hidden space-y-4">
         {paymentMethods.length > 0 ? (
           paymentMethods.map((method) => (
@@ -90,7 +93,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
               <p className="text-gray-700">{method.name_account} - {method.type_account}</p>
               <p className="text-gray-700">NIT/CC: {method.nit_cc}</p>
               
-              {/* Botones en columnas en móviles */}
+              {/* Botones en formato columna para dispositivos móviles */}
               <div className="mt-3 flex flex-col gap-2">
                 <button
                   onClick={() => toggleActive(method)}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Pencil, Trash2, Package } from "lucide-react";
 import { ProductFormData } from "../../../interface/product";
 import Paginator from "../Paginator";
@@ -15,13 +15,10 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
+  // Actualiza la cantidad de productos mostrados según el tamaño de la pantalla
   useEffect(() => {
     const updateItemsPerPage = () => {
-      if (window.innerWidth >= 1024) {
-        setItemsPerPage(8);
-      } else {
-        setItemsPerPage(3);
-      }
+      setItemsPerPage(window.innerWidth >= 1024 ? 8 : 3);
     };
 
     updateItemsPerPage();
@@ -29,32 +26,47 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
     return () => window.removeEventListener("resize", updateItemsPerPage);
   }, []);
 
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  // Cálculo de productos para la página actual
+  const currentProducts = useMemo(() => {
+    const indexOfLastProduct = currentPage * itemsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+    return products.slice(indexOfFirstProduct, indexOfLastProduct);
+  }, [products, currentPage, itemsPerPage]);
+
+  // Manejo de edición
+  const handleEdit = useCallback(
+    (product: ProductFormData) => {
+      onEdit?.(product);
+    },
+    [onEdit]
+  );
+
+  // Manejo de eliminación
+  const handleDelete = useCallback(
+    (product: ProductFormData) => {
+      onDelete?.(product);
+    },
+    [onDelete]
+  );
 
   return (
     <div className="mt-8 w-full pb-30">
       {showTitle && <h3 className="text-2xl font-bold mb-6 text-gray-900">📦 Productos Agregados</h3>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {currentProducts.map((product, index) => (
-          <div key={index} className="flex flex-col p-3 bg-gray-50 rounded-md border border-gray-200 shadow-md w-full">
+        {currentProducts.map(({ id, name, image, category, price, stock }) => (
+          <div key={id} className="flex flex-col p-3 bg-gray-50 rounded-md border border-gray-200 shadow-md w-full">
             <div className="flex flex-col items-center">
-              {product.image ? (
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-20 h-20 object-cover rounded-md shadow-sm"
-                />
+              {image ? (
+                <img src={image} alt={name} className="w-20 h-20 object-cover rounded-md shadow-sm" />
               ) : (
                 <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded-md shadow-sm">
                   <Package size={32} className="text-gray-400" />
                 </div>
               )}
-              <h4 className="font-medium text-gray-800 mt-2 text-center">{product.name}</h4>
+              <h4 className="font-medium text-gray-800 mt-2 text-center">{name}</h4>
               <p className="text-xs text-gray-500 text-center">
-                Categoría: {product.category ? product.category.name : "Sin categoría"}
+                Categoría: {category?.name || "Sin categoría"}
               </p>
             </div>
 
@@ -63,7 +75,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                 <label className="block text-xs text-gray-500 mb-1">Precio</label>
                 <input
                   type="text"
-                  value={`$${product.price}`}
+                  value={`$${price}`}
                   disabled
                   className="w-full px-2 py-1 bg-gray-100 border border-gray-200 rounded-md text-center"
                 />
@@ -73,7 +85,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                 <label className="block text-xs text-gray-500 mb-1">Stock</label>
                 <input
                   type="text"
-                  value={product.stock}
+                  value={stock ?? "N/A"}
                   disabled
                   className="w-full px-2 py-1 bg-gray-100 border border-gray-200 rounded-md text-center"
                 />
@@ -83,14 +95,16 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
             {showActions && (
               <div className="flex justify-between items-center mt-2">
                 <button
-                  onClick={() => onEdit && onEdit(product)} // Pasar el producto a editar
+                  onClick={() => handleEdit({ id, name, image, category, price, stock })}
                   className="flex items-center px-3 py-1 text-xs font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-[#ff204e] hover:text-white transition duration-300"
+                  aria-label={`Editar ${name}`}
                 >
                   <Pencil size={14} className="mr-1" /> Editar
                 </button>
                 <button
-                  onClick={() => onDelete && onDelete(product)}
+                  onClick={() => handleDelete({ id, name, image, category, price, stock })}
                   className="flex items-center px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition duration-300"
+                  aria-label={`Eliminar ${name}`}
                 >
                   <Trash2 size={14} className="mr-1" /> Eliminar
                 </button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import ProductForm from "./Product";
 import ProductList from "./ProductList";
 import { ProductFormData } from "../../../interface/product";
@@ -9,7 +9,8 @@ const ProductComponents: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductFormData | null>(null);
 
-  const handleProductAdded = (updatedProduct: ProductFormData) => {
+  // Función para manejar la creación/edición de un producto
+  const handleProductAdded = useCallback((updatedProduct: ProductFormData) => {
     if (editingProduct) {
       updateProduct(editingProduct.id, updatedProduct);
     } else {
@@ -17,30 +18,40 @@ const ProductComponents: React.FC = () => {
     }
     setShowForm(false);
     setEditingProduct(null);
-  };
+  }, [editingProduct, createProduct, updateProduct]);
 
-  const handleEditProduct = (product: ProductFormData) => {
+  // Función para manejar la edición de un producto
+  const handleEditProduct = useCallback((product: ProductFormData) => {
     setEditingProduct(product);
     setShowForm(true);
-  };
+  }, []);
+
+  // Función para cerrar el formulario
+  const handleCloseForm = useCallback(() => {
+    setShowForm(false);
+    setEditingProduct(null);
+  }, []);
 
   return (
-    <div>
-      <button onClick={() => setShowForm(true)} className="bg-green-500 text-white p-2 rounded">
-        Agregar Producto
+    <div className="p-4">
+      {/* Botón para abrir el formulario */}
+      <button
+        onClick={() => setShowForm(true)}
+        className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition"
+      >
+        ➕ Agregar Producto
       </button>
 
+      {/* Mostrar mensaje de carga o error */}
+      {loading && <p className="text-gray-600 mt-4">Cargando productos...</p>}
+      {error && <p className="text-red-500 mt-4">❌ Error al cargar los productos</p>}
+
+      {/* Formulario de producto */}
       {showForm && (
-        <ProductForm
-          onClose={() => {
-            setShowForm(false);
-            setEditingProduct(null);
-          }}
-          onSubmit={handleProductAdded}
-          initialData={editingProduct}
-        />
+        <ProductForm onClose={handleCloseForm} onSubmit={handleProductAdded} initialData={editingProduct} />
       )}
 
+      {/* Lista de productos */}
       <ProductList products={products} onEdit={handleEditProduct} onDelete={() => {}} />
     </div>
   );

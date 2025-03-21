@@ -3,10 +3,11 @@ import { useProviders } from "../../../hooks/bashboard/useProviders";
 import { SearchBar } from "../SearchBar";
 import { EditableListWithAdd } from "../EditableList";
 import Sidebar from "../Sidebar";
+import { useMemo, useCallback } from "react";
 
 export function ProviderList() {
   const {
-    filteredProviders,
+    providers,
     newProvider,
     setNewProvider,
     editingProvider,
@@ -18,6 +19,18 @@ export function ProviderList() {
     saveEdit,
     deleteProvider,
   } = useProviders();
+
+  // Filtrar proveedores solo cuando `providers` o `searchTerm` cambian
+  const filteredProviders = useMemo(() => {
+    return providers.filter((provider) =>
+      provider.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [providers, searchTerm]);
+
+  // Manejo eficiente del cambio en la barra de búsqueda
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }, [setSearchTerm]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -35,8 +48,9 @@ export function ProviderList() {
         {/* Barra de búsqueda */}
         <SearchBar 
           value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
+          onChange={handleSearchChange} 
           placeholder="Buscar proveedores..." 
+          aria-label="Buscar proveedores"
         />
 
         {/* Lista de proveedores */}

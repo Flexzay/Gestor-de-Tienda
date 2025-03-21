@@ -15,7 +15,7 @@ export function RoleModal({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center  bg-opacity-40 backdrop-blur-sm">
+    <div className="fixed inset-0 flex items-center justify-center bg-opacity-40 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -26,6 +26,7 @@ export function RoleModal({
         {/* Botón de cierre */}
         <button
           onClick={onClose}
+          aria-label="Cerrar modal"
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
         >
           <X size={24} />
@@ -35,14 +36,18 @@ export function RoleModal({
         <h3 className="text-2xl font-bold text-gray-800 text-center mb-4">Administrar Roles</h3>
 
         {/* Mensaje de error */}
-        {error && <p className="text-red-500 text-center text-sm mb-4">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-center text-sm mb-4" aria-live="polite">
+            {error}
+          </p>
+        )}
 
         {/* Campo de entrada */}
         <div className="flex gap-2">
           <input
             type="text"
             placeholder="Nombre del Rol"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none text-gray-700"
             value={newRole}
             onChange={(e) => setNewRole(e.target.value)}
           />
@@ -57,13 +62,11 @@ export function RoleModal({
         {/* Lista de roles */}
         <ul className="mt-5 space-y-3">
           {roles.map((role) => (
-            <li
-              key={role}
-              className="flex justify-between items-center p-3 bg-gray-100 rounded-lg"
-            >
+            <li key={role} className="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
               <span className="text-gray-800">{role}</span>
               <button
                 onClick={() => handleDeleteRole(role)}
+                aria-label={`Eliminar rol ${role}`}
                 className="text-red-500 hover:text-red-700 transition"
               >
                 <Trash2 size={20} />

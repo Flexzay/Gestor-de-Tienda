@@ -23,7 +23,7 @@ function LoginForm() {
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-12">
         <div className="bg-white shadow-xl rounded-3xl p-10 w-full max-w-lg animate-fadeIn">
           
-          {/* 🔹 Logo SOLO visible en móviles */}
+          {/*  Logo SOLO visible en móviles */}
           <img src={domiduck} alt="DomiDuck" className="w-24 mx-auto mb-4 md:hidden" />
 
           <h2 className="text-4xl font-bold text-gray-800 text-center mb-6">Iniciar Sesión</h2>
