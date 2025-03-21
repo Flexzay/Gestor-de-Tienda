@@ -27,7 +27,7 @@ const DashboardContent: React.FC = () => {
       setProducts([]);
     }
   };
-  
+
 
   const handleAddProduct = async () => {
     await fetchProducts();

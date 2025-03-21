@@ -1,6 +1,6 @@
 export interface ProductFormData {
   name: string;
-  category: string;
+  category: { id: number; name: string };
   brand: string;
   stock: number;
   expirationDate?: string;

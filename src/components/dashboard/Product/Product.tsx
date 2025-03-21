@@ -16,7 +16,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     name: initialData?.name || "",
     description: initialData?.description || "",
     price: initialData?.price || "",
-    category: initialData?.category || "",
+    category_id: initialData?.category_id || "",
     available: initialData?.available ?? true,
     image: null as File | null,
   });
@@ -42,20 +42,24 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     setLoading(true);
     setError(null);
 
-    if (!formData.name || !formData.description || !formData.price || !formData.category) {
+    if (!formData.name || !formData.description || !formData.price || !formData.category_id) {
       setError("Todos los campos son obligatorios.");
       setLoading(false);
       return;
     }
 
     const formDataObj = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === "image" && value instanceof File) {
-        formDataObj.append(key, value);
-      } else if (value !== null && value !== undefined) {
-        formDataObj.append(key, value.toString());
-      }
-    });
+    formDataObj.append("name", formData.name);
+    formDataObj.append("description", formData.description);
+    formDataObj.append("price", formData.price.toString());
+    formDataObj.append("category_id", formData.category_id.toString()); // Asegúrate de que sea el ID
+    formDataObj.append("available", formData.available.toString());
+
+    if (formData.image) {
+      formDataObj.append("image", formData.image);
+    }
+
+    console.log("📤 Enviando datos a la API:", Object.fromEntries(formDataObj.entries()));
 
     try {
       if (initialData) {
@@ -117,15 +121,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
             />
 
             <select
-              name="category"
-              value={formData.category}
+              name="category_id" 
+              value={formData.category_id}
               onChange={handleChange}
               required
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff2c59] outline-none text-gray-900 bg-white"
             >
               <option value="">Selecciona una categoría</option>
               {filteredCategories.map((cat) => (
-                <option key={cat.id} value={cat.name}>
+                <option key={cat.id} value={cat.id}> 
                   {cat.name}
                 </option>
               ))}

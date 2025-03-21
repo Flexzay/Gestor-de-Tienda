@@ -12,27 +12,30 @@ export const productService = {
       const token = storageService.getToken();
       const shopId = storageService.getShopId();
       if (!token || !shopId) throw new Error("Falta el token o el shopId.");
-  
+
       console.log("📤 Enviando datos a la API:", Object.fromEntries(productData.entries())); // 🔹 Verifica qué se está enviando
-  
+
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: productData,
       });
-  
+
+      if (!response.ok) {
+        const errorData = await response.text(); // Obtén el texto de la respuesta
+        console.error("❌ Error del servidor:", errorData);
+        throw new Error(`Error ${response.status}: ${errorData}`);
+      }
+
       const data = await response.json();
       console.log("🔄 Respuesta de la API al crear producto:", data); // 🔹 Revisa si la API devuelve la imagen
-  
-      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
-  
+
       return { status: response.status, data };
     } catch (error: any) {
       console.error("❌ Error al crear el producto:", error.message);
       return { status: 500, message: error.message || "Error al crear el producto" };
     }
   },
-  
   
 
   /**

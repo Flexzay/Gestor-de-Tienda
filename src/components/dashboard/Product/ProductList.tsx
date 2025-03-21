@@ -53,7 +53,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                 </div>
               )}
               <h4 className="font-medium text-gray-800 mt-2 text-center">{product.name}</h4>
-              <p className="text-xs text-gray-500 text-center">Categoría: {product.category}</p>
+              <p className="text-xs text-gray-500 text-center">
+                Categoría: {product.category ? product.category.name : "Sin categoría"}
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-2 mt-2">
