@@ -83,7 +83,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
             {showActions && (
               <div className="flex justify-between items-center mt-2">
                 <button
-                  onClick={() => onEdit && onEdit(product)}
+                  onClick={() => onEdit && onEdit(product)} // Pasar el producto a editar
                   className="flex items-center px-3 py-1 text-xs font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-[#ff204e] hover:text-white transition duration-300"
                 >
                   <Pencil size={14} className="mr-1" /> Editar

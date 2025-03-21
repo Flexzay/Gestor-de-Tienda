@@ -2,11 +2,12 @@ import { useState } from "react";
 import { X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { productService } from "../../../Services/product.service";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
+import { ProductFormData } from "../../../interface/product";
 
 interface ProductFormProps {
   onClose: () => void;
   onSubmit: () => void;
-  initialData?: any;
+  initialData?: ProductFormData | null;
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialData }) => {
@@ -16,7 +17,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     name: initialData?.name || "",
     description: initialData?.description || "",
     price: initialData?.price || "",
-    category_id: initialData?.category_id || "",
+    category_id: initialData?.category?.id || "", // Usar el ID de la categoría
     available: initialData?.available ?? true,
     image: null as File | null,
   });
@@ -52,7 +53,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     formDataObj.append("name", formData.name);
     formDataObj.append("description", formData.description);
     formDataObj.append("price", formData.price.toString());
-    formDataObj.append("category_id", formData.category_id.toString()); // Asegúrate de que sea el ID
+    formDataObj.append("category_id", formData.category_id.toString());
     formDataObj.append("available", formData.available.toString());
 
     if (formData.image) {
@@ -62,12 +63,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     console.log("📤 Enviando datos a la API:", Object.fromEntries(formDataObj.entries()));
 
     try {
+      let response;
       if (initialData) {
-        await productService.updateProduct(initialData.id, formDataObj);
+        response = await productService.updateProduct(initialData.id, formDataObj);
+        onSubmit(response.data); // Pasar el producto actualizado
       } else {
-        await productService.createProduct(formDataObj);
+        response = await productService.createProduct(formDataObj);
+        onSubmit(response.data); // Pasar el nuevo producto
       }
-      onSubmit();
       onClose();
     } catch (error) {
       setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");
@@ -79,7 +82,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
   return (
     <div className="fixed inset-0 bg-white bg-opacity-40 backdrop-blur-md flex justify-center items-center px-4 z-50">
       <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-lg relative">
-        {/* Botón de cerrar */}
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-700">
           <X size={24} />
         </button>
@@ -88,7 +90,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
           {initialData ? "✏️ Editar Producto" : "➕ Agregar Nuevo Producto"}
         </h2>
 
-        {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -121,7 +122,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
             />
 
             <select
-              name="category_id" 
+              name="category_id"
               value={formData.category_id}
               onChange={handleChange}
               required
@@ -129,7 +130,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
             >
               <option value="">Selecciona una categoría</option>
               {filteredCategories.map((cat) => (
-                <option key={cat.id} value={cat.id}> 
+                <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>
               ))}

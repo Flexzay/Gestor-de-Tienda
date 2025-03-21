@@ -1,35 +1,27 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ProductForm from "./Product";
 import ProductList from "./ProductList";
-import { productService } from "../../../Services/product.service";
 import { ProductFormData } from "../../../interface/product";
+import useProduct from "../../../hooks/bashboard/useProduct";
 
 const ProductComponents: React.FC = () => {
-  const [products, setProducts] = useState<ProductFormData[]>([]);
+  const { products, loading, error, createProduct, updateProduct } = useProduct();
   const [showForm, setShowForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductFormData | null>(null);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await productService.getProducts();
-      if (response.status === 200 && response.data) {
-        setProducts(Array.isArray(response.data) ? response.data : response.data.data || []);
-      } else {
-        setProducts([]);
-      }
-    } catch (error) {
-      setProducts([]);
+  const handleProductAdded = (updatedProduct: ProductFormData) => {
+    if (editingProduct) {
+      updateProduct(editingProduct.id, updatedProduct);
+    } else {
+      createProduct(updatedProduct);
     }
-  };
-  
-
-  const handleProductAdded = () => {
-    console.log("✅ Producto agregado con éxito, recargando lista...");
-    fetchProducts();
     setShowForm(false);
+    setEditingProduct(null);
+  };
+
+  const handleEditProduct = (product: ProductFormData) => {
+    setEditingProduct(product);
+    setShowForm(true);
   };
 
   return (
@@ -38,9 +30,18 @@ const ProductComponents: React.FC = () => {
         Agregar Producto
       </button>
 
-      {showForm && <ProductForm onClose={() => setShowForm(false)} onProductAdded={handleProductAdded} />}
+      {showForm && (
+        <ProductForm
+          onClose={() => {
+            setShowForm(false);
+            setEditingProduct(null);
+          }}
+          onSubmit={handleProductAdded}
+          initialData={editingProduct}
+        />
+      )}
 
-      <ProductList products={products} onEdit={() => {}} onDelete={() => {}} />
+      <ProductList products={products} onEdit={handleEditProduct} onDelete={() => {}} />
     </div>
   );
 };
