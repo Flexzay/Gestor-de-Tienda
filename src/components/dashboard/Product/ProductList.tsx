@@ -40,11 +40,13 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
           return (
             <div key={product.id} className="p-3 bg-gray-50 rounded-md border border-gray-200 shadow-md">
               <img
-                src={product.images?.[0] || "/default.jpg"} // Mostrar la primera imagen del array
+                src={product.images?.[0]?.path ? `https://bucket-domiduck-s3.s3.amazonaws.com/${product.images[0].path}` : "/default.jpg"}
                 className="w-20 h-20 object-cover rounded-md mx-auto"
                 alt={product.name}
-                onError={(e) => (e.currentTarget.src = "/default.jpg")}
+                onError={(e) => (e.currentTarget.src = "/default.jpg")} // Si falla, mostrar imagen por defecto
               />
+
+
               <h4 className="text-center">{product.name}</h4>
               <p className="text-xs text-center">{product.category?.name || "Sin categoría"}</p>
             </div>

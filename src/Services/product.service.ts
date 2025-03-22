@@ -31,6 +31,7 @@ export const productService = {
         throw new Error("La API no devolvió una ruta válida para la imagen.");
       }
   
+      // Devolver la URL completa de la imagen
       return `${S3_BUCKET_URL}${data.data.path}`;
     } catch (error) {
       console.error("Error al subir imagen:", error);
@@ -38,44 +39,64 @@ export const productService = {
     }
   },
   
-
   /**
    * Crear un nuevo producto
    */
+  
   async createProduct(productData: any) {
     try {
       const token = storageService.getToken();
       const shopId = storageService.getShopId();
       if (!token || !shopId) throw new Error("Falta el token o el shopId.");
   
-      let imageUrl = null;
-  
-      // 📤 Si hay imagen, subir a S3 primero
-      if (productData.image) {
-        imageUrl = await productService.uploadImage(shopId, productData.image);
-      }
-  
-      // Si la imagen se subió correctamente, incluirla en el array `images`
-      const body = {
-        ...productData,
-        images: imageUrl ? [imageUrl] : [],
-      };
-  
+      // 📌 1️⃣ Primero, crear el producto SIN imagen
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          name: productData.name,
+          description: productData.description,
+          price: productData.price,
+          category_id: productData.category_id,
+          available: productData.available,
+        }),
       });
   
       if (!response.ok) throw new Error("Error al crear el producto.");
   
-      const data = await response.json();
-      return { status: response.status, data };
+      const createdProduct = await response.json();
+      console.log("✅ Producto creado correctamente:", createdProduct);
+  
+      // 📌 2️⃣ Ahora subimos la imagen con el ID del producto
+      let imageUrl = null;
+      if (productData.image) {
+        imageUrl = await productService.uploadImage(createdProduct.data.id, productData.image);
+      }
+  
+      // 📌 3️⃣ Ahora actualizamos el producto para asociarle la imagen
+      if (imageUrl) {
+        await fetch(`${API_URL}/${createdProduct.data.id}`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ image: imageUrl }),
+        });
+      }
+  
+      return {
+        status: response.status,
+        data: {
+          ...createdProduct.data,
+          image: imageUrl || null,
+        },
+      };
     } catch (error) {
-      console.error("Error al crear producto:", error);
+      console.error("❌ Error al crear producto:", error);
       return { status: 500, message: "Error al crear el producto" };
     }
   },
