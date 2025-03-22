@@ -46,9 +46,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
               alt={product.name}
               onError={(e) => (e.currentTarget.src = Domiduck)}
             />
-
-
-
             <h4 className="text-center">{product.name}</h4>
             <p className="text-xs text-center">{product.category?.name || "Sin categoría"}</p>
           </div>
