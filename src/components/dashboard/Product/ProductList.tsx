@@ -36,13 +36,21 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
       {showTitle && <h3 className="text-2xl font-bold mb-6 text-gray-900">📦 Productos Agregados</h3>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {currentProducts.map(({ id, name, image, category, price }) => (
-          <div key={id} className="p-3 bg-gray-50 rounded-md border border-gray-200 shadow-md">
-            <img src={image || "/default.jpg"} className="w-20 h-20 object-cover rounded-md mx-auto" />
-            <h4 className="text-center">{name}</h4>
-            <p className="text-xs text-center">{category?.name || "Sin categoría"}</p>
-          </div>
-        ))}
+        {currentProducts.map((product) => {
+          return (
+            <div key={product.id} className="p-3 bg-gray-50 rounded-md border border-gray-200 shadow-md">
+              <img
+                src={product.images?.[0] || "/default.jpg"} // Mostrar la primera imagen del array
+                className="w-20 h-20 object-cover rounded-md mx-auto"
+                alt={product.name}
+                onError={(e) => (e.currentTarget.src = "/default.jpg")}
+              />
+              <h4 className="text-center">{product.name}</h4>
+              <p className="text-xs text-center">{product.category?.name || "Sin categoría"}</p>
+            </div>
+          );
+        })}
+
       </div>
 
       <Paginator currentPage={currentPage} totalItems={products.length} itemsPerPage={itemsPerPage} onPageChange={setCurrentPage} />

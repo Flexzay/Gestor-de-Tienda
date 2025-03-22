@@ -40,7 +40,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     category_id: initialData?.category?.id || "",
     available: initialData?.available ?? true,
     image: null as File | null,
-    preview: initialData?.image || null,
+    preview: initialData?.images || null,
   });
 
   const [loading, setLoading] = useState(false);
