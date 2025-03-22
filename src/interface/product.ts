@@ -5,6 +5,7 @@ export interface ProductFormData {
   brand: string;
   stock: number;
   expirationDate?: string;
+  available : boolean;
   price: number;
   description: string;
   image: string | null;

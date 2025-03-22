@@ -4,14 +4,7 @@ import { productService } from "../../../Services/product.service";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
 import { ProductFormData } from "../../../interface/product";
 
-// Definir el tipo de acción para el reducer
-type Action =
-  | { type: "CHANGE_INPUT"; field: string; value: string | boolean }
-  | { type: "CHANGE_IMAGE"; file: File | null; preview: string | null }
-  | { type: "RESET"; initialData: ProductFormData | null };
-
-// Reducer para manejar el estado del formulario
-const formReducer = (state: any, action: Action) => {
+const formReducer = (state: any, action: any) => {
   switch (action.type) {
     case "CHANGE_INPUT":
       return { ...state, [action.field]: action.value };
@@ -39,9 +32,7 @@ interface ProductFormProps {
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialData }) => {
-  const { filteredCategories } = useCategories(); // Obtener categorías desde el hook personalizado
-
-  // Estado del formulario usando useReducer
+  const { filteredCategories } = useCategories();
   const [formData, dispatch] = useReducer(formReducer, {
     name: initialData?.name || "",
     description: initialData?.description || "",
@@ -55,12 +46,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Manejar cambios en los inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     dispatch({ type: "CHANGE_INPUT", field: e.target.name, value: e.target.value });
   };
 
-  // Manejar cambios en la imagen seleccionada
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -68,41 +57,29 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     }
   };
 
-  // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Validación básica
     if (!formData.name || !formData.description || !formData.price || !formData.category_id) {
       setError("Todos los campos son obligatorios.");
       setLoading(false);
       return;
     }
 
-    // Crear objeto FormData para enviar al backend
-    const formDataObj = new FormData();
-    formDataObj.append("name", formData.name);
-    formDataObj.append("description", formData.description);
-    formDataObj.append("price", formData.price.toString());
-    formDataObj.append("category_id", formData.category_id.toString());
-    formDataObj.append("available", formData.available.toString());
-
-    if (formData.image) {
-      formDataObj.append("image", formData.image);
-    }
-
     try {
       let response;
       if (initialData) {
-        response = await productService.updateProduct(initialData.id, formDataObj);
+        // Actualizar producto existente
+        response = await productService.updateProduct(initialData.id, formData);
       } else {
-        response = await productService.createProduct(formDataObj);
+        // Crear nuevo producto
+        response = await productService.createProduct(formData);
       }
 
-      onSubmit(response.data); // Notificar al padre el nuevo producto
-      onClose(); // Cerrar el modal
+      onSubmit(response.data);
+      onClose();
     } catch (error) {
       setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");
     } finally {
@@ -113,7 +90,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
   return (
     <div className="fixed inset-0 bg-white bg-opacity-40 backdrop-blur-md flex justify-center items-center px-4 z-50">
       <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-lg relative">
-        {/* Botón para cerrar el formulario */}
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-700">
           <X size={24} />
         </button>
@@ -124,72 +100,34 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
-        {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block">
             Nombre del producto
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded-lg"
-            />
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full p-3 border rounded-lg" />
           </label>
-
           <label className="block">
             Descripción
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded-lg h-24"
-            />
+            <textarea name="description" value={formData.description} onChange={handleChange} required className="w-full p-3 border rounded-lg" />
           </label>
-
-          <div className="grid grid-cols-2 gap-4">
-            <label>
-              Precio
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border rounded-lg"
-              />
-            </label>
-
-            <label>
-              Categoría
-              <select
-                name="category_id"
-                value={formData.category_id}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border rounded-lg bg-white"
-              >
-                <option value="">Selecciona una categoría</option>
-                {filteredCategories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          {/* Carga de imagen */}
+          <label className="block">
+            Precio
+            <input type="number" name="price" value={formData.price} onChange={handleChange} required className="w-full p-3 border rounded-lg" />
+          </label>
+          <label className="block">
+            Categoría
+            <select name="category_id" value={formData.category_id} onChange={handleChange} required className="w-full p-3 border rounded-lg">
+              <option value="">Selecciona una categoría</option>
+              {filteredCategories.map(category => (
+                <option key={category.id} value={category.id}>{category.name}</option>
+              ))}
+            </select>
+          </label>
           <label className="block text-center border-2 border-dashed p-3 cursor-pointer">
             <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
             <ImageIcon size={40} />
             <span>Subir imagen</span>
           </label>
-
           {formData.preview && <img src={formData.preview} className="w-32 h-32 object-cover rounded-lg mx-auto" />}
-
           <button type="submit" disabled={loading} className="w-full bg-red-500 text-white p-3 rounded-lg">
             {loading ? <Loader2 className="animate-spin mr-2" size={20} /> : "Guardar Producto"}
           </button>

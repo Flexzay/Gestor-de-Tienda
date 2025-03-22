@@ -2,41 +2,75 @@ import { environment } from "../config/environmet";
 import { storageService } from "../Services/storage.service";
 
 const API_URL = `${environment.baseUrl}/product`;
+const S3_BUCKET_URL = environment.s3Storage; // URL base de S3
 
 export const productService = {
   /**
+   * Subir imagen a S3 antes de crear el producto
+   */
+  async uploadImage(productId: string | number, file: File) {
+    try {
+      const token = storageService.getToken();
+      if (!token) throw new Error("No hay un token válido.");
+  
+      const formData = new FormData();
+      formData.append("file", file); // Asegúrate de que el backend espera "file"
+  
+      const response = await fetch(`${API_URL}/product/images/${productId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error al subir la imagen: ${errorText}`);
+      }
+  
+      const data = await response.json();
+      
+      // Retornamos la URL de la imagen en S3 si el backend la envía correctamente
+      return data.filename ? `${S3_BUCKET_URL}${data.filename}` : null;
+    } catch (error) {
+      console.error("Error al subir imagen:", error);
+      return null;
+    }
+  },
+  
+
+  /**
    * Crear un nuevo producto
    */
-  async createProduct(productData: FormData) {
+  async createProduct(productData: any) {
     try {
       const token = storageService.getToken();
       const shopId = storageService.getShopId();
       if (!token || !shopId) throw new Error("Falta el token o el shopId.");
 
-      console.log("📤 Enviando datos a la API:", Object.fromEntries(productData.entries())); // 🔹 Verifica qué se está enviando
+      // 📤 Si hay imagen, subir a S3 primero
+      if (productData.image) {
+        const imageUrl = await productService.uploadImage(shopId, productData.image);
+        if (imageUrl) productData.image = imageUrl;
+      }
 
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: productData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
       });
 
-      if (!response.ok) {
-        const errorData = await response.text(); // Obtén el texto de la respuesta
-        console.error("❌ Error del servidor:", errorData);
-        throw new Error(`Error ${response.status}: ${errorData}`);
-      }
+      if (!response.ok) throw new Error("Error al crear el producto.");
 
       const data = await response.json();
-      console.log("🔄 Respuesta de la API al crear producto:", data); // 🔹 Revisa si la API devuelve la imagen
-
       return { status: response.status, data };
-    } catch (error: any) {
-      console.error("❌ Error al crear el producto:", error.message);
-      return { status: 500, message: error.message || "Error al crear el producto" };
+    } catch (error) {
+      console.error("Error al crear producto:", error);
+      return { status: 500, message: "Error al crear el producto" };
     }
   },
-  
 
   /**
    * Obtener todos los productos
@@ -67,7 +101,7 @@ export const productService = {
   async updateProduct(productId: string | number, productData: FormData) {
     try {
       const token = storageService.getToken();
-      if (!token) throw new Error("No hay un token de autenticación válido.");
+      if (!token) throw new Error("No hay un token válido.");
 
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
@@ -81,55 +115,6 @@ export const productService = {
       return { status: response.status, data };
     } catch (error: any) {
       return { status: 500, message: error.message || "Error al actualizar el producto" };
-    }
-  },
-
-  /**
-   * Guardar precios de un producto
-   */
-  async savePrices(productId: string | number, prices: any) {
-    try {
-      const token = storageService.getToken();
-      if (!token) throw new Error("No hay un token válido.");
-
-      const response = await fetch(`${API_URL}/price/${productId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(prices),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
-
-      return { status: response.status, message: "Precios guardados con éxito" };
-    } catch (error: any) {
-      return { status: 500, message: error.message || "Error al guardar precios" };
-    }
-  },
-
-  /**
-   * Guardar imágenes de un producto
-   */
-  async saveImages(productId: string | number, images: FormData) {
-    try {
-      const token = storageService.getToken();
-      if (!token) throw new Error("No hay un token válido.");
-
-      const response = await fetch(`${API_URL}/images/${productId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: images,
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
-
-      return { status: response.status, message: "Imágenes guardadas con éxito" };
-    } catch (error: any) {
-      return { status: 500, message: error.message || "Error al guardar imágenes" };
     }
   },
 
@@ -174,6 +159,32 @@ export const productService = {
       return { status: response.status, message: "Imagen eliminada con éxito" };
     } catch (error: any) {
       return { status: 500, message: error.message || "Error al eliminar la imagen" };
+    }
+  },
+
+  /**
+   * Guardar precios de un producto
+   */
+  async savePrices(productId: string | number, prices: any) {
+    try {
+      const token = storageService.getToken();
+      if (!token) throw new Error("No hay un token válido.");
+
+      const response = await fetch(`${API_URL}/price/${productId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(prices),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+
+      return { status: response.status, message: "Precios guardados con éxito" };
+    } catch (error: any) {
+      return { status: 500, message: error.message || "Error al guardar precios" };
     }
   },
 
