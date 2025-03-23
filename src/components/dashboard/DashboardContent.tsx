@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AddProductForm from "./Product/Product";
 import DashboardCard from "./DashboardCard";
+import DashboardImageCard from "./DashboardImageCard";
 import ProductList from "./Product/ProductList";
 import { Package, Truck, Wallet } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
@@ -64,6 +65,7 @@ const DashboardContent: React.FC = () => {
         <DashboardCard title="Total Productos" value={products.length.toString()} icon={<Package className="text-[#fff5f7]" size={24} />} />
         <DashboardCard title="Total Proveedores" value="2" icon={<Truck className="text-[#ffffff]" size={24} />} />
         <DashboardCard title="Total Métodos de Pago" value="3" icon={<Wallet className="text-[#ffffff]" size={24} />} />
+        <DashboardImageCard title="Domiduck Especial" value="Destacado" />
       </div>
 
       <ProductList products={products} onEdit={handleEditProduct} />
