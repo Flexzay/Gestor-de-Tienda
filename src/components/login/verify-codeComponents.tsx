@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Lock, Loader2, Ban } from "lucide-react";
 import { useVerifyCode } from "../../hooks/login/useVerifyCode";
 import domiduck from "../../assets/img/domiduck.svg";

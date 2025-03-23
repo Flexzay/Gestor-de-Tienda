@@ -1,5 +1,3 @@
-import React from "react";
-
 function Error404() {
     return (
         // Contenedor principal que ocupa toda la altura de la pantalla y centra el contenido
