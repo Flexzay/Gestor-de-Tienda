@@ -61,20 +61,20 @@ const useProduct = () => {
 
 
   // Eliminar un producto
-  const deleteProduct = async (id: number) => {
-    setLoading(true);
-    try {
-      await productService.deleteProduct(id);
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.id !== id)
-      );
-    } catch (error) {
-      console.error("Error al eliminar producto:", error);
-      setError("Error al eliminar producto");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const deleteProduct = async (id: number) => {
+  //   setLoading(true);
+  //   try {
+  //     await productService.deleteProduct(id);
+  //     setProducts((prevProducts) =>
+  //       prevProducts.filter((product) => product.id !== id)
+  //     );
+  //   } catch (error) {
+  //     console.error("Error al eliminar producto:", error);
+  //     setError("Error al eliminar producto");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Efecto para cargar los productos al montar el componente
   useEffect(() => {
@@ -88,7 +88,7 @@ const useProduct = () => {
     fetchProducts,
     createProduct,
     updateProduct,
-    deleteProduct,
+    // deleteProduct,
   };
 };
 

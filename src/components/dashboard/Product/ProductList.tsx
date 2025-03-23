@@ -11,7 +11,8 @@ interface ProductListProps {
   showTitle?: boolean;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, showTitle = true }) => {
+const ProductList: React.FC<ProductListProps> = ({ products, onEdit, showTitle = true }) => {
+  // onDelete debe ir en la parte de products,onedit, showtitle para cuando se implente la funcion de eliminar producto
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
@@ -70,7 +71,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                   <Pencil size={18} />
                 </button>
                 <button
-                  onClick={() => onDelete?.(product.id)}
+                  // onClick={() => onDelete?.(product.id)}
                   className="bg-red-500 text-white p-2 rounded-lg shadow-md hover:bg-red-600 transition"
                 >
                   <Trash2 size={18} />

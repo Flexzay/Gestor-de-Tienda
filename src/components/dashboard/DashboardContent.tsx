@@ -7,17 +7,16 @@ import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
 
 const DashboardContent: React.FC = () => {
-  const { products, loading, error, createProduct, updateProduct, deleteProduct, fetchProducts } = useProduct();
+  const { products, createProduct, updateProduct,  fetchProducts } = useProduct();
+  // deleteProduct debe ir despues de createProduct y updateProduct a la hora de implementar la funcion de eliminar producto
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
 
   const handleAddProduct = async (product: ProductFormData) => {
     try {
-      if (selectedProduct) {
-        console.log("Actualizando producto:", product);
+      if (selectedProduct) {;
         await updateProduct(selectedProduct.id, product);
       } else {
-        console.log("Creando nuevo producto:", product);
         await createProduct(product);
       }
   
@@ -32,10 +31,10 @@ const DashboardContent: React.FC = () => {
   };
   
 
-  const handleDeleteProduct = async (productToDelete: ProductFormData) => {
-    if (!window.confirm(`¿Seguro que deseas desactivar "${productToDelete.name}"?`)) return;
-    await deleteProduct(productToDelete.id);
-  };
+  // const handleDeleteProduct = async (productToDelete: ProductFormData) => {
+  //   if (!window.confirm(`¿Seguro que deseas desactivar "${productToDelete.name}"?`)) return;
+  //   await deleteProduct(productToDelete.id);
+  // };
 
   const handleEditProduct = (product: ProductFormData) => {
     setSelectedProduct(product);
@@ -67,7 +66,8 @@ const DashboardContent: React.FC = () => {
         <DashboardCard title="Total Métodos de Pago" value="3" icon={<Wallet className="text-[#ffffff]" size={24} />} />
       </div>
 
-      <ProductList products={products} onEdit={handleEditProduct} onDelete={handleDeleteProduct} />
+      <ProductList products={products} onEdit={handleEditProduct} />
+      {/* onDelete={handleDeleteProduct} debe ir despues de onEdit={handleEditProduct} a la hora de implementar la funcion de eliminar producto */}
     </main>
   );
 };
