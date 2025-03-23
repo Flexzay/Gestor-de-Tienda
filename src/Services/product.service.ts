@@ -1,5 +1,6 @@
 import { environment } from "../config/environmet";
 import { storageService } from "../Services/storage.service";
+import { ProductFormData } from "../interface/product";
 
 const API_URL = `${environment.baseUrl}/product`;
 const S3_BUCKET_URL = environment.s3Storage; // URL base de S3
@@ -131,25 +132,34 @@ export const productService = {
   /**
    * Actualizar un producto
    */
-  async updateProduct(productId: string | number, productData: FormData) {
+  async updateProduct(productId: string | number, productData: ProductFormData) {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
-
+  
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: productData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
       });
-
+  
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
-
+      if (!response.ok) {
+        console.error("❌ Error en la API:", data);
+        throw new Error(data.message || `Error ${response.status}`);
+      }
+  
+      console.log("✅ Producto actualizado con éxito:", data);
       return { status: response.status, data };
     } catch (error: any) {
-      return { status: 500, message: error.message || "Error al actualizar el producto" };
+      console.error("Error al actualizar producto:", error);
+      return { status: 500, message: error.message || "Error al actualizar producto" };
     }
   },
+  
 
   /**
    * Obtener detalles de un producto

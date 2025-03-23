@@ -1,51 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AddProductForm from "./Product/Product";
 import DashboardCard from "./DashboardCard";
 import ProductList from "./Product/ProductList";
 import { Package, Truck, Wallet } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
-import { productService } from "../../Services/product.service";
+import useProduct from "../../hooks/bashboard/useProduct";
 
 const DashboardContent: React.FC = () => {
-  const [products, setProducts] = useState<ProductFormData[]>([]);
+  const { products, loading, error, createProduct, updateProduct, deleteProduct, fetchProducts } = useProduct();
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  const handleAddProduct = async (product: ProductFormData) => {
     try {
-      const response = await productService.getProducts();
-      if (response.status === 200 && response.data) {
-        setProducts(Array.isArray(response.data) ? response.data : response.data.data || []);
+      if (selectedProduct) {
+        console.log("Actualizando producto:", product);
+        await updateProduct(selectedProduct.id, product);
       } else {
-        setProducts([]);
+        console.log("Creando nuevo producto:", product);
+        await createProduct(product);
       }
+  
+      // ✅ Llamar a fetchProducts para recargar la lista
+      await fetchProducts();
+  
+      setIsAdding(false);
+      setSelectedProduct(null);
     } catch (error) {
-      setProducts([]);
+      console.error("Error al guardar producto:", error);
     }
   };
-
-
-  const handleAddProduct = async () => {
-    await fetchProducts();
-    setIsAdding(false);
-    setSelectedProduct(null);
-  };
+  
 
   const handleDeleteProduct = async (productToDelete: ProductFormData) => {
     if (!window.confirm(`¿Seguro que deseas desactivar "${productToDelete.name}"?`)) return;
-
-    try {
-      const updatedProduct = { ...productToDelete, available: false };
-      await productService.updateProduct(productToDelete.id, updatedProduct);
-      await fetchProducts();
-      console.log(`✅ Producto ${productToDelete.id} desactivado`);
-    } catch (error) {
-      console.error("❌ Error al desactivar el producto:", error);
-    }
+    await deleteProduct(productToDelete.id);
   };
 
   const handleEditProduct = (product: ProductFormData) => {
@@ -55,7 +44,6 @@ const DashboardContent: React.FC = () => {
 
   return (
     <main className="p-6 bg-gray-100 w-full h-screen overflow-y-auto">
-
       <button onClick={() => setIsAdding(true)} className="mb-4 px-4 py-2 text-white bg-[#ff204e] rounded-md hover:bg-[#ff3b61]">
         {selectedProduct ? "Editar Producto" : "Agregar Producto"}
       </button>

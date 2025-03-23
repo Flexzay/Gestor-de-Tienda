@@ -41,7 +41,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
             key={product.id}
             className="relative bg-white shadow-lg rounded-xl overflow-hidden transition-all hover:scale-[1.03] hover:shadow-2xl border border-gray-200"
           >
-            {/* 🖼️ Imagen más grande con fondo gris claro */}
             <div className="relative w-full h-56 bg-gray-100 flex items-center justify-center">
               <img
                 src={product.image || Domiduck}
@@ -49,7 +48,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                 alt={product.name}
                 onError={(e) => (e.currentTarget.src = Domiduck)}
               />
-              {/* 🔖 Categoría en una etiqueta flotante */}
               {product.category?.name && (
                 <span className="absolute bottom-3 left-3 bg-gray-800 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
                   {product.category.name}
@@ -57,13 +55,11 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
               )}
             </div>
 
-            {/* 📄 Contenido alineado y optimizado */}
             <div className="px-6 py-4">
               <h4 className="text-lg font-bold text-gray-900 truncate">{product.name}</h4>
               <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
             </div>
 
-            {/* 💰 Precio y botones con fondo semitransparente */}
             <div className="flex items-center justify-between px-6 py-3 bg-white border-t">
               <span className="text-xl font-bold text-red-500">${product.price}</span>
               <div className="flex space-x-2">

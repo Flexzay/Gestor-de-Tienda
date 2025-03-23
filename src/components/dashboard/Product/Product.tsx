@@ -1,8 +1,7 @@
 import { useReducer, useState } from "react";
 import { X, Image as ImageIcon, Loader2 } from "lucide-react";
-import { productService } from "../../../Services/product.service";
-import { useCategories } from "../../../hooks/bashboard/useCategories";
 import { ProductFormData } from "../../../interface/product";
+import { useCategories } from "../../../hooks/bashboard/useCategories";
 
 const formReducer = (state: any, action: any) => {
   switch (action.type) {
@@ -27,7 +26,7 @@ const formReducer = (state: any, action: any) => {
 
 interface ProductFormProps {
   onClose: () => void;
-  onSubmit: (product: any) => void;
+  onSubmit: (product: ProductFormData) => void;
   initialData?: ProductFormData | null;
 }
 
@@ -69,16 +68,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     }
 
     try {
-      let response;
-      if (initialData) {
-        // Actualizar producto existente
-        response = await productService.updateProduct(initialData.id, formData);
-      } else {
-        // Crear nuevo producto
-        response = await productService.createProduct(formData);
-      }
-
-      onSubmit(response.data);
+      onSubmit(formData);
       onClose();
     } catch (error) {
       setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");

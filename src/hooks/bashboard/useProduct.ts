@@ -26,7 +26,7 @@ const useProduct = () => {
   };
 
   // Crear un nuevo producto
-  const createProduct = async (formData: FormData) => {
+  const createProduct = async (formData: ProductFormData) => {
     setLoading(true);
     try {
       const response = await productService.createProduct(formData);
@@ -42,24 +42,23 @@ const useProduct = () => {
   };
 
   // Actualizar un producto existente
-  const updateProduct = async (id: number, formData: FormData) => {
-    setLoading(true);
-    try {
-      const response = await productService.updateProduct(id, formData);
-      if (response.data) {
-        setProducts((prevProducts) =>
-          prevProducts.map((product) =>
-            product.id === id ? response.data : product
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error al actualizar producto:", error);
-      setError("Error al actualizar producto");
-    } finally {
-      setLoading(false);
+  
+  const updateProduct = async (id: number, formData: ProductFormData) => {
+  setLoading(true);
+  try {
+    const response = await productService.updateProduct(id, formData);
+    if (response.data) {
+      // ✅ Recargar productos después de actualizar
+      await fetchProducts();
     }
-  };
+  } catch (error) {
+    console.error("Error al actualizar producto:", error);
+    setError("Error al actualizar producto");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Eliminar un producto
   const deleteProduct = async (id: number) => {
