@@ -14,7 +14,7 @@ const DashboardContent: React.FC = () => {
 
   const handleAddProduct = async (product: ProductFormData) => {
     try {
-      if (selectedProduct) {;
+      if (selectedProduct?.id !== undefined) { 
         await updateProduct(selectedProduct.id, product);
       } else {
         await createProduct(product);

@@ -11,7 +11,7 @@ const ProductComponents: React.FC = () => {
 
   // Función para manejar la creación/edición de un producto
   const handleProductAdded = useCallback((updatedProduct: ProductFormData) => {
-    if (editingProduct) {
+    if (editingProduct?.id !== undefined) {
       updateProduct(editingProduct.id, updatedProduct);
     } else {
       createProduct(updatedProduct);
