@@ -8,29 +8,29 @@ import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
 
 const DashboardContent: React.FC = () => {
-  const { products, createProduct, updateProduct,  fetchProducts } = useProduct();
+  const { products, createProduct, updateProduct, fetchProducts } = useProduct();
   // deleteProduct debe ir despues de createProduct y updateProduct a la hora de implementar la funcion de eliminar producto
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
 
   const handleAddProduct = async (product: ProductFormData) => {
     try {
-      if (selectedProduct?.id !== undefined) { 
+      if (selectedProduct?.id !== undefined) {
         await updateProduct(selectedProduct.id, product);
       } else {
         await createProduct(product);
       }
-  
+
       // ✅ Llamar a fetchProducts para recargar la lista
       await fetchProducts();
-  
+
       setIsAdding(false);
       setSelectedProduct(null);
     } catch (error) {
       console.error("Error al guardar producto:", error);
     }
   };
-  
+
 
   // const handleDeleteProduct = async (productToDelete: ProductFormData) => {
   //   if (!window.confirm(`¿Seguro que deseas desactivar "${productToDelete.name}"?`)) return;
@@ -65,7 +65,8 @@ const DashboardContent: React.FC = () => {
         <DashboardCard title="Total Productos" value={products.length.toString()} icon={<Package className="text-[#fff5f7]" size={24} />} />
         <DashboardCard title="Total Proveedores" value="2" icon={<Truck className="text-[#ffffff]" size={24} />} />
         <DashboardCard title="Total Métodos de Pago" value="3" icon={<Wallet className="text-[#ffffff]" size={24} />} />
-        <DashboardImageCard title="Domiduck Especial" value="Destacado" />
+        <DashboardImageCard/>
+
       </div>
 
       <ProductList products={products} onEdit={handleEditProduct} />
