@@ -16,7 +16,7 @@ function Header() {
         <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
           <Menu size={24} className="text-gray-800" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-800"> Bienvenido </h1>
+        <h1 className="text-2xl  pl-3.5 font-bold text-gray-800"> Bienvenido </h1>
       </div>
       <div className="relative hidden md:block w-full max-w-md">
         <input
