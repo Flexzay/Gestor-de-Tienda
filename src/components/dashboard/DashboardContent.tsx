@@ -44,8 +44,11 @@ const DashboardContent: React.FC = () => {
 
   return (
     <main className="p-6 bg-gray-100 w-full h-screen overflow-y-auto">
-      <button onClick={() => setIsAdding(true)} className="mb-4 px-4 py-2 text-white bg-[#ff204e] rounded-md hover:bg-[#ff3b61]">
-        {selectedProduct ? "Editar Producto" : "Agregar Producto"}
+      <button
+        onClick={() => setIsAdding(true)}
+        className="mb-4 px-6 py-3 text-xl font-semibold text-white bg-[#ff204e] rounded-lg hover:bg-[#ff3b61] transition-all duration-300"
+      >
+        Agregar Producto
       </button>
 
       {isAdding && (
@@ -65,7 +68,7 @@ const DashboardContent: React.FC = () => {
         <DashboardCard title="Total Productos" value={products.length.toString()} icon={<Package className="text-[#fff5f7]" size={24} />} />
         <DashboardCard title="Total Proveedores" value="2" icon={<Truck className="text-[#ffffff]" size={24} />} />
         <DashboardCard title="Total Métodos de Pago" value="3" icon={<Wallet className="text-[#ffffff]" size={24} />} />
-        <DashboardImageCard/>
+        <DashboardImageCard />
 
       </div>
 
