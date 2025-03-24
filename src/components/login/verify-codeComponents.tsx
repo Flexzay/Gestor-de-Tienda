@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Lock, Loader2, Ban } from "lucide-react";
 import { useVerifyCode } from "../../hooks/login/useVerifyCode";
 import domiduck from "../../assets/img/domiduck.svg";
@@ -55,10 +55,10 @@ export function VerifyCodeComponent() {
 
           {/* Título y descripción */}
           <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">Verificar Código</h2>
-          <p className="text-gray-500 text-center mb-6">Introduce el código de 4 dígitos</p>
+          <p className="text-gray-500 text-center mb-6">
+            Introduce el código enviado a tu número de teléfono: <strong>{phoneNumber}</strong>
+          </p>
 
-          {/* Mostrar número de teléfono ingresado */}
-          <p className="text-gray-700 text-center mb-4 font-semibold">Código enviado a: {phoneNumber}</p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="relative">
@@ -70,12 +70,12 @@ export function VerifyCodeComponent() {
                   {...register("pin", {
                     required: "Código es requerido",
                     pattern: {
-                      value: /^[0-9]{4}$/,
-                      message: "El código debe ser de 4 dígitos",
+                      value: /^[0-9]{4,6}$/,
+                      message: "El código debe tener entre 4 y 6 dígitos",
                     },
                   })}
-                  placeholder="1234"
-                  maxLength={4}
+                  placeholder="123456"
+                  maxLength={6}
                   inputMode="numeric"
                   className={`w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-[#FF2C59] focus:outline-none transition-all appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${errors.pin ? "border-red-500" : ""
                     }`}
