@@ -8,7 +8,7 @@ export interface ProductFormData {
   available : boolean;
   price: number;
   description: string;
-  image: string | null;
+  images: string | null;
 }
 
 export default ProductFormData;

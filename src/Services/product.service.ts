@@ -132,33 +132,75 @@ export const productService = {
   /**
    * Actualizar un producto
    */
+  
   async updateProduct(productId: string | number, productData: ProductFormData) {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
   
+      console.log("🔄 Actualizando producto...");
+  
+      // 1️⃣ Actualizar los datos básicos del producto (sin la imagen)
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(productData),
+        body: JSON.stringify({
+          name: productData.name,
+          description: productData.description,
+          price: productData.price,
+          category_id: productData.category,
+          available: productData.available,
+        }),
       });
   
-      const data = await response.json();
-      if (!response.ok) {
-        console.error("❌ Error en la API:", data);
-        throw new Error(data.message || `Error ${response.status}`);
+      const updatedProduct = await response.json();
+      if (!response.ok) throw new Error(updatedProduct.message || `Error ${response.status}`);
+  
+      console.log("✅ Producto actualizado con éxito:", updatedProduct);
+  
+      // 2️⃣ Si hay una nueva imagen, subirla
+      let imageUrl = null;
+      if (productData.images instanceof File) {
+        console.log("🖼️ Subiendo nueva imagen...");
+        imageUrl = await productService.uploadImage(productId, productData.images);
+  
+        if (imageUrl) {
+          console.log("📸 Imagen subida con éxito:", imageUrl);
+          console.log("🔄 Asociando imagen al producto...");
+  
+          // 3️⃣ Asociar la nueva imagen al producto
+          const imageUpdateResponse = await fetch(`${API_URL}/${productId}`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ image: imageUrl }),
+          });
+  
+          const imageUpdateData = await imageUpdateResponse.json();
+          if (!imageUpdateResponse.ok) throw new Error(imageUpdateData.message || `Error ${imageUpdateResponse.status}`);
+  
+          console.log("✅ Imagen actualizada en el producto:", imageUpdateData);
+        }
       }
   
-      console.log("✅ Producto actualizado con éxito:", data);
-      return { status: response.status, data };
+      // 4️⃣ Obtener el producto actualizado para confirmar el cambio
+      console.log("🔍 Obteniendo producto actualizado...");
+      const finalProduct = await productService.getProductById(productId);
+  
+      console.log("📦 Producto final después de actualización:", finalProduct);
+  
+      return { status: 200, data: finalProduct.data };
     } catch (error: any) {
-      console.error("Error al actualizar producto:", error);
+      console.error("❌ Error al actualizar producto:", error);
       return { status: 500, message: error.message || "Error al actualizar producto" };
     }
   },
+  
   
 
   /**

@@ -40,7 +40,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     category_id: initialData?.category?.id || "",
     available: initialData?.available ?? true,
     image: null as File | null,
-    preview: initialData?.image || null,
+    preview: initialData?.images || null,
   });
   
   const [step, setStep] = useState(1);
@@ -58,15 +58,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
         const compressedFile = await compressImage(file);
         const objectURL = URL.createObjectURL(compressedFile);
   
+        // Liberar la URL anterior antes de actualizar el estado
+        if (formData.preview) {
+          URL.revokeObjectURL(formData.preview);
+        }
+  
         dispatch({ type: "CHANGE_IMAGE", file: compressedFile, preview: objectURL });
   
-        // Limpia la URL anterior para evitar fugas de memoria
-        return () => URL.revokeObjectURL(objectURL);
       } catch (error) {
         setError("La imagen es demasiado grande o no pudo comprimirse.");
       }
     }
   };
+  
   
 
   const handleSubmit = async (e: React.FormEvent) => {
