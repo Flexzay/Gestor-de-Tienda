@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Package, Search } from "lucide-react";
 import { productService } from "../../../Services/product.service";
 import { ProductFormData } from "../../../interface/product";
-import Paginator from "../Paginator";
 import ProductList from "../Product/ProductList";
 
 const ProductCatalog = () => {
@@ -29,11 +28,6 @@ const ProductCatalog = () => {
       setProducts([]); // En caso de error, se limpia la lista de productos
     }
   };
-
-  // Paginación: calcular el índice de los productos a mostrar
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -63,15 +57,14 @@ const ProductCatalog = () => {
         </select>
       </div>
 
-      {/* Listado de productos y paginación */}
+      {/* Listado de productos */}
       <div className="mt-8 w-full pb-30">
-        {/* Se reutiliza el componente ProductList para mostrar los productos sin acciones */}
-        <ProductList products={currentProducts} showTitle={false} showActions={false} />
-
-        {/* Paginador para navegar entre páginas de productos */}
-        <Paginator 
+        {/* Se pasa currentPage y itemsPerPage para que ProductList maneje la paginación */}
+        <ProductList 
+          products={products} 
+          showTitle={false} 
+          showActions={false} 
           currentPage={currentPage} 
-          totalItems={products.length} 
           itemsPerPage={itemsPerPage} 
           onPageChange={setCurrentPage} 
         />
