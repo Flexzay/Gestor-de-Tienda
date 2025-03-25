@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import { X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { ProductFormData } from "../../../interface/product";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
+import { compressImage } from "../../../hooks/bashboard/useProduct"; 
 
 const formReducer = (state: any, action: any) => {
   switch (action.type) {
@@ -49,10 +50,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     dispatch({ type: "CHANGE_INPUT", field: e.target.name, value: e.target.value });
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      dispatch({ type: "CHANGE_IMAGE", file, preview: URL.createObjectURL(file) });
+      try {
+        const compressedFile = await compressImage(file); // ✅ Usar la función importada
+        dispatch({ type: "CHANGE_IMAGE", file: compressedFile, preview: URL.createObjectURL(compressedFile) });
+      } catch (error) {
+        setError("La imagen es demasiado grande o no pudo comprimirse.");
+      }
     }
   };
 
