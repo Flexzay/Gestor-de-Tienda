@@ -1,5 +1,5 @@
 import { useReducer, useState } from "react";
-import { X, Image as ImageIcon, CheckCircle } from "lucide-react";
+import { X, Image as ImageIcon, CheckCircle, Trash2 } from "lucide-react";
 import { ProductFormData } from "../../../interface/product";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
 import { compressImage } from "../../../hooks/bashboard/useProduct";
@@ -8,8 +8,18 @@ const formReducer = (state: any, action: any) => {
   switch (action.type) {
     case "CHANGE_INPUT":
       return { ...state, [action.field]: action.value };
-    case "CHANGE_IMAGE":
-      return { ...state, image: action.file, preview: action.preview };
+    case "ADD_IMAGES":
+      return { 
+        ...state, 
+        images: [...state.images, ...action.files], 
+        previews: [...state.previews, ...action.previews] 
+      };
+    case "REMOVE_IMAGE":
+      return {
+        ...state,
+        images: state.images.filter((_img: any, index: number) => index !== action.index),
+        previews: state.previews.filter((_preview: any, index: number) => index !== action.index),
+      };
     case "RESET":
       return {
         name: action.initialData?.name || "",
@@ -17,8 +27,8 @@ const formReducer = (state: any, action: any) => {
         price: action.initialData?.price || "",
         category_id: action.initialData?.category?.id || "",
         available: action.initialData?.available ?? true,
-        image: null,
-        preview: action.initialData?.image || null,
+        images: [],
+        previews: [],
       };
     default:
       return state;
@@ -39,8 +49,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     price: initialData?.price || "",
     category_id: initialData?.category?.id || "",
     available: initialData?.available ?? true,
-    image: null as File | null,
-    preview: initialData?.images || null,
+    images: [],
+    previews: [],
   });
   
   const [step, setStep] = useState(1);
@@ -52,26 +62,22 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length > 0) {
       try {
-        const compressedFile = await compressImage(file);
-        const objectURL = URL.createObjectURL(compressedFile);
-  
-        // Liberar la URL anterior antes de actualizar el estado
-        if (formData.preview) {
-          URL.revokeObjectURL(formData.preview);
-        }
-  
-        dispatch({ type: "CHANGE_IMAGE", file: compressedFile, preview: objectURL });
-  
+        const compressedFiles = await Promise.all(files.map(file => compressImage(file)));
+        const previews = compressedFiles.map(file => URL.createObjectURL(file));
+        
+        dispatch({ type: "ADD_IMAGES", files: compressedFiles, previews });
       } catch (error) {
-        setError("La imagen es demasiado grande o no pudo comprimirse.");
+        setError("Algunas imágenes no pudieron comprimirse.");
       }
     }
   };
-  
-  
+
+  const removeImage = (index: number) => {
+    dispatch({ type: "REMOVE_IMAGE", index });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,11 +123,24 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
           {step === 2 && (
             <>
               <label className="block text-center border-2 border-dashed p-3 cursor-pointer">
-                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                 <ImageIcon size={40} />
-                <span>Subir imagen</span>
+                <span>Subir imágenes</span>
               </label>
-              {formData.preview && <img src={formData.preview} className="w-32 h-32 object-cover rounded-lg mx-auto" />}
+
+              <div className="flex flex-wrap gap-2 justify-center">
+                {formData.previews.map((preview: string, index: number) => (
+                  <div key={index} className="relative">
+                    <img src={preview} className="w-20 h-20 object-cover rounded-lg" />
+                    <button 
+                      type="button" 
+                      onClick={() => removeImage(index)} 
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </>
           )}
 

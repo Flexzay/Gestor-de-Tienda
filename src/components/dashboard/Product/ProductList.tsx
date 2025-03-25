@@ -16,9 +16,12 @@ interface ProductListProps {
   showTitle?: boolean;
 }
 
-const getImageUrl = (img: string) => (img.startsWith("http") ? img : `${environment.s3Storage}${img}`);
+const getImageUrl = (img?: string) => {
+  if (!img) return Domiduck;
+  return img.startsWith("http") ? img : `${environment.s3Storage}${img}`;
+};
 
-const ProductList: React.FC<ProductListProps> = ({ products, onEdit, showTitle = true }) => {
+const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, showTitle = true }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
@@ -26,7 +29,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, showTitle =
     const updateItemsPerPage = () => {
       setItemsPerPage(window.innerWidth >= 1024 ? 8 : 3);
     };
-
     updateItemsPerPage();
     window.addEventListener("resize", updateItemsPerPage);
     return () => window.removeEventListener("resize", updateItemsPerPage);
@@ -44,7 +46,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, showTitle =
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {currentProducts.map((product) => {
-          const images = product.images?.length ? product.images.map((img) => img.path) : [Domiduck];
+          const images = product.images?.length
+            ? product.images.map((img) => (typeof img === "string" ? img : img.path))
+            : [Domiduck];
 
           return (
             <div
@@ -52,15 +56,14 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, showTitle =
               className="relative bg-white shadow-lg rounded-xl overflow-hidden transition-all hover:scale-[1.03] hover:shadow-2xl border border-gray-200"
             >
               <div className="relative w-full h-56 bg-gray-100">
-                {/* Swiper con paginación y autoplay */}
                 <Swiper
                   modules={[Pagination, Autoplay]}
                   pagination={{ clickable: true }}
-                  autoplay={{ delay: 1000, disableOnInteraction: false }}
-                  className="w-full h-full"
+                  autoplay={{ delay: 2500, disableOnInteraction: false }}
                   spaceBetween={10}
                   slidesPerView={1}
-                  loop
+                  loop={images.length > 1} // ✅ Solo activa loop si hay más de 1 imagen
+                  className="w-full h-full"
                 >
                   {images.map((img, imgIndex) => (
                     <SwiperSlide key={imgIndex}>
@@ -74,12 +77,13 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, showTitle =
                   ))}
                 </Swiper>
 
-                {/* Categoría */}
-                {product.category?.name && (
-                  <span className="absolute bottom-3 left-3 bg-gray-800 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                {product.category && product.category.name ? (
+                  <span className="absolute bottom-3 left-3 bg-gray-800 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md z-10">
                     {product.category.name}
                   </span>
-                )}
+                ) : null}
+
+
               </div>
 
               <div className="px-6 py-4">
@@ -96,7 +100,10 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, showTitle =
                   >
                     <Pencil size={18} />
                   </button>
-                  <button className="bg-red-500 text-white p-2 rounded-lg shadow-md hover:bg-red-600 transition">
+                  <button
+                    onClick={() => onDelete?.(product.id)}
+                    className="bg-red-500 text-white p-2 rounded-lg shadow-md hover:bg-red-600 transition"
+                  >
                     <Trash2 size={18} />
                   </button>
                 </div>

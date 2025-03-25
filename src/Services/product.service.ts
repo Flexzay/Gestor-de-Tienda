@@ -7,31 +7,37 @@ const S3_BUCKET_URL = environment.s3Storage; // URL base de S3
 
 export const productService = {
   /**
-   * Subir imagen a S3 antes de crear el producto
+   * Subir imágenes a S3 antes de asociarlas al producto
    */
-  async uploadImage(productId: string | number, file: File) {
+  async uploadImages(productId: string | number, files: File[]) {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
 
-      const formData = new FormData();
-      formData.append("image", file);
+      const uploadedImages = [];
 
-      const response = await fetch(`${API_URL}/images/${productId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("image", file);
 
-      if (!response.ok) throw new Error(`Error al subir la imagen: ${response.statusText}`);
+        const response = await fetch(`${API_URL}/images/${productId}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
 
-      const data = await response.json();
-      if (!data.data?.path) throw new Error("La API no devolvió una ruta válida para la imagen.");
+        if (!response.ok) throw new Error(`Error al subir la imagen: ${response.statusText}`);
 
-      return `${S3_BUCKET_URL}${data.data.path}`;
+        const data = await response.json();
+        if (!data.data?.path) throw new Error("La API no devolvió una ruta válida para la imagen.");
+
+        uploadedImages.push(`${S3_BUCKET_URL}${data.data.path}`);
+      }
+
+      return uploadedImages;
     } catch (error) {
-      console.error("Error al subir imagen:", error);
-      return null;
+      console.error("Error al subir imágenes:", error);
+      return [];
     }
   },
 
@@ -46,7 +52,7 @@ export const productService = {
       const shopId = storageService.getShopId();
       if (!token || !shopId) throw new Error("Falta el token o el shopId.");
 
-      // 📌 1️⃣ Crear el producto sin imagen
+      // 📌 1️⃣ Crear el producto sin imágenes
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
         headers: {
@@ -66,27 +72,15 @@ export const productService = {
 
       const createdProduct = await response.json();
 
-      // 📌 2️⃣ Subir la imagen después de crear el producto
-      let imageUrl = null;
-      if (productData.image) {
-        imageUrl = await productService.uploadImage(createdProduct.data.id, productData.image);
-      }
-
-      // 📌 3️⃣ Asociar la imagen al producto
-      if (imageUrl) {
-        await fetch(`${API_URL}/${createdProduct.data.id}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ image: imageUrl }),
-        });
+      // 📌 2️⃣ Subir imágenes después de crear el producto
+      let imageUrls: string[] = [];
+      if (productData.images?.length) {
+        imageUrls = await productService.uploadImages(createdProduct.data.id, productData.images);
       }
 
       return {
         status: response.status,
-        data: { ...createdProduct.data, image: imageUrl || null },
+        data: { ...createdProduct.data, images: imageUrls },
       };
     } catch (error) {
       console.error("Error al crear producto:", error);
@@ -112,14 +106,11 @@ export const productService = {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
 
-      // Asegurar que todas las imágenes tienen la URL completa
       return {
         status: response.status,
         data: data.data.map((product: any) => ({
           ...product,
-          image: product.images?.length
-            ? `${S3_BUCKET_URL}${product.images[0].path}`
-            : null,
+          images: product.images?.length ? product.images.map((img: any) => `${S3_BUCKET_URL}${img.path}`) : [],
         })),
       };
     } catch (error: any) {
@@ -137,10 +128,10 @@ export const productService = {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
-  
+
       console.log("🔄 Actualizando producto...");
-  
-      // 1️⃣ Actualizar los datos básicos del producto (sin la imagen)
+
+      // 1️⃣ Actualizar los datos básicos del producto (sin imágenes)
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
         headers: {
@@ -155,53 +146,22 @@ export const productService = {
           available: productData.available,
         }),
       });
-  
-      const updatedProduct = await response.json();
-      if (!response.ok) throw new Error(updatedProduct.message || `Error ${response.status}`);
-  
-      console.log("✅ Producto actualizado con éxito:", updatedProduct);
-  
-      // 2️⃣ Si hay una nueva imagen, subirla
-      let imageUrl = null;
-      if (productData.images instanceof File) {
-        console.log("🖼️ Subiendo nueva imagen...");
-        imageUrl = await productService.uploadImage(productId, productData.images);
-  
-        if (imageUrl) {
-          console.log("📸 Imagen subida con éxito:", imageUrl);
-          console.log("🔄 Asociando imagen al producto...");
-  
-          // 3️⃣ Asociar la nueva imagen al producto
-          const imageUpdateResponse = await fetch(`${API_URL}/${productId}`, {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ image: imageUrl }),
-          });
-  
-          const imageUpdateData = await imageUpdateResponse.json();
-          if (!imageUpdateResponse.ok) throw new Error(imageUpdateData.message || `Error ${imageUpdateResponse.status}`);
-  
-          console.log("✅ Imagen actualizada en el producto:", imageUpdateData);
-        }
+
+      if (!response.ok) throw new Error("Error al actualizar el producto.");
+
+      let imageUrls: string[] = [];
+      if (productData.images && productData.images.length) {
+        console.log("🖼️ Subiendo nuevas imágenes...");
+        imageUrls = await productService.uploadImages(productId, productData.images);
       }
-  
-      // 4️⃣ Obtener el producto actualizado para confirmar el cambio
-      console.log("🔍 Obteniendo producto actualizado...");
-      const finalProduct = await productService.getProductById(productId);
-  
-      console.log("📦 Producto final después de actualización:", finalProduct);
-  
-      return { status: 200, data: finalProduct.data };
+
+      return { status: 200, data: { ...productData, images: imageUrls } };
     } catch (error: any) {
       console.error("❌ Error al actualizar producto:", error);
       return { status: 500, message: error.message || "Error al actualizar producto" };
     }
   },
-  
-  
+
 
   /**
    * Obtener detalles de un producto
