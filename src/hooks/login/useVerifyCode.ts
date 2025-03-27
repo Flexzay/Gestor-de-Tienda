@@ -38,7 +38,7 @@ export const useVerifyCode = () => {
 
       if (response.status === 200 && response.data?.data?.token) {
         localStorage.setItem("token", response.data.data.token);
-        setTimeout(() => navigate("/dashboard", { replace: true }), 500);
+        setTimeout(() => navigate("/select-store", { replace: true }), 500);
       } else {
         setMessage("Código inválido. Inténtalo de nuevo.");
         setInvalidCode(true);
