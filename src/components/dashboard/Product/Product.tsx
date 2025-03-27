@@ -41,13 +41,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
     images: [],
     previews: [],
   });
-  
+
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     dispatch({ type: "CHANGE_INPUT", field: e.target.name, value: e.target.value });
+    setFieldErrors({ ...fieldErrors, [e.target.name]: "" }); // Elimina errores al escribir
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +59,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
         const compressedFiles = await Promise.all(files.map(file => compressImage(file)));
         const previews = compressedFiles.map(file => URL.createObjectURL(file));
         dispatch({ type: "ADD_IMAGES", files: compressedFiles, previews });
+        setFieldErrors({ ...fieldErrors, images: "" }); // Elimina errores al subir imágenes
       } catch (error) {
         setError("Algunas imágenes no pudieron comprimirse.");
       }
@@ -65,6 +68,30 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
 
   const removeImage = (index: number) => {
     dispatch({ type: "REMOVE_IMAGE", index });
+  };
+
+  const validateStep = () => {
+    let errors: { [key: string]: string } = {};
+    
+    if (step === 0) {
+      if (!formData.name) errors.name = "El nombre es obligatorio.";
+      if (!formData.description) errors.description = "La descripción es obligatoria.";
+      if (!formData.price) errors.price = "El precio es obligatorio.";
+      if (!formData.category_id) errors.category_id = "Selecciona una categoría.";
+    }
+
+    if (step === 1 && formData.images.length === 0) {
+      errors.images = "Debes subir al menos una imagen.";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleNextStep = () => {
+    if (validateStep()) {
+      setStep(step + 1);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,17 +118,37 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
         <div className="flex justify-center mb-6">
           <CustomTimeline currentStep={step} />
         </div>
-        
+
         <div className="p-6">
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {step === 0 && (
               <>
-                <label className="block">Nombre<input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full p-3 border rounded-lg" /></label>
-                <label className="block">Descripción<textarea name="description" value={formData.description} onChange={handleChange} required className="w-full p-3 border rounded-lg" /></label>
-                <label className="block">Precio<input type="number" name="price" value={formData.price} onChange={handleChange} required className="w-full p-3 border rounded-lg" /></label>
-                <label className="block">Categoría<select name="category_id" value={formData.category_id} onChange={handleChange} required className="w-full p-3 border rounded-lg"><option value="">Selecciona una categoría</option>{filteredCategories.map(category => (<option key={category.id} value={category.id}>{category.name}</option>))}</select></label>
+                <label className="block">Nombre
+                  <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-3 border rounded-lg" />
+                  {fieldErrors.name && <p className="text-red-500 text-sm">{fieldErrors.name}</p>}
+                </label>
+
+                <label className="block">Descripción
+                  <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-3 border rounded-lg"></textarea>
+                  {fieldErrors.description && <p className="text-red-500 text-sm">{fieldErrors.description}</p>}
+                </label>
+
+                <label className="block">Precio
+                  <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full p-3 border rounded-lg" />
+                  {fieldErrors.price && <p className="text-red-500 text-sm">{fieldErrors.price}</p>}
+                </label>
+
+                <label className="block">Categoría
+                  <select name="category_id" value={formData.category_id} onChange={handleChange} className="w-full p-3 border rounded-lg">
+                    <option value="">Selecciona una categoría</option>
+                    {filteredCategories.map(category => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </select>
+                  {fieldErrors.category_id && <p className="text-red-500 text-sm">{fieldErrors.category_id}</p>}
+                </label>
               </>
             )}
 
@@ -112,31 +159,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
                   <Upload size={40} />
                   <span>Subir imágenes</span>
                 </label>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {formData.previews.map((preview, index) => (
-                    <div key={index} className="relative w-24 h-24">
-                      <img src={preview} alt={`preview-${index}`} className="w-full h-full object-cover rounded-lg" />
-                      <button type="button" onClick={() => removeImage(index)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div>
-                <h3 className="text-xl font-semibold">Confirmar Producto</h3>
-                <p><strong>Nombre:</strong> {formData.name}</p>
-                <p><strong>Descripción:</strong> {formData.description}</p>
-                <p><strong>Precio:</strong> ${formData.price}</p>
+                {fieldErrors.images && <p className="text-red-500 text-sm">{fieldErrors.images}</p>}
               </div>
             )}
 
             <div className="flex justify-between mt-6">
               {step > 0 && <button type="button" onClick={() => setStep(step - 1)} className="px-4 py-2 bg-gray-400 text-white rounded-lg">Atrás</button>}
-              {step < 2 ? <button type="button" onClick={() => setStep(step + 1)} className="px-4 py-2 bg-red-500 text-white rounded-lg">Siguiente</button> : <button type="submit" disabled={loading} className="px-4 py-2 bg-green-500 text-white rounded-lg">Guardar</button>}
+              {step < 2 
+                ? <button type="button" onClick={handleNextStep} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Siguiente</button> 
+                : <button type="submit" disabled={loading} className="px-4 py-2 bg-green-500 text-white rounded-lg">Guardar</button>}
             </div>
           </form>
         </div>
