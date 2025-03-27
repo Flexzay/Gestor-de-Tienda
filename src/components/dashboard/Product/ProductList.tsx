@@ -113,7 +113,17 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
         })}
       </div>
 
-      <Paginator currentPage={currentPage} totalItems={products.length} itemsPerPage={itemsPerPage} onPageChange={setCurrentPage} />
+      <Paginator
+        currentPage={currentPage}
+        totalItems={products.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={setCurrentPage}
+        onItemsPerPageChange={(value) => {
+          setItemsPerPage(value);
+          setCurrentPage(1); // Reiniciar a la primera página
+        }}
+      />
+
     </div>
   );
 };
