@@ -10,28 +10,23 @@ function Sidebar() {
 
   useEffect(() => {
     const storedShop = localStorage.getItem("shop_data");
-  
+
     if (storedShop) {
       const parsedShop = JSON.parse(storedShop);
       setShop({
-        name: parsedShop.name, 
+        name: parsedShop.name,
         image: parsedShop.media?.front?.path || "https://via.placeholder.com/150", // ✅ Usa la imagen o un placeholder
       });
     }
   }, []);
-  
-  
-  
-  
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="flex">
       <aside
-        className={`bg-gray-900 text-white w-72 min-h-screen p-5 fixed top-0 left-0 md:relative transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out z-50`}
+        className={`bg-gray-900 text-white w-72 min-h-screen p-5 fixed top-0 left-0 md:relative transform ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 transition-transform duration-300 ease-in-out z-50`}
       >
         <button
           className="md:hidden p-2 text-white bg-gray-700 absolute top-4 left-60 rounded-lg z-50"
@@ -49,13 +44,19 @@ function Sidebar() {
           </div>
         </div>
 
-        {/* Sección de la Tienda */}
+        {/* Sección de la Tienda en una barra separada debajo del logo */}
         {shop && (
-          <div className="flex flex-col items-center border-t border-gray-700 pt-4 mt-4">
-            <img src={shop.image} alt={shop.name} className="h-16 w-16 rounded-full object-cover mb-2" />
-            <span className="text-lg font-medium">{shop.name}</span>
+          <div className="flex items-center gap-3 p-4 bg-gray-800 rounded-lg shadow-md mt-4">
+            <img
+              src={shop.image}
+              alt={shop.name}
+              className="h-14 w-14 rounded-full object-cover border-2 border-[#ff204e] shadow-lg"
+            />
+            <span className="text-lg font-semibold text-white">{shop.name}</span>
           </div>
         )}
+
+
 
         {/* Menú de navegación */}
         <nav>
