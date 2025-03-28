@@ -10,8 +10,10 @@ export const categoriesService = {
   async getCategories() {
     try {
       const token = storageService.getToken();
-      const shopId = storageService.getShopId();
+      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
+      const shopId = shop.id;
       if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
+
 
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "GET",
@@ -33,8 +35,10 @@ export const categoriesService = {
   async createCategory(name: string) {
     try {
       const token = storageService.getToken();
-      const shopId = storageService.getShopId();
+      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
+      const shopId = shop.id;
       if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
+
 
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",

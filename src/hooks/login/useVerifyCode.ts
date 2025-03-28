@@ -37,9 +37,18 @@ export const useVerifyCode = () => {
       });
 
       if (response.status === 200 && response.data?.data?.token) {
-        localStorage.setItem("token", response.data.data.token);
-        setTimeout(() => navigate("/select-store", { replace: true }), 500);
-      } else {
+        const { token, shop } = response.data.data;
+      
+        localStorage.setItem("token", token);
+        if (shop?.id) localStorage.setItem("shop_id", String(shop.id));
+        if (shop?.name) localStorage.setItem("shop_name", shop.name);
+        if (shop?.image) localStorage.setItem("shop_image", shop.image);
+      
+        console.log("📌 Guardado en localStorage:", { shop });
+      
+        setTimeout(() => navigate("/dashboard", { replace: true }), 500);
+      }
+       else {
         setMessage("Código inválido. Inténtalo de nuevo.");
         setInvalidCode(true);
       }

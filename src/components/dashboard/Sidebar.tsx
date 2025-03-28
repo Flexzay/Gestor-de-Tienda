@@ -1,25 +1,38 @@
 import { Link, useLocation } from "react-router-dom";
-import {
-  Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu
-} from "lucide-react";
-import { useState } from "react";
-import Domiduck from "../../assets/img/horizontal-logo.svg"; // Importamos el logo
+import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu } from "lucide-react";
+import { useState, useEffect } from "react";
+import Domiduck from "../../assets/img/horizontal-logo.svg";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [shop, setShop] = useState<{ name: string; image: string } | null>(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const storedShop = localStorage.getItem("shop_data");
+  
+    if (storedShop) {
+      const parsedShop = JSON.parse(storedShop);
+      setShop({
+        name: parsedShop.name, 
+        image: parsedShop.media?.front?.path || "https://via.placeholder.com/150", // ✅ Usa la imagen o un placeholder
+      });
+    }
+  }, []);
+  
+  
+  
+  
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="flex">
-      {/* Sidebar */}
       <aside
         className={`bg-gray-900 text-white w-72 min-h-screen p-5 fixed top-0 left-0 md:relative transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out z-50`}
       >
-        {/* Botón para cerrar el Sidebar en móviles */}
         <button
           className="md:hidden p-2 text-white bg-gray-700 absolute top-4 left-60 rounded-lg z-50"
           onClick={() => setIsOpen(false)}
@@ -27,18 +40,22 @@ function Sidebar() {
           ✖
         </button>
 
-        {/* 🔹 Nueva presentación del logo más grande */}
+        {/* Logo de la tienda */}
         <div className="flex flex-col items-center mb-8">
           <div className="relative w-full flex justify-center">
             <div className="p-6 rounded-xl shadow-lg w-full flex justify-center">
-              <img
-                src={Domiduck}
-                alt="Domiduck"
-                className="w-40 h-auto drop-shadow-lg animate-fadeIn"
-              />
+              <img src={Domiduck} alt="Domiduck" className="w-40 h-auto drop-shadow-lg animate-fadeIn" />
             </div>
           </div>
         </div>
+
+        {/* Sección de la Tienda */}
+        {shop && (
+          <div className="flex flex-col items-center border-t border-gray-700 pt-4 mt-4">
+            <img src={shop.image} alt={shop.name} className="h-16 w-16 rounded-full object-cover mb-2" />
+            <span className="text-lg font-medium">{shop.name}</span>
+          </div>
+        )}
 
         {/* Menú de navegación */}
         <nav>
@@ -56,7 +73,7 @@ function Sidebar() {
                 <Link
                   to={item.path}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out 
-                    ${isActive(item.path) ? 'bg-[#ff204e] text-white' : 'hover:bg-[#ff204e] hover:shadow-lg hover:shadow-[#ff204e]/50'}`} 
+                    ${isActive(item.path) ? "bg-[#ff204e] text-white" : "hover:bg-[#ff204e] hover:shadow-lg hover:shadow-[#ff204e]/50"}`}
                   onClick={() => setIsOpen(false)}
                 >
                   <item.icon size={24} />

@@ -41,16 +41,18 @@ export const productService = {
     }
   },
 
-  
+
   /**
    * Crear un nuevo producto
    */
-  
+
   async createProduct(productData: any) {
     try {
       const token = storageService.getToken();
-      const shopId = storageService.getShopId();
-      if (!token || !shopId) throw new Error("Falta el token o el shopId.");
+      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
+      const shopId = shop.id;
+      if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
+
 
       // 📌 1️⃣ Crear el producto sin imágenes
       const response = await fetch(`${API_URL}/${shopId}`, {
@@ -87,7 +89,7 @@ export const productService = {
       return { status: 500, message: "Error al crear el producto" };
     }
   },
-  
+
 
   /**
    * Obtener todos los productos
@@ -95,8 +97,10 @@ export const productService = {
   async getProducts() {
     try {
       const token = storageService.getToken();
-      const shopId = storageService.getShopId();
-      if (!token || !shopId) throw new Error("Falta el token o el shopId.");
+      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
+      const shopId = shop.id;
+      if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
+
 
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "GET",
@@ -118,12 +122,12 @@ export const productService = {
       return { status: 500, message: error.message || "Error al obtener productos" };
     }
   },
-  
+
 
   /**
    * Actualizar un producto
    */
-  
+
   async updateProduct(productId: string | number, productData: ProductFormData) {
     try {
       const token = storageService.getToken();
@@ -169,8 +173,10 @@ export const productService = {
   async getProductById(productId: string | number) {
     try {
       const token = storageService.getToken();
-      const shopId = storageService.getShopId();
-      if (!token || !shopId) throw new Error("Falta el token o el shopId.");
+      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
+      const shopId = shop.id;
+      if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
+
 
       const response = await fetch(`${environment.baseUrl}/shop/${shopId}/product/detail/${productId}`, {
         method: "GET",

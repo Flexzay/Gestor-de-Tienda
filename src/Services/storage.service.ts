@@ -1,4 +1,5 @@
 export const storageService = {
+  // ✅ Guardar token
   setToken(token: string) {
     localStorage.setItem("token", token);
   },
@@ -15,16 +16,17 @@ export const storageService = {
     return !!localStorage.getItem("token");
   },
 
-  //  Guardar y obtener `shop_id`
-  setShopId(shopId: string) {
-    localStorage.setItem("shop_id", shopId);
+  // ✅ Guardar y obtener TODOS los datos de la tienda
+  setShopData(shopData: any) {
+    localStorage.setItem("shop_data", JSON.stringify(shopData));
   },
 
-  getShopId(): string | null {
-    return localStorage.getItem("shop_id");
+  getShopData(): any | null {
+    const data = localStorage.getItem("shop_data");
+    return data ? JSON.parse(data) : null;
   },
 
-  removeShopId() {
-    localStorage.removeItem("shop_id");
+  removeShopData() {
+    localStorage.removeItem("shop_data");
   }
 };

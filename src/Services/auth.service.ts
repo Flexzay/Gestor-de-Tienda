@@ -31,25 +31,31 @@ export const authService = {
     try {
       if (!userId || isNaN(userId)) throw new Error("❌ `userId` debe ser un número válido.");
       if (!code) throw new Error("❌ `code` es requerido.");
-
+  
       const response = await fetch(`${API_URL}/auth/phone/verify/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pin: code }),
       });
-
+  
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
-
+  
       const { token, shop } = data.data || {};
+      
       if (token) storageService.setToken(token);
-      if (shop?.id) storageService.setShopId(shop.id.toString());
-
+      if (shop) {
+        localStorage.setItem("shop_data", JSON.stringify(shop)); // ✅ Guarda TODO el objeto `shop`
+      }
+  
+      console.log("📌 Datos guardados en localStorage:", shop);
+  
       return { status: response.status, data };
     } catch (error: any) {
       return { status: 500, message: error.message || "Error en el servidor" };
     }
   },
+  
 
   /**
    *  Verificar si el usuario está autenticado
@@ -61,6 +67,7 @@ export const authService = {
    */
   logout: () => {
     storageService.removeToken();
-    storageService.removeShopId();
+    localStorage.removeItem("shop_data");  
   },
+  
 };
