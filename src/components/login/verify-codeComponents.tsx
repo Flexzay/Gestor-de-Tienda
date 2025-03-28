@@ -70,12 +70,12 @@ export function VerifyCodeComponent() {
                   {...register("pin", {
                     required: "Código es requerido",
                     pattern: {
-                      value: /^[0-9]{4,6}$/,
-                      message: "El código debe tener entre 4 y 6 dígitos",
+                      value: /^[0-9]{4,9}$/,
+                      message: "codigo inválido",
                     },
                   })}
-                  placeholder="123456"
-                  maxLength={6}
+                  placeholder="* * * * "
+                  maxLength={4}
                   inputMode="numeric"
                   className={`w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-[#FF2C59] focus:outline-none transition-all appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${errors.pin ? "border-red-500" : ""
                     }`}
