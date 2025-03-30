@@ -46,7 +46,7 @@ export const useVerifyCode = () => {
       
         console.log("📌 Guardado en localStorage:", { shop });
       
-        setTimeout(() => navigate("/dashboard", { replace: true }), 500);
+        setTimeout(() => navigate("/select-store", { replace: true }), 500);
       }
        else {
         setMessage("Código inválido. Inténtalo de nuevo.");
