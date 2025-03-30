@@ -47,9 +47,6 @@ export const authService = {
       if (shop) {
         localStorage.setItem("shop_data", JSON.stringify(shop)); // ✅ Guarda TODO el objeto `shop`
       }
-  
-      console.log("📌 Datos guardados en localStorage:", shop);
-  
       return { status: response.status, data };
     } catch (error: any) {
       return { status: 500, message: error.message || "Error en el servidor" };

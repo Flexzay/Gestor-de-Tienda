@@ -36,7 +36,7 @@ export const productService = {
 
       return uploadedImages;
     } catch (error) {
-      console.error("Error al subir imágenes:", error);
+      
       return [];
     }
   },
@@ -85,7 +85,7 @@ export const productService = {
         data: { ...createdProduct.data, images: imageUrls },
       };
     } catch (error) {
-      console.error("Error al crear producto:", error);
+      
       return { status: 500, message: "Error al crear el producto" };
     }
   },
@@ -118,7 +118,7 @@ export const productService = {
         })),
       };
     } catch (error: any) {
-      console.error("Error al obtener productos:", error);
+      
       return { status: 500, message: error.message || "Error al obtener productos" };
     }
   },
@@ -133,7 +133,7 @@ export const productService = {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
 
-      console.log("🔄 Actualizando producto...");
+      
 
       // 1️⃣ Actualizar los datos básicos del producto (sin imágenes)
       const response = await fetch(`${API_URL}/${productId}`, {
@@ -155,13 +155,13 @@ export const productService = {
 
       let imageUrls: string[] = [];
       if (productData.images && productData.images.length) {
-        console.log("🖼️ Subiendo nuevas imágenes...");
+
         imageUrls = await productService.uploadImages(productId, productData.images);
       }
 
       return { status: 200, data: { ...productData, images: imageUrls } };
     } catch (error: any) {
-      console.error("❌ Error al actualizar producto:", error);
+
       return { status: 500, message: error.message || "Error al actualizar producto" };
     }
   },
