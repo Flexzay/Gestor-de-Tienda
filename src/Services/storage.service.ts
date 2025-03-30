@@ -19,6 +19,7 @@ export const storageService = {
   // ✅ Guardar y obtener TODOS los datos de la tienda
   setShopData(shopData: any) {
     localStorage.setItem("shop_data", JSON.stringify(shopData));
+    console.log("shop_data", shopData);
   },
 
   getShopData(): any | null {

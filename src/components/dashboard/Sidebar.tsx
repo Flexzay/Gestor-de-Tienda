@@ -1,23 +1,26 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
+import { shopService } from "../../Services/shop.service"; 
 import Domiduck from "../../assets/img/horizontal-logo.svg";
 import domiduck from "../../assets/img/domiduck.svg";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [shop, setShop] = useState<{ name: string; image: string } | null>(null);
+  const [shop, setShop] = useState<{ name: string; image?: string } | null>(null);
   const location = useLocation();
 
   useEffect(() => {
-    const storedShop = localStorage.getItem("shop_data");
-    if (storedShop) {
-      const parsedShop = JSON.parse(storedShop);
-      setShop({
-        name: parsedShop.name,
-        image: parsedShop.media?.front?.path || domiduck,
-      });
-    }
+    const fetchShop = () => {
+      const shopData = shopService.getShopData();
+      if (shopData) {
+        setShop({
+          name: shopData.name,
+          image: shopService.getShopImage() || domiduck, // Si no hay imagen, usa la de respaldo
+        });
+      }
+    };
+    fetchShop();
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
@@ -48,6 +51,7 @@ function Sidebar() {
               src={shop.image}
               alt={shop.name}
               className="h-16 w-16 rounded-full object-cover border-2 border-[#ff204e] shadow-lg"
+              onError={(e) => (e.currentTarget.src = domiduck)} 
             />
             <span className="text-lg font-semibold text-white mt-2">{shop.name}</span>
             <Link to="/shop-profile" className="text-sm text-[#ff204e] hover:underline mt-1">

@@ -4,3 +4,4 @@ export const environment = {
     s3Storage : 'https://bucket-domiduck-s3.s3.amazonaws.com/'
 }
 
+ 

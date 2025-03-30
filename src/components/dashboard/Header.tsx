@@ -1,7 +1,7 @@
 import { Bell, Search, Menu, LogOut, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { authService } from "../../Services/auth.service";
-import { membership } from "../../Services/membership.service"; 
+import { shopService } from "../../Services/shop.service"; 
 import DuckIcon from "../../assets/img/ducks.svg";
 
 function Header() {
@@ -10,7 +10,7 @@ function Header() {
 
   useEffect(() => {
     const fetchBalance = async () => {
-      const balance = await membership.getBalance();
+      const balance = await shopService.getBalance();
       setDucks(balance);
     };
 
