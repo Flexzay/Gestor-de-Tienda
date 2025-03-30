@@ -6,7 +6,8 @@ import DuckIcon from "../../assets/img/ducks.svg";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [ducks, setDucks] = useState(0);
+  const [ducks, setDucks] = useState<number | null>(null);
+
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -44,12 +45,12 @@ function Header() {
       <div className="flex items-center space-x-4">
         {/* Contador de Ducks */}
         <div className="flex items-center bg-gray-100 rounded-full px-3 py-1">
-          <span className="text-lg font-bold text-gray-900">
-            {ducks !== null ? ducks.toLocaleString("de-DE") : "--"}
-          </span>
+  <span className="text-lg font-bold text-gray-900">
+    {ducks !== null ? ducks.toLocaleString("de-DE") : "--"}
+  </span>
+  <img src={DuckIcon} alt="Icono de patos" className="w-8 h-8 ml-2" />
+</div>
 
-          <img src={DuckIcon} alt="Icono de patos" className="w-8 h-8 ml-2" />
-        </div>
 
         <button className="relative p-2 text-gray-600 hover:text-[#ff204e] transition-colors">
           <Bell size={24} />
