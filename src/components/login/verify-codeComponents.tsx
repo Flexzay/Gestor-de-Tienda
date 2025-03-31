@@ -1,9 +1,21 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Lock, Loader2, Ban } from "lucide-react";
 import { useVerifyCode } from "../../hooks/login/useVerifyCode";
 import domiduck from "../../assets/img/domiduck.svg";
 
 export function VerifyCodeComponent() {
+  const navigate = useNavigate();
+  const [showAlert, setShowAlert] = useState(false);
+  const phoneNumber = localStorage.getItem("phone") || "";
+
+  // 🛑 Bloquear acceso manual si no hay teléfono en localStorage
+  useEffect(() => {
+    if (!phoneNumber) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate, phoneNumber]);
+
   const {
     register,
     handleSubmit,
@@ -14,9 +26,6 @@ export function VerifyCodeComponent() {
     onSubmit,
     backLogin,
   } = useVerifyCode();
-
-  const [showAlert, setShowAlert] = useState(false);
-  const phoneNumber = localStorage.getItem("phone") || "";
 
   useEffect(() => {
     setShowAlert(invalidCode);
@@ -59,7 +68,6 @@ export function VerifyCodeComponent() {
             Introduce el código enviado a tu número de teléfono: <strong>{phoneNumber}</strong>
           </p>
 
-
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="relative">
               <label className="block text-gray-700 font-medium mb-1">Código</label>
@@ -71,14 +79,13 @@ export function VerifyCodeComponent() {
                     required: "Código es requerido",
                     pattern: {
                       value: /^[0-9]{4,9}$/,
-                      message: "codigo inválido",
+                      message: "Código inválido",
                     },
                   })}
                   placeholder="* * * * "
                   maxLength={4}
                   inputMode="numeric"
-                  className={`w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-[#FF2C59] focus:outline-none transition-all appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${errors.pin ? "border-red-500" : ""
-                    }`}
+                  className={`w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-[#FF2C59] focus:outline-none transition-all appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${errors.pin ? "border-red-500" : ""}`}
                 />
               </div>
               {errors.pin && <p className="text-red-500 text-sm mt-2">{errors.pin.message}</p>}

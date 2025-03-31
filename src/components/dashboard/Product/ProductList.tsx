@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, ListCollapse } from "lucide-react";
 import { ProductFormData } from "../../../interface/product";
 import Paginator from "../Paginator";
 import Domiduck from "../../../assets/img/domiduck.svg";
@@ -62,7 +62,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                   autoplay={{ delay: 2500, disableOnInteraction: false }}
                   spaceBetween={10}
                   slidesPerView={1}
-                  loop={images.length > 1} // ✅ Solo activa loop si hay más de 1 imagen
+                  loop={images.length > 1} 
                   className="w-full h-full"
                 >
                   {images.map((img, imgIndex) => (
@@ -94,6 +94,12 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
               <div className="flex items-center justify-between px-6 py-3 bg-white border-t">
                 <span className="text-xl font-bold text-red-500">${product.price}</span>
                 <div className="flex space-x-2">
+                <button
+                    onClick={() => onEdit?.(product)}
+                    className="bg-green-500 text-white p-2 rounded-lg shadow-md hover:bg-green-600 transition"
+                  >
+                    <ListCollapse  size={18} />
+                  </button>
                   <button
                     onClick={() => onEdit?.(product)}
                     className="bg-blue-500 text-white p-2 rounded-lg shadow-md hover:bg-blue-600 transition"
