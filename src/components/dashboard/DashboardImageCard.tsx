@@ -22,7 +22,7 @@ const DashboardImageCard: React.FC = () => (
     <div className="relative z-10 text-center">
       <img src={Domiduck} alt="Domiduck Logo" className="w-28 h-28 mx-auto mb-2" />
       <h3 className="text-xl font-bold uppercase tracking-wide">Domiduck</h3>
-      <p className="text-sm opacity-80">Innovación y calidad en cada producto</p>
+      <p className="text-sm opacity-80">Innovación y calidad </p>
     </div>
   </motion.div>
 );
