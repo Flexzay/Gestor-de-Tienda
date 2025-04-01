@@ -4,7 +4,6 @@ import { ProductFormData } from "../../../interface/product";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
 import { compressImage } from "../../../hooks/bashboard/useProduct";
 import CustomTimeline from "../Timeline";
-import Category from "../../../interface/category";
 
 const formReducer = (state: any, action: any) => {
   switch (action.type) {
@@ -34,16 +33,16 @@ interface ProductFormProps {
 const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialData }) => {
   const { filteredCategories } = useCategories();
   // Modifica el useReducer inicial para incluir las imágenes existentes
-  const [formData, dispatch] = useReducer(formReducer, {
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-    price: initialData?.price || "",
-    category_id: initialData?.category_id|| "",
-    available: initialData?.available ?? true,
-    images: [],
-    previews: initialData?.images?.length ? initialData.images : [], // Mostrar imágenes existentes
-    existingImages: initialData?.images || [], // Guardar imágenes existentes
-  });
+const [formData, dispatch] = useReducer(formReducer, {
+  name: initialData?.name || "",
+  description: initialData?.description || "",
+  price: initialData?.price || "",
+  category_id: initialData?.category?.id || "",
+  available: initialData?.available ?? true,
+  images: [],
+  previews: initialData?.images?.length ? initialData.images : [], // Mostrar imágenes existentes
+  existingImages: initialData?.images || [], // Guardar imágenes existentes
+});
 
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -144,18 +143,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
                 </label>
 
                 <label className="block">Categoría
-                  <select
-                    name="category_id"
-                    value={formData.category_id}
-                    onChange={handleChange}
-                    className="w-full p-3 border rounded-lg"
-                  >
+                  <select name="category_id" value={formData.category_id} onChange={handleChange} className="w-full p-3 border rounded-lg">
                     <option value="">Selecciona una categoría</option>
-                    {filteredCategories.map((category: Category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                        {category.count_products && ` (${category.count_products})`}
-                      </option>
+                    {filteredCategories.map(category => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
                     ))}
                   </select>
                   {fieldErrors.category_id && <p className="text-red-500 text-sm">{fieldErrors.category_id}</p>}

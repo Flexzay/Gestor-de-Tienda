@@ -3,12 +3,7 @@ import { Pencil, Trash2, ListCollapse } from "lucide-react";
 import { ProductFormData } from "../../../interface/product";
 import Paginator from "../Paginator";
 import Domiduck from "../../../assets/img/domiduck.svg";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import { Pagination, Autoplay } from "swiper/modules";
 import { environment } from "../../../config/environmet";
-
 
 interface ProductListProps {
   products: ProductFormData[];
@@ -52,53 +47,40 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {currentProducts.map((product) => {
-          const images = product.images?.length
-            ? product.images.map((img) => (typeof img === "string" ? img : img.path))
-            : [Domiduck];
+          const firstImage = product.images?.length
+            ? typeof product.images[0] === "string" 
+              ? product.images[0] 
+              : product.images[0].path
+            : Domiduck;
 
           return (
             <div
               key={product.id}
               className="relative bg-white shadow-lg rounded-2xl overflow-hidden transition-all hover:scale-[1.03] hover:shadow-2xl border border-gray-200"
             >
-              {/* Imagen con categoría encima */}
+              {/* Product image */}
               <div className="relative w-full h-56 bg-gray-100">
-                <Swiper
-                  modules={[Pagination, Autoplay]}
-                  pagination={{ clickable: true }}
-                  autoplay={{ delay: 2500, disableOnInteraction: false }}
-                  spaceBetween={10}
-                  slidesPerView={1}
-                  loop={images.length > 1}
-                  className="w-full h-full"
-                >
-                  {images.map((img, imgIndex) => (
-                    <SwiperSlide key={imgIndex}>
-                      <img
-                        src={getImageUrl(img)}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                        alt={product.name}
-                        onError={(e) => (e.currentTarget.src = Domiduck)}
-                      />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                <img
+                  src={getImageUrl(firstImage)}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  alt={product.name}
+                  onError={(e) => (e.currentTarget.src = Domiduck)}
+                />
 
-                {/* Contenedor de categoría en la parte inferior izquierda de la imagen */}
-
+                {/* Category badge */}
                 <div className="absolute bottom-0 left-0 bg-black bg-opacity-70 text-white px-4 py-1 text-xs rounded-tl-2xl z-10">
                   {product.category?.name || "Sin categoría"}
                   {product.category?.count_products && ` · ${product.category.count_products} productos`}
                 </div>
               </div>
 
-              {/* Información del producto */}
+              {/* Product information */}
               <div className="px-6 py-4">
                 <h4 className="text-lg font-bold text-gray-900 truncate">{product.name}</h4>
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
               </div>
 
-              {/* Precio y botones de acción */}
+              {/* Price and action buttons */}
               <div className="flex items-center justify-between px-6 py-3 bg-white border-t">
                 <span className="text-xl font-bold text-red-500">${product.price}</span>
                 <div className="flex space-x-2">
@@ -134,7 +116,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
         onPageChange={setCurrentPage}
         onItemsPerPageChange={(value) => {
           setItemsPerPage(value);
-          setCurrentPage(1); // Reiniciar a la primera página
+          setCurrentPage(1); // Reset to first page
         }}
       />
     </div>
