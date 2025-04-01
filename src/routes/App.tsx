@@ -13,6 +13,7 @@ import PaymentMethodPage from '../pages/dashboard/paymentMetthod-page';
 import ExpensesIncomePage from '../pages/dashboard/receipts-page';
 import SalesPage from '../pages/dashboard/sales-page';
 
+
 const App = () => {
   return (
     <Routes>
