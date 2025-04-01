@@ -25,7 +25,7 @@ const getImageUrl = (img?: string) => {
 const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, showTitle = true }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
-  const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);  // Estado para el producto seleccionado
+  const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -43,7 +43,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
   }, [products, currentPage, itemsPerPage]);
 
   const handleProductSelect = (product: ProductFormData) => {
-    setSelectedProduct(product);  // Establece el producto seleccionado
+    setSelectedProduct(product);
   };
 
   return (
@@ -59,8 +59,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
           return (
             <div
               key={product.id}
-              className="relative bg-white shadow-lg rounded-xl overflow-hidden transition-all hover:scale-[1.03] hover:shadow-2xl border border-gray-200"
+              className="relative bg-white shadow-lg rounded-2xl overflow-hidden transition-all hover:scale-[1.03] hover:shadow-2xl border border-gray-200"
             >
+              {/* Imagen con categoría encima */}
               <div className="relative w-full h-56 bg-gray-100">
                 <Swiper
                   modules={[Pagination, Autoplay]}
@@ -68,7 +69,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                   autoplay={{ delay: 2500, disableOnInteraction: false }}
                   spaceBetween={10}
                   slidesPerView={1}
-                  loop={images.length > 1} 
+                  loop={images.length > 1}
                   className="w-full h-full"
                 >
                   {images.map((img, imgIndex) => (
@@ -82,18 +83,25 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                     </SwiperSlide>
                   ))}
                 </Swiper>
+
+                {/* Contenedor de categoría en la parte inferior izquierda de la imagen */}
+                <div className="absolute bottom-0 left-0 bg-black bg-opacity-70 text-white px-4 py-1 text-xs rounded-tl-2xl z-10">
+                  {product.category?.name || "Sin categoría"}
+                </div>
               </div>
 
+              {/* Información del producto */}
               <div className="px-6 py-4">
                 <h4 className="text-lg font-bold text-gray-900 truncate">{product.name}</h4>
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
               </div>
 
+              {/* Precio y botones de acción */}
               <div className="flex items-center justify-between px-6 py-3 bg-white border-t">
                 <span className="text-xl font-bold text-red-500">${product.price}</span>
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleProductSelect(product)}  
+                    onClick={() => handleProductSelect(product)}
                     className="bg-green-500 text-white p-2 rounded-lg shadow-md hover:bg-green-600 transition"
                   >
                     <ListCollapse size={18} />
@@ -127,8 +135,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
           setCurrentPage(1); // Reiniciar a la primera página
         }}
       />
-
-      
     </div>
   );
 };
