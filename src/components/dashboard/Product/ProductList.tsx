@@ -8,7 +8,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import { environment } from "../../../config/environmet";
-import ProductDetail from "./ProductDatail";  // Asegúrate de importar el componente de detalles
+
 
 interface ProductListProps {
   products: ProductFormData[];
@@ -128,8 +128,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
         }}
       />
 
-      {/* Mostrar el detalle del producto seleccionado si existe */}
-      {selectedProduct && <ProductDetail product={selectedProduct} />}
+      
     </div>
   );
 };
