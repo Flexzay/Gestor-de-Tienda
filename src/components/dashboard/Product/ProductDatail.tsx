@@ -1,19 +1,19 @@
-import { ShoppingCart, CreditCard } from "lucide-react"; // Importar íconos de Lucide
+import { ShoppingCart, CreditCard } from "lucide-react"; 
 
-export default function ProductDetail({ product }) {
-  // Producto de ejemplo para demostración
-  const demoProduct = {
-    id: "1",
-    name: "Cámara Digital Profesional",
-    description:
-      "Cámara digital de alta resolución con zoom óptico 10x, perfecta para fotografía profesional. Incluye múltiples modos de captura y grabación de video en 4K.",
-    price: 599.99,
-    category: "Electrónica",
-    imageUrl: "https://via.placeholder.com/600",
+interface ProductDetailProps {
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;  // Asegúrate de que price sea un número, no un objeto
+    category: string;
+    imageUrl: string;
   };
+}
 
-  // Usar el producto proporcionado o el de demostración
-  const productData = product || demoProduct;
+export default function ProductDetail({ product }: ProductDetailProps) {
+  // Asegúrate de que el precio es un número
+  const price = typeof product.price === "number" ? product.price : parseFloat(product.price);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -22,8 +22,8 @@ export default function ProductDetail({ product }) {
           {/* Imagen del producto */}
           <div className="relative w-full h-96 bg-gray-200 flex items-center justify-center">
             <img
-              src={productData.imageUrl || "https://via.placeholder.com/600"}
-              alt={productData.name}
+              src={product.imageUrl || "https://via.placeholder.com/600"}
+              alt={product.name}
               className="object-cover w-full h-full rounded-l-lg"
             />
           </div>
@@ -34,17 +34,17 @@ export default function ProductDetail({ product }) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="px-3 py-1 text-sm font-medium bg-gray-200 rounded-full">
-                    {productData.category}
+                    {product.category}
                   </span>
                   <span className="text-2xl font-bold text-red-500">
-                    ${productData.price.toFixed(2)}
+                    ${isNaN(price) ? "Precio no disponible" : price.toFixed(2)} {/* Verifica si el precio es un número válido */}
                   </span>
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight">{productData.name}</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
               </div>
               <div className="pt-4">
                 <h2 className="text-xl font-semibold mb-2">Descripción</h2>
-                <p className="text-gray-600 leading-relaxed">{productData.description}</p>
+                <p className="text-gray-600 leading-relaxed">{product.description}</p>
               </div>
             </div>
 

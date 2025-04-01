@@ -8,6 +8,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import { environment } from "../../../config/environmet";
+import ProductDetail from "./ProductDatail";  // Asegúrate de importar el componente de detalles
 
 interface ProductListProps {
   products: ProductFormData[];
@@ -24,6 +25,7 @@ const getImageUrl = (img?: string) => {
 const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, showTitle = true }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);  // Estado para el producto seleccionado
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -39,6 +41,10 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
     const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
     return products.slice(indexOfFirstProduct, indexOfLastProduct);
   }, [products, currentPage, itemsPerPage]);
+
+  const handleProductSelect = (product: ProductFormData) => {
+    setSelectedProduct(product);  // Establece el producto seleccionado
+  };
 
   return (
     <div className="mt-8 w-full pb-30">
@@ -76,14 +82,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                     </SwiperSlide>
                   ))}
                 </Swiper>
-
-                {product.category && product.category.name ? (
-                  <span className="absolute bottom-3 left-3 bg-gray-800 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md z-10">
-                    {product.category.name}
-                  </span>
-                ) : null}
-
-
               </div>
 
               <div className="px-6 py-4">
@@ -94,11 +92,11 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
               <div className="flex items-center justify-between px-6 py-3 bg-white border-t">
                 <span className="text-xl font-bold text-red-500">${product.price}</span>
                 <div className="flex space-x-2">
-                <button
-                    onClick={() => onEdit?.(product)}
+                  <button
+                    onClick={() => handleProductSelect(product)}  
                     className="bg-green-500 text-white p-2 rounded-lg shadow-md hover:bg-green-600 transition"
                   >
-                    <ListCollapse  size={18} />
+                    <ListCollapse size={18} />
                   </button>
                   <button
                     onClick={() => onEdit?.(product)}
@@ -130,6 +128,8 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
         }}
       />
 
+      {/* Mostrar el detalle del producto seleccionado si existe */}
+      {selectedProduct && <ProductDetail product={selectedProduct} />}
     </div>
   );
 };
