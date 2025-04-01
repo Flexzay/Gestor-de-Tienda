@@ -8,7 +8,9 @@ import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
 
 const DashboardContent: React.FC = () => {
-  const { products, createProduct, updateProduct, fetchProducts } = useProduct();
+  const { products, createProduct, updateProduct, fetchProducts } = useProduct({});
+
+
   // deleteProduct debe ir despues de createProduct y updateProduct a la hora de implementar la funcion de eliminar producto
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);

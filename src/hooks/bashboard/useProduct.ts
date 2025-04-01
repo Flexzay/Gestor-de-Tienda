@@ -1,22 +1,51 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { productService } from "../../Services/product.service";
 import { ProductFormData } from "../../interface/product";
 
-const useProduct = () => {
+const formReducer = (state: any, action: any) => {
+  switch (action.type) {
+    case "CHANGE_INPUT":
+      return { ...state, [action.field]: action.value };
+    case "ADD_IMAGES":
+      return {
+        ...state,
+        images: [...state.images, ...action.files],
+        previews: [...state.previews, ...action.previews],
+      };
+    case "REMOVE_IMAGE":
+      return {
+        ...state,
+        images: state.images.filter((_img: any, index: number) => index !== action.index),
+        previews: state.previews.filter((_preview: any, index: number) => index !== action.index),
+      };
+    default:
+      return state;
+  }
+};
+
+const useProduct = ({ onSubmit, initialData, onClose }) => {
   const [products, setProducts] = useState<ProductFormData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
-  // Obtener la lista de productos
+  const [formData, dispatch] = useReducer(formReducer, {
+    name: initialData?.name || "",
+    description: initialData?.description || "",
+    price: initialData?.price || "",
+    category_id: initialData?.category?.id || "",
+    available: initialData?.available ?? true,
+    images: [],
+    previews: initialData?.images?.length ? initialData.images : [],
+    existingImages: initialData?.images || [],
+  });
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await productService.getProducts();
-      if (response.status === 200 && response.data) {
-        setProducts(Array.isArray(response.data) ? response.data : response.data.data || []);
-      } else {
-        setProducts([]);
-      }
+      setProducts(response.status === 200 && response.data ? (Array.isArray(response.data) ? response.data : response.data.data || []) : []);
     } catch (error) {
       console.error("Error al obtener productos:", error);
       setError("Error al obtener productos");
@@ -25,53 +54,85 @@ const useProduct = () => {
     }
   };
 
-  // Crear un nuevo producto
-  const createProduct = async (formData: ProductFormData) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    dispatch({ type: "CHANGE_INPUT", field: e.target.name, value: e.target.value });
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length > 0) {
+      try {
+        const compressedFiles = await Promise.all(files.map(file => compressImage(file)));
+        const previews = compressedFiles.map(file => URL.createObjectURL(file));
+        dispatch({ type: "ADD_IMAGES", files: compressedFiles, previews });
+        setFieldErrors((prev) => ({ ...prev, images: "" }));
+      } catch (error) {
+        setError("Algunas imágenes no pudieron comprimirse.");
+      }
+    }
+  };
+
+  const removeImage = (index: number) => {
+    dispatch({ type: "REMOVE_IMAGE", index });
+  };
+
+  const handleNextStep = () => {
+    setStep((prev) => prev + 1);
+  };
+
+  const handlePrevStep = () => {
+    setStep((prev) => prev - 1);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      onSubmit(formData);
+      onClose();
+    } catch (error) {
+      setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createProduct = async (product: ProductFormData) => {
     setLoading(true);
     try {
-      const response = await productService.createProduct(formData);
-      if (response.data) {
-        setProducts((prevProducts) => [...prevProducts, response.data]);
+      const response = await productService.createProduct(product);
+      if (response.status === 201) {
+        fetchProducts(); // Actualizar lista después de crear un producto
       }
     } catch (error) {
       console.error("Error al crear producto:", error);
-      setError("Error al crear producto");
+      setError("No se pudo crear el producto.");
     } finally {
       setLoading(false);
     }
   };
-
-  // Actualizar un producto existente
-  const updateProduct = async (id: number, formData: ProductFormData) => {
+  
+  const updateProduct = async (id: string, product: ProductFormData) => {
     setLoading(true);
     try {
-      const response = await productService.updateProduct(id, formData);
-      if (response.data) {
-        await fetchProducts(); // Recargar productos después de actualizar
+      const response = await productService.updateProduct(id, product);
+      if (response.status === 200) {
+        fetchProducts(); // Actualizar lista después de editar un producto
       }
     } catch (error) {
       console.error("Error al actualizar producto:", error);
-      setError("Error al actualizar producto");
+      setError("No se pudo actualizar el producto.");
     } finally {
       setLoading(false);
     }
   };
+  
 
-    // Eliminar un producto
-  // const deleteProduct = async (id: number) => {
-  //   setLoading(true);
-  //   try {
-  //     await productService.deleteProduct(id);
-  //     setProducts((prevProducts) =>
-  //       prevProducts.filter((product) => product.id !== id)
-  //     );
-  //   } catch (error) {
-  //     console.error("Error al eliminar producto:", error);
-  //     setError("Error al eliminar producto");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+
+
+
 
 
   useEffect(() => {
@@ -83,8 +144,17 @@ const useProduct = () => {
     loading,
     error,
     fetchProducts,
+    formData,
+    step,
+    fieldErrors,
     createProduct,
     updateProduct,
+    handleChange,
+    handleImageChange,
+    removeImage,
+    handleNextStep,
+    handlePrevStep,
+    handleSubmit,
   };
 };
 
@@ -98,18 +168,13 @@ export const compressImage = (file: File, maxSizeMB = 3, quality = 0.8): Promise
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
-        if (!ctx) {
-          reject(new Error("No se pudo obtener el contexto del canvas."));
-          return;
-        }
+        if (!ctx) return reject(new Error("No se pudo obtener el contexto del canvas."));
 
         const maxWidth = 1200;
         const maxHeight = 1200;
         let width = img.width;
         let height = img.height;
 
-        // Ajustar tamaño manteniendo la proporción
         if (width > maxWidth || height > maxHeight) {
           const ratio = Math.min(maxWidth / width, maxHeight / height);
           width *= ratio;
@@ -120,35 +185,26 @@ export const compressImage = (file: File, maxSizeMB = 3, quality = 0.8): Promise
         canvas.height = height;
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Función para comprimir con calidad ajustable
         const compress = (currentQuality: number) => {
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                const compressedSizeMB = blob.size / (1024 * 1024);
-
-                if (compressedSizeMB <= maxSizeMB || currentQuality <= 0.2) {
-                  resolve(new File([blob], file.name, { type: "image/jpeg" }));
-                } else {
-                  // Reducir calidad y volver a intentar
-                  compress(currentQuality - 0.1);
-                }
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const compressedSizeMB = blob.size / (1024 * 1024);
+              if (compressedSizeMB <= maxSizeMB || currentQuality <= 0.2) {
+                resolve(new File([blob], file.name, { type: "image/jpeg" }));
               } else {
-                reject(new Error("Error al comprimir la imagen."));
+                compress(currentQuality - 0.1);
               }
-            },
-            "image/jpeg",
-            currentQuality
-          );
+            } else {
+              reject(new Error("Error al comprimir la imagen."));
+            }
+          }, "image/jpeg", currentQuality);
         };
 
-        // Iniciar la compresión con la calidad inicial
         compress(quality);
       };
     };
     reader.onerror = (error) => reject(error);
   });
 };
-
 
 export default useProduct;
