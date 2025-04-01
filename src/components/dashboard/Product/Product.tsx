@@ -72,7 +72,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
 
   const validateStep = () => {
     let errors: { [key: string]: string } = {};
-    
+
     if (step === 0) {
       if (!formData.name) errors.name = "El nombre es obligatorio.";
       if (!formData.description) errors.description = "La descripción es obligatoria.";
@@ -159,14 +159,34 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
                   <Upload size={40} />
                   <span>Subir imágenes</span>
                 </label>
+
                 {fieldErrors.images && <p className="text-red-500 text-sm">{fieldErrors.images}</p>}
+
+                <div className="mt-4">
+                  {/* Mostrar las imágenes cargadas */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {formData.previews.map((preview, index) => (
+                      <div key={index} className="relative">
+                        <img src={preview} alt={`Imagen previa ${index}`} className="w-full h-32 object-cover rounded-lg" />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
+
             <div className="flex justify-between mt-6">
               {step > 0 && <button type="button" onClick={() => setStep(step - 1)} className="px-4 py-2 bg-gray-400 text-white rounded-lg">Atrás</button>}
-              {step < 2 
-                ? <button type="button" onClick={handleNextStep} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Siguiente</button> 
+              {step < 2
+                ? <button type="button" onClick={handleNextStep} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Siguiente</button>
                 : <button type="submit" disabled={loading} className="px-4 py-2 bg-green-500 text-white rounded-lg">Guardar</button>}
             </div>
           </form>
