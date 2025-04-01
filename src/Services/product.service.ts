@@ -9,12 +9,12 @@ export const productService = {
   /**
    * Subir imágenes a S3 antes de asociarlas al producto
    */
-  async uploadImages(productId: string | number, files: File[]) {
+  async uploadImages(productId: string | number, files: File[]): Promise<string[]> {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
 
-      const uploadedImages = [];
+      const uploadedImages: string[] = [];
 
       for (const file of files) {
         const formData = new FormData();
@@ -26,17 +26,21 @@ export const productService = {
           body: formData,
         });
 
-        if (!response.ok) throw new Error(`Error al subir la imagen: ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Error al subir la imagen: ${response.statusText}`);
+        }
 
         const data = await response.json();
-        if (!data.data?.path) throw new Error("La API no devolvió una ruta válida para la imagen.");
+        if (!data.data?.path) {
+          throw new Error("La API no devolvió una ruta válida para la imagen.");
+        }
 
         uploadedImages.push(`${S3_BUCKET_URL}${data.data.path}`);
       }
 
       return uploadedImages;
     } catch (error) {
-      
+      console.error("Error uploading images:", error);
       return [];
     }
   },
@@ -46,15 +50,17 @@ export const productService = {
    * Crear un nuevo producto
    */
 
-  async createProduct(productData: any) {
+  async createProduct(productData: ProductFormData) {
     try {
       const token = storageService.getToken();
       const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
       const shopId = shop.id;
-      if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
+      
+      if (!token || !shopId) {
+        throw new Error("Falta el token o el shop_id.");
+      }
 
-
-      // 📌 1️⃣ Crear el producto sin imágenes
+      // 1. Crear el producto sin imágenes
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
         headers: {
@@ -65,8 +71,11 @@ export const productService = {
           name: productData.name,
           description: productData.description,
           price: productData.price,
-          category_id: productData.category_id,
+          category_id: productData.category_id, // Enviamos solo el ID
           available: productData.available,
+          brand: productData.brand,
+          stock: productData.stock,
+          expirationDate: productData.expirationDate,
         }),
       });
 
@@ -74,19 +83,37 @@ export const productService = {
 
       const createdProduct = await response.json();
 
-      // 📌 2️⃣ Subir imágenes después de crear el producto
+      // 2. Subir imágenes si existen
       let imageUrls: string[] = [];
-      if (productData.images?.length) {
-        imageUrls = await productService.uploadImages(createdProduct.data.id, productData.images);
+      const filesToUpload = productData.images.filter(img => img instanceof File) as File[];
+      
+      if (filesToUpload.length) {
+        imageUrls = await this.uploadImages(createdProduct.data.id, filesToUpload);
       }
+
+      // Combinar imágenes existentes con las nuevas
+      const allImages = [
+        ...(productData.existingImages || []),
+        ...imageUrls
+      ];
 
       return {
         status: response.status,
-        data: { ...createdProduct.data, images: imageUrls },
+        data: { 
+          ...createdProduct.data, 
+          images: allImages,
+          category: {
+            id: productData.category_id,
+            name: "", // Se completará cuando se obtenga el producto
+          }
+        },
       };
     } catch (error) {
-      
-      return { status: 500, message: "Error al crear el producto" };
+      console.error("Error creating product:", error);
+      return { 
+        status: 500, 
+        message: error instanceof Error ? error.message : "Error al crear el producto" 
+      };
     }
   },
 
@@ -99,8 +126,10 @@ export const productService = {
       const token = storageService.getToken();
       const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
       const shopId = shop.id;
-      if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
-
+      
+      if (!token || !shopId) {
+        throw new Error("Falta el token o el shop_id.");
+      }
 
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "GET",
@@ -108,18 +137,31 @@ export const productService = {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+      
+      if (!response.ok) {
+        throw new Error(data.message || `Error ${response.status}`);
+      }
 
       return {
         status: response.status,
         data: data.data.map((product: any) => ({
           ...product,
-          images: product.images?.length ? product.images.map((img: any) => `${S3_BUCKET_URL}${img.path}`) : [],
+          images: product.images?.length 
+            ? product.images.map((img: any) => `${S3_BUCKET_URL}${img.path}`) 
+            : [],
+          category: product.category || {
+            id: product.category_id,
+            name: product.category_name || "Sin categoría",
+            count_products: product.category_count
+          }
         })),
       };
     } catch (error: any) {
-      
-      return { status: 500, message: error.message || "Error al obtener productos" };
+      console.error("Error getting products:", error);
+      return { 
+        status: 500, 
+        message: error.message || "Error al obtener productos" 
+      };
     }
   },
 
@@ -133,9 +175,7 @@ export const productService = {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
 
-      
-
-      // 1️⃣ Actualizar los datos básicos del producto (sin imágenes)
+      // 1. Actualizar datos básicos
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
         headers: {
@@ -146,23 +186,44 @@ export const productService = {
           name: productData.name,
           description: productData.description,
           price: productData.price,
-          category_id: productData.category,
+          category_id: productData.category_id, // Corregido: usar category_id en lugar de category
           available: productData.available,
+          brand: productData.brand,
+          stock: productData.stock,
+          expirationDate: productData.expirationDate,
         }),
       });
 
       if (!response.ok) throw new Error("Error al actualizar el producto.");
 
-      let imageUrls: string[] = [];
-      if (productData.images && productData.images.length) {
-
-        imageUrls = await productService.uploadImages(productId, productData.images);
+      // 2. Manejo de imágenes
+      let allImages = [...(productData.existingImages || [])];
+      
+      // Subir nuevas imágenes
+      const filesToUpload = productData.images.filter(img => img instanceof File) as File[];
+      if (filesToUpload.length) {
+        const uploadedImages = await this.uploadImages(productId, filesToUpload);
+        allImages = [...allImages, ...uploadedImages];
       }
 
-      return { status: 200, data: { ...productData, images: imageUrls } };
+      return { 
+        status: 200, 
+        data: { 
+          ...productData,
+          id: productId,
+          images: allImages,
+          category: productData.category || {
+            id: productData.category_id,
+            name: "",
+          }
+        } 
+      };
     } catch (error: any) {
-
-      return { status: 500, message: error.message || "Error al actualizar producto" };
+      console.error("Error updating product:", error);
+      return { 
+        status: 500, 
+        message: error.message || "Error al actualizar producto" 
+      };
     }
   },
 

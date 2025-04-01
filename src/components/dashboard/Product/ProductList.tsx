@@ -85,8 +85,10 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                 </Swiper>
 
                 {/* Contenedor de categoría en la parte inferior izquierda de la imagen */}
+
                 <div className="absolute bottom-0 left-0 bg-black bg-opacity-70 text-white px-4 py-1 text-xs rounded-tl-2xl z-10">
                   {product.category?.name || "Sin categoría"}
+                  {product.category?.count_products && ` · ${product.category.count_products} productos`}
                 </div>
               </div>
 

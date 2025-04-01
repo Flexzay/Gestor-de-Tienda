@@ -1,14 +1,17 @@
+import Category from './category'; 
+
 export interface ProductFormData {
   id?: number;
   name: string;
-  category: { id: number; name: string };
+  category_id: number; 
+  category?: Category; 
   brand: string;
   stock: number;
   expirationDate?: string;
-  available : boolean;
+  available: boolean;
   price: number;
   description: string;
-  images: string | null;
+  images: (string | File)[];
+  existingImages?: string[];
+  previews?: string[];
 }
-
-export default ProductFormData;
