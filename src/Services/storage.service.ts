@@ -29,5 +29,11 @@ export const storageService = {
 
   removeShopData() {
     localStorage.removeItem("shop_data");
+  },
+
+  // ✅ Nuevo método para obtener el shopId
+  getShopId(): string | null {
+    const shopData = this.getShopData();
+    return shopData?.id || null;
   }
 };

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import PaymentMethodsService from "../../Services/paymentMethods.service";
 import type { PaymentMethod } from "../../interface/paymentMethod";
 
 const usePaymentMethods = () => {
@@ -14,6 +15,19 @@ const usePaymentMethods = () => {
   });
   const [imageSelected, setImageSelected] = useState<string | null>(null);
   const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    fetchPaymentMethods();
+  }, []);
+
+  const fetchPaymentMethods = async () => {
+    try {
+      const methods = await PaymentMethodsService.getPaymentMethods();
+      setPaymentMethods(methods);
+    } catch (error) {
+      console.error("Error al obtener los métodos de pago", error);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -40,22 +54,24 @@ const usePaymentMethods = () => {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    if (editingMethod) {
-      setPaymentMethods(paymentMethods.map((method) => (method.id === editingMethod.id ? { ...method, ...formData } : method)));
-      setEditingMethod(null);
-    } else {
-      const newMethod: PaymentMethod = {
-        id: Date.now(),
-        ...formData,
-        status: true,
-      };
-      setPaymentMethods([...paymentMethods, newMethod]);
+    try {
+      if (editingMethod) {
+        await PaymentMethodsService.updatePaymentMethod(editingMethod.id, formData);
+      } else {
+        await PaymentMethodsService.createPaymentMethod(formData);
+      }
+      fetchPaymentMethods();
+      resetForm();
+    } catch (error) {
+      console.error("Error al guardar el método de pago", error);
     }
+  };
 
+  const resetForm = () => {
     setFormData({
       name_account: "",
       entidad: "",
@@ -65,10 +81,16 @@ const usePaymentMethods = () => {
       link_payment: "",
     });
     setImageSelected(null);
+    setEditingMethod(null);
   };
 
-  const toggleActive = (method: PaymentMethod) => {
-    setPaymentMethods(paymentMethods.map((m) => (m.id === method.id ? { ...m, status: !m.status } : m)));
+  const toggleActive = async (method: PaymentMethod) => {
+    try {
+      await PaymentMethodsService.changeStatusPaymentMethod(method.id);
+      fetchPaymentMethods();
+    } catch (error) {
+      console.error("Error al cambiar el estado del método de pago", error);
+    }
   };
 
   const editPaymentMethod = (method: PaymentMethod) => {
@@ -84,8 +106,13 @@ const usePaymentMethods = () => {
     setImageSelected(method.qr_code || null);
   };
 
-  const deletePaymentMethod = (id: number) => {
-    setPaymentMethods(paymentMethods.filter((m) => m.id !== id));
+  const deletePaymentMethod = async (id: number) => {
+    try {
+      await PaymentMethodsService.deletePaymentMethod(id);
+      fetchPaymentMethods();
+    } catch (error) {
+      console.error("Error al eliminar el método de pago", error);
+    }
   };
 
   return {
