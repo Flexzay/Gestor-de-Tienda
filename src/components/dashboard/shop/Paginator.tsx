@@ -1,5 +1,5 @@
 import React from "react";
-import PaginatorProps from "../../interface/paginator";
+import PaginatorProps from "../../../interface/paginator";
 
 const Paginator: React.FC<PaginatorProps> = ({ 
   currentPage, 
