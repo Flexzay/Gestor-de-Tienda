@@ -2,7 +2,7 @@
 import { X, Upload, Trash2 } from "lucide-react";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
 import useProduct from "../../../hooks/bashboard/useProduct";
-import CustomTimeline from "../Timeline";
+import CustomTimeline from "../shop/Timeline";
 
 const ProductForm = ({ onClose, onSubmit, initialData }) => {
   const { filteredCategories } = useCategories();

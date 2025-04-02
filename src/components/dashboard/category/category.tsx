@@ -1,7 +1,7 @@
 import { Tag } from "lucide-react";
 import { useCategories } from "../../../hooks/bashboard/useCategories";
 import { SearchBar } from "../SearchBar";
-import { EditableListWithAdd } from "../EditableList";
+import { EditableListWithAdd } from "../shop/EditableList";
 import Sidebar from "../Sidebar";
 
 export function Categories() {

@@ -1,7 +1,7 @@
 import { Truck } from "lucide-react";
 import { useProviders } from "../../../hooks/bashboard/useProviders";
 import { SearchBar } from "../SearchBar";
-import { EditableListWithAdd } from "../EditableList";
+import { EditableListWithAdd } from "../shop/EditableList";
 import Sidebar from "../Sidebar";
 import { useMemo, useCallback } from "react";
 
