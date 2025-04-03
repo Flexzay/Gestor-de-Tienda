@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Pencil, Trash2, ListCollapse } from "lucide-react";
 import { ProductFormData } from "../../../interface/product";
-import Paginator from "../Paginator";
+import Paginator from "../shop/Paginator";
 import Domiduck from "../../../assets/img/domiduck.svg";
 import { environment } from "../../../config/environmet";
 

@@ -1,13 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu } from "lucide-react";
+import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power } from "lucide-react";
 import { useState, useEffect } from "react";
-import { shopService } from "../../Services/shop.service"; 
+import { shopService } from "../../Services/shop.service";
+import { Button } from "./shop/Button";
 import Domiduck from "../../assets/img/horizontal-logo.svg";
 import domiduck from "../../assets/img/domiduck.svg";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [shop, setShop] = useState<{ name: string; image?: string } | null>(null);
+  const [isShopOpen, setIsShopOpen] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
@@ -16,7 +18,7 @@ function Sidebar() {
       if (shopData) {
         setShop({
           name: shopData.name,
-          image: shopService.getShopImage() || domiduck, // Si no hay imagen, usa la de respaldo
+          image: shopService.getShopImage() || domiduck,
         });
       }
     };
@@ -24,6 +26,12 @@ function Sidebar() {
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
+
+  const toggleShopStatus = () => {
+    setIsShopOpen((prev) => !prev);
+    console.log(isShopOpen ? "Cerrando tienda" : "Abriendo tienda");
+    // Aquí puedes agregar la lógica para cambiar el estado de la tienda
+  };
 
   return (
     <div className="flex">
@@ -39,19 +47,17 @@ function Sidebar() {
           ✖
         </button>
 
-        {/* Logo de Domiduck */}
         <div className="flex justify-center mb-4">
           <img src={Domiduck} alt="Domiduck" className="w-40 h-auto drop-shadow-lg" />
         </div>
 
-        {/* Tarjeta de la tienda */}
         {shop && (
           <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col items-center mb-6">
             <img
               src={shop.image}
               alt={shop.name}
               className="h-16 w-16 rounded-full object-cover border-2 border-[#ff204e] shadow-lg"
-              onError={(e) => (e.currentTarget.src = domiduck)} 
+              onError={(e) => (e.currentTarget.src = domiduck)}
             />
             <span className="text-lg font-semibold text-white mt-2">{shop.name}</span>
             <Link to="/shop-profile" className="text-sm text-[#ff204e] hover:underline mt-1">
@@ -60,7 +66,6 @@ function Sidebar() {
           </div>
         )}
 
-        {/* Menú de navegación */}
         <nav>
           <ul className="space-y-3">
             {[
@@ -87,9 +92,21 @@ function Sidebar() {
             ))}
           </ul>
         </nav>
+
+        {/* Botón Cerrar/Abrir Tienda */}
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="primary"
+            className={`w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 ${
+              isShopOpen ? "bg-[#ff204e] text-white hover:bg-[#ff3b60]" : "bg-green-600 text-white hover:bg-green-700"
+            }`}
+            icon={Power}
+            text={isShopOpen ? "Cerrar Tienda" : "Abrir Tienda"}
+            onClick={toggleShopStatus}
+          />
+        </div>
       </aside>
 
-      {/* Botón para abrir el Sidebar en móviles */}
       {!isOpen && (
         <button
           className="md:hidden p-3 text-white bg-[#ff204e] fixed top-4 left-4 rounded-lg z-50"

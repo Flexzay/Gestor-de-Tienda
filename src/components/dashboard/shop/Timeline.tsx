@@ -1,7 +1,7 @@
-import * as React from "react";
+
 import { CheckCircle, Info, Image } from "lucide-react";
 import Typography from "@mui/material/Typography";
-import Domiduck from "../../assets/img/horizontal-logo.svg"; // Importamos el logo
+import Domiduck from "../../../assets/img/horizontal-logo.svg"; 
 
 const steps = [
   { label: "Información Básica", icon: <Info size={28} /> },
