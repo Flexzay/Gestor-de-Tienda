@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Pencil, Trash2, Plus } from "lucide-react";
-import { Button } from "./Button_Add";
+import { Button } from "./Button";
 
 interface EditableListWithAddProps<T> {
   items: T[];
