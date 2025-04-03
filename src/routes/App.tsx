@@ -14,6 +14,8 @@ import ExpensesIncomePage from '../pages/dashboard/receipts-page';
 import SalesPage from '../pages/dashboard/sales-page';
 
 
+
+
 const App = () => {
   return (
     <Routes>
@@ -34,6 +36,8 @@ const App = () => {
       <Route path="/Payment-methods" element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
       <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
       <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
+      <Route path="/Membership" element={<PrivateRoute></PrivateRoute>} />
+
     </Routes>
   );
 };
