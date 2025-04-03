@@ -77,7 +77,7 @@ function Sidebar() {
               { icon: Coins, label: "Gastos - Ingresos", path: "/Income" },
               { icon: BadgeDollarSign, label: "Ventas", path: "/Sales" },
             ].map((item) => (
-              <li key={item.path}>
+              <li key={item.path}>             
                 <Link
                   to={item.path}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out ${

@@ -20,7 +20,7 @@ const CustomTimeline = ({ currentStep }) => {
             {/* Línea de progreso correctamente centrada */}
             {index < steps.length - 1 && (
               <div
-                className={`absolute top-2/6 left-[75%] -translate-y-1/2 w-1/2 h-2 transition-all duration-300 ${
+                className={`absolute top-2/6 left-[75%] -translate-y-1/2 w-1/2 h-1.5 transition-all duration-300 ${
                   currentStep > index ? "bg-[#007AFF]" : "bg-gray-300"
                 }`}
               />
