@@ -55,7 +55,7 @@ export const productService = {
       const token = storageService.getToken();
       const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
       const shopId = shop.id;
-      
+
       if (!token || !shopId) {
         throw new Error("Falta el token o el shop_id.");
       }
@@ -86,7 +86,7 @@ export const productService = {
       // 2. Subir imágenes si existen
       let imageUrls: string[] = [];
       const filesToUpload = productData.images.filter(img => img instanceof File) as File[];
-      
+
       if (filesToUpload.length) {
         imageUrls = await this.uploadImages(createdProduct.data.id, filesToUpload);
       }
@@ -99,8 +99,8 @@ export const productService = {
 
       return {
         status: response.status,
-        data: { 
-          ...createdProduct.data, 
+        data: {
+          ...createdProduct.data,
           images: allImages,
           category: {
             id: productData.category_id,
@@ -110,9 +110,9 @@ export const productService = {
       };
     } catch (error) {
       console.error("Error creating product:", error);
-      return { 
-        status: 500, 
-        message: error instanceof Error ? error.message : "Error al crear el producto" 
+      return {
+        status: 500,
+        message: error instanceof Error ? error.message : "Error al crear el producto"
       };
     }
   },
@@ -126,7 +126,7 @@ export const productService = {
       const token = storageService.getToken();
       const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
       const shopId = shop.id;
-      
+
       if (!token || !shopId) {
         throw new Error("Falta el token o el shop_id.");
       }
@@ -137,7 +137,7 @@ export const productService = {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || `Error ${response.status}`);
       }
@@ -146,8 +146,8 @@ export const productService = {
         status: response.status,
         data: data.data.map((product: any) => ({
           ...product,
-          images: product.images?.length 
-            ? product.images.map((img: any) => `${S3_BUCKET_URL}${img.path}`) 
+          images: product.images?.length
+            ? product.images.map((img: any) => `${S3_BUCKET_URL}${img.path}`)
             : [],
           category: product.category || {
             id: product.category_id,
@@ -158,9 +158,9 @@ export const productService = {
       };
     } catch (error: any) {
       console.error("Error getting products:", error);
-      return { 
-        status: 500, 
-        message: error.message || "Error al obtener productos" 
+      return {
+        status: 500,
+        message: error.message || "Error al obtener productos"
       };
     }
   },
@@ -175,7 +175,21 @@ export const productService = {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
 
-      // 1. Actualizar datos básicos
+      // 1. Identificar imágenes eliminadas
+      const deletedImages = productData.existingImages
+  .filter((img) => !productData.images.some((image) =>
+    typeof image === "string" ? image === (typeof img === "string" ? img : img.url) : false
+  ))
+  .map((img) => (typeof img === "string" ? img : img.url)); // Convertir objetos a URLs
+
+
+      // 2. Eliminar imágenes de S3
+      for (const imageUrl of deletedImages) {
+        const imageId = imageUrl.split("/").pop(); // Extraer el ID de la URL
+        if (imageId) await this.deleteImage(imageId);
+      }
+
+      // 3. Actualizar datos básicos del producto
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
         headers: {
@@ -186,7 +200,7 @@ export const productService = {
           name: productData.name,
           description: productData.description,
           price: productData.price,
-          category_id: productData.category_id, // Corregido: usar category_id en lugar de category
+          category_id: productData.category_id,
           available: productData.available,
           brand: productData.brand,
           stock: productData.stock,
@@ -196,19 +210,18 @@ export const productService = {
 
       if (!response.ok) throw new Error("Error al actualizar el producto.");
 
-      // 2. Manejo de imágenes
-      let allImages = [...(productData.existingImages || [])];
-      
-      // Subir nuevas imágenes
-      const filesToUpload = productData.images.filter(img => img instanceof File) as File[];
+      // 4. Manejo de imágenes: Subir nuevas imágenes si existen
+      let allImages = productData.images.filter((img) => typeof img === "string"); // Mantener imágenes existentes (URLs)
+      const filesToUpload = productData.images.filter((img) => img instanceof File) as File[];
+
       if (filesToUpload.length) {
         const uploadedImages = await this.uploadImages(productId, filesToUpload);
-        allImages = [...allImages, ...uploadedImages];
+        allImages = [...allImages, ...uploadedImages]; // Agregar las nuevas imágenes subidas
       }
 
-      return { 
-        status: 200, 
-        data: { 
+      return {
+        status: 200,
+        data: {
           ...productData,
           id: productId,
           images: allImages,
@@ -216,16 +229,17 @@ export const productService = {
             id: productData.category_id,
             name: "",
           }
-        } 
+        }
       };
     } catch (error: any) {
       console.error("Error updating product:", error);
-      return { 
-        status: 500, 
-        message: error.message || "Error al actualizar producto" 
+      return {
+        status: 500,
+        message: error.message || "Error al actualizar producto"
       };
     }
   },
+
 
 
   /**
@@ -256,24 +270,32 @@ export const productService = {
   /**
    * Eliminar una imagen de un producto
    */
-  async deleteImage(imageId: string | number) {
+  async deleteImage(imageId: number) {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
-
-      const response = await fetch(`${API_URL}/images/${imageId}`, {
+  
+      const response = await fetch(`${environment.baseUrl}/product/images/${imageId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (!response.ok) throw new Error(`Error ${response.status}`);
-
+  
+      if (!response.ok) {
+        throw new Error(`Error ${response.status} - ${await response.text()}`);
+      }
+  
+      console.log(`✅ Imagen ${imageId} eliminada correctamente.`);
       return { status: response.status, message: "Imagen eliminada con éxito" };
+  
     } catch (error: any) {
-      return { status: 500, message: error.message || "Error al eliminar la imagen" };
+      console.error(`❌ Error eliminando imagen:`, error.message);
+      return { status: 500, message: error.message };
     }
   },
-
+  
+  
+  
+  
   /**
    * Guardar precios de un producto
    */

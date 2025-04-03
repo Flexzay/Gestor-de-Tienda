@@ -18,6 +18,13 @@ const formReducer = (state: any, action: any) => {
         images: state.images.filter((_img: any, index: number) => index !== action.index),
         previews: state.previews.filter((_preview: any, index: number) => index !== action.index),
       };
+      case "REMOVE_EXISTING_IMAGE":
+        return {
+          ...state,
+          existingImages: state.existingImages.filter((_, index) => index !== action.index),
+          deletedImages: [...(state.deletedImages || []), state.existingImages[action.index]],
+        };
+      
     default:
       return state;
   }
@@ -38,7 +45,13 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     available: initialData?.available ?? true,
     images: [],
     previews: initialData?.images?.length ? initialData.images : [],
-    existingImages: initialData?.images || [],
+    existingImages: initialData?.images?.map((img: any) => 
+      typeof img === 'string' 
+        ? { id: null, url: img } 
+        : { id: Number(img.id), url: img.url }
+    ) || []
+    
+
   });
 
   const fetchProducts = async () => {
@@ -73,9 +86,28 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     }
   };
 
-  const removeImage = (index: number) => {
-    dispatch({ type: "REMOVE_IMAGE", index });
+  const removeImage = async (index: number, isExisting: boolean) => {
+    if (isExisting && formData.existingImages) {
+      const imageToDelete = formData.existingImages[index];
+  
+      // Verificar que el ID es numérico antes de hacer la petición
+      if (imageToDelete?.id && !isNaN(Number(imageToDelete.id))) {
+        try {
+          console.log(`🛠️ Eliminando imagen con ID: ${imageToDelete.id}`);
+          await productService.deleteImage(imageToDelete.id); 
+        } catch (error) {
+          console.error(`❌ Error eliminando imagen:`, error);
+        }
+      } else {
+        console.error("❌ No se encontró un ID válido para la imagen.");
+      }
+    } else {
+      dispatch({ type: "REMOVE_IMAGE", index });
+    }
   };
+  
+  
+  
 
   const handleNextStep = () => {
     setStep((prev) => prev + 1);
@@ -113,7 +145,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
       setLoading(false);
     }
   };
-  
+
   const updateProduct = async (id: string, product: ProductFormData) => {
     setLoading(true);
     try {
@@ -128,7 +160,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
       setLoading(false);
     }
   };
-  
+
 
 
 

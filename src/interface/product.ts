@@ -1,5 +1,10 @@
 import Category from './category'; 
 
+interface ProductImage {
+  id: number | null;
+  url: string;
+}
+
 export interface ProductFormData {
   id?: number;
   name: string;
@@ -12,6 +17,7 @@ export interface ProductFormData {
   price: number;
   description: string;
   images: (string | File)[];
-  existingImages?: string[];
+  existingImages?: ProductImage[];
+  deletedImages?: ProductImage[];
   previews?: string[];
 }
