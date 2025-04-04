@@ -1,20 +1,18 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Home from '../home/home';
-import Login from '../pages/login/login';
-import NotFoundPage from '../pages/404/404-Pages';
-import PrivateRoute from "./PrivateRoute"; 
-import VerifyCode from '../pages/login/verify-code';
-import SelectStorePage from '../pages/login/select-store';
+import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "../home/home";
+import Login from "../pages/login/login";
+import NotFoundPage from "../pages/404/404-Pages";
+import PrivateRoute from "./PrivateRoute";
+import VerifyCode from "../pages/login/verify-code";
+import SelectStorePage from "../pages/login/select-store";
 import Dashboard from "../pages/dashboard/dashboard-page";
 import Staff from "../pages/dashboard/Staff-pages";
-import CategoryPage from '../pages/dashboard/category-page';
-import SuppliersPage from '../pages/dashboard/Providers';
-import PaymentMethodPage from '../pages/dashboard/paymentMetthod-page';
-import ExpensesIncomePage from '../pages/dashboard/receipts-page';
-import SalesPage from '../pages/dashboard/sales-page';
-
-
-
+import CategoryPage from "../pages/dashboard/category-page";
+import SuppliersPage from "../pages/dashboard/Providers";
+import PaymentMethodPage from "../pages/dashboard/paymentMetthod-page";
+import ExpensesIncomePage from "../pages/dashboard/receipts-page";
+import SalesPage from "../pages/dashboard/sales-page";
+import ProductDetail from "../components/dashboard/Product/ProductDatail"; 
 
 const App = () => {
   return (
@@ -38,6 +36,8 @@ const App = () => {
       <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
       <Route path="/Membership" element={<PrivateRoute></PrivateRoute>} />
 
+      {/* 🆕 Ruta protegida para ver detalles de productos */}
+      <Route path="/product/:id" element={<PrivateRoute><ProductDetail /></PrivateRoute>} />
     </Routes>
   );
 };
