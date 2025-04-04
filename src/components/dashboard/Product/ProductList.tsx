@@ -18,11 +18,11 @@ const getImageUrl = (img?: string) => {
   return img.startsWith("http") ? img : `${environment.s3Storage}${img}`;
 };
 
-const ProductList: React.FC<ProductListProps> = ({ 
-  products, 
-  onEdit, 
-  onDelete, 
-  showTitle = true 
+const ProductList: React.FC<ProductListProps> = ({
+  products,
+  onEdit,
+  onDelete,
+  showTitle = true
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,10 +32,10 @@ const ProductList: React.FC<ProductListProps> = ({
     const updateItemsPerPage = () => {
       setItemsPerPage(window.innerWidth >= 1024 ? 8 : 4);
     };
-    
+
     updateItemsPerPage();
     window.addEventListener("resize", updateItemsPerPage);
-    
+
     return () => window.removeEventListener("resize", updateItemsPerPage);
   }, []);
 
@@ -90,6 +90,7 @@ const ProductList: React.FC<ProductListProps> = ({
                   ${product.price.toLocaleString()}
                 </span>
                 <div className="flex space-x-2">
+
                   <button
                     onClick={() => navigate(`/product/${product.id}`)}
                     className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition"

@@ -35,12 +35,12 @@ const ProductComponents: React.FC = () => {
   }, []);
 
   const handleSelectProduct = useCallback((product: ProductFormData) => {
-    console.log("📦 Producto seleccionado:", product);
+    
     setSelectedProduct(product);
   }, []);
 
   useEffect(() => {
-    console.log("🧪 Cambió selectedProduct:", selectedProduct);
+    
   }, [selectedProduct]);
 
   return (

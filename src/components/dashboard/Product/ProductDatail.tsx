@@ -1,10 +1,10 @@
-// src/pages/private/product/ProductDetail.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
 import Domiduck from "../../../assets/img/domiduck.svg";
 import { environment } from "../../../config/environmet";
 import { ProductFormData } from "../../../interface/product";
+import { productService } from "../../../Services/product.service";
 
 const getImageUrl = (img?: string) => {
   if (!img) return Domiduck;
@@ -12,41 +12,78 @@ const getImageUrl = (img?: string) => {
 };
 
 const ProductDetail: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = React.useState<ProductFormData | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const [product, setProduct] = useState<ProductFormData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  React.useEffect(() => {
-    // Aquí deberías cargar el producto específico usando el ID
-    // Esto es un ejemplo, deberías implementar tu propia lógica de carga
+  useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // Simulando una llamada a la API
-        // const response = await productService.getProductById(id);
-        // setProduct(response.data);
+        setLoading(true);
+        const response = await productService.getProductById(id || "");
         
-        // Mientras tanto, usaremos un mock:
-        setProduct({
-          id: id || "",
-          name: "Producto de ejemplo",
-          description: "Descripción detallada del producto",
-          price: 99.99,
-          category: { id: "1", name: "Categoría ejemplo" },
-          images: [Domiduck],
-          available: true
-        });
+        console.log("API Response:", response);
+  
+        if (response.status !== 200 || !response.data?.data) {
+          throw new Error(response.data?.message || "Producto no encontrado");
+        }
+  
+        // Accedemos a response.data.data que contiene los datos reales
+        const productData = response.data.data;
+        
+        console.log("Product Data:", productData);
+  
+        const formattedProduct: ProductFormData = {
+          id: productData.id,
+          name: productData.name || "Nombre no disponible",
+          description: productData.description || "Sin descripción",
+          price: Number(productData.price) || 0, // Convertimos a número
+          category: productData.category || {
+            id: productData.category_id,
+            name: "Sin categoría"
+          },
+          images: productData.images || [],
+          available: productData.available ?? true,
+          brand: productData.brand || "",
+          stock: productData.stock || 0,
+          expirationDate: productData.expirationDate
+        };
+  
+        setProduct(formattedProduct);
       } catch (error) {
         console.error("Error al cargar el producto:", error);
+        setError(error instanceof Error ? error.message : "Error desconocido");
       } finally {
         setLoading(false);
       }
     };
-
-    fetchProduct();
+  
+    if (id) {
+      fetchProduct();
+    } else {
+      setError("ID de producto no proporcionado");
+      setLoading(false);
+    }
   }, [id]);
 
-  if (loading) return <div className="p-4">Cargando producto...</div>;
+  const handleDelete = async () => {
+    if (!product?.id) return;
+    
+    try {
+      const confirmDelete = window.confirm("¿Estás seguro de eliminar este producto?");
+      if (!confirmDelete) return;
+      
+      navigate("/products", { replace: true });
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+      setError("No se pudo eliminar el producto");
+    }
+  };
+
+  if (loading) return <div className="p-4 text-center">Cargando producto...</div>;
+  if (error) return <div className="p-4 text-red-500">{error}</div>;
   if (!product) return <div className="p-4">Producto no encontrado</div>;
 
   const firstImage = product.images?.length
@@ -83,21 +120,47 @@ const ProductDetail: React.FC = () => {
                 </span>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
               </div>
-              <span className="text-2xl font-bold text-red-500">${product.price}</span>
+              <span className="text-2xl font-bold text-red-500">
+                ${(product.price || 0).toLocaleString()} {/* Asegurar que siempre haya un valor */}
+              </span>
             </div>
             
-            <p className="mt-4 text-gray-600">{product.description}</p>
+            <div className="mt-4 space-y-4">
+              <p className="text-gray-600">{product.description}</p>
+              
+              {product.brand && (
+                <p>
+                  <strong>Marca:</strong> {product.brand}
+                </p>
+              )}
+              
+              {product.stock !== undefined && (
+                <p>
+                  <strong>Stock:</strong> {product.stock}
+                </p>
+              )}
+              
+              {product.expirationDate && (
+                <p>
+                  <strong>Fecha de expiración:</strong> {new Date(product.expirationDate).toLocaleDateString()}
+                </p>
+              )}
+              
+              <p>
+                <strong>Disponibilidad:</strong> {product.available ? "Disponible" : "No disponible"}
+              </p>
+            </div>
             
             <div className="mt-8 flex space-x-4">
               <button
-                onClick={() => navigate(`/product/edit/${product.id}`)} // Asume que tienes una ruta de edición
+                onClick={() => navigate(`/product/edit/${product.id}`)}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
               >
                 <Pencil size={16} />
                 Editar
               </button>
               <button
-                onClick={() => {/* Lógica para eliminar */}}
+                onClick={handleDelete}
                 className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition flex items-center gap-2"
               >
                 <Trash2 size={16} />
@@ -107,18 +170,18 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
         
-        {/* Sección adicional para mostrar todas las imágenes */}
         {product.images?.length > 1 && (
           <div className="p-6 border-t">
             <h3 className="text-xl font-semibold mb-4">Más imágenes</h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {product.images.slice(1).map((img, index) => (
-                <img
-                  key={index}
-                  src={getImageUrl(typeof img === 'string' ? img : img.path)}
-                  className="w-full h-32 object-cover rounded-lg"
-                  alt={`${product.name} ${index + 1}`}
-                />
+                <div key={index} className="relative group">
+                  <img
+                    src={getImageUrl(typeof img === 'string' ? img : img.path)}
+                    className="w-full h-32 object-cover rounded-lg"
+                    alt={`${product.name} ${index + 1}`}
+                  />
+                </div>
               ))}
             </div>
           </div>
