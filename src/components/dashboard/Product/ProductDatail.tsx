@@ -119,14 +119,7 @@ const ProductDetail: React.FC = () => {
       {/* Contenido principal */}
       <div className="flex-1 p-4 md:p-8 w-full">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {/* Botón de volver */}
-          <button
-            onClick={() => navigate(-1)}
-            className="ml-4 mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
-          >
-            ← Volver a la lista
-          </button>
-
+          
           <div className="md:flex">
             <div className="md:w-1/2 p-4">
               <img
