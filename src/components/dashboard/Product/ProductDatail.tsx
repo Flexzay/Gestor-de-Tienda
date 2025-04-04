@@ -5,6 +5,7 @@ import Domiduck from "../../../assets/img/domiduck.svg";
 import { environment } from "../../../config/environmet";
 import { ProductFormData } from "../../../interface/product";
 import { productService } from "../../../Services/product.service";
+import Sidebar from "../Sidebar";
 
 const getImageUrl = (img?: string) => {
   if (!img) return Domiduck;
@@ -24,22 +25,17 @@ const ProductDetail: React.FC = () => {
         setLoading(true);
         const response = await productService.getProductById(id || "");
         
-        console.log("API Response:", response);
-  
         if (response.status !== 200 || !response.data?.data) {
           throw new Error(response.data?.message || "Producto no encontrado");
         }
-  
-        // Accedemos a response.data.data que contiene los datos reales
+
         const productData = response.data.data;
         
-        console.log("Product Data:", productData);
-  
         const formattedProduct: ProductFormData = {
           id: productData.id,
           name: productData.name || "Nombre no disponible",
           description: productData.description || "Sin descripción",
-          price: Number(productData.price) || 0, // Convertimos a número
+          price: Number(productData.price) || 0,
           category: productData.category || {
             id: productData.category_id,
             name: "Sin categoría"
@@ -50,7 +46,7 @@ const ProductDetail: React.FC = () => {
           stock: productData.stock || 0,
           expirationDate: productData.expirationDate
         };
-  
+
         setProduct(formattedProduct);
       } catch (error) {
         console.error("Error al cargar el producto:", error);
@@ -82,9 +78,32 @@ const ProductDetail: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="p-4 text-center">Cargando producto...</div>;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
-  if (!product) return <div className="p-4">Producto no encontrado</div>;
+  if (loading) return (
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      <Sidebar />
+      <div className="flex-1 p-4 md:p-8 w-full">
+        <div className="p-4 text-center">Cargando producto...</div>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      <Sidebar />
+      <div className="flex-1 p-4 md:p-8 w-full">
+        <div className="p-4 text-red-500">{error}</div>
+      </div>
+    </div>
+  );
+
+  if (!product) return (
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      <Sidebar />
+      <div className="flex-1 p-4 md:p-8 w-full">
+        <div className="p-4">Producto no encontrado</div>
+      </div>
+    </div>
+  );
 
   const firstImage = product.images?.length
     ? typeof product.images[0] === "string"
@@ -93,99 +112,100 @@ const ProductDetail: React.FC = () => {
     : Domiduck;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
-      >
-        ← Volver a la lista
-      </button>
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar />
 
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="md:flex">
-          <div className="md:w-1/2">
-            <img
-              src={getImageUrl(firstImage)}
-              className="w-full h-full object-cover"
-              alt={product.name}
-              onError={(e) => (e.currentTarget.src = Domiduck)}
-            />
+      {/* Contenido principal */}
+      <div className="flex-1 p-4 md:p-8 w-full">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Botón de volver */}
+          <button
+            onClick={() => navigate(-1)}
+            className="ml-4 mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
+          >
+            ← Volver a la lista
+          </button>
+
+          <div className="md:flex">
+            <div className="md:w-1/2 p-4">
+              <img
+                src={getImageUrl(firstImage)}
+                className="w-full h-auto max-h-96 object-contain rounded-lg"
+                alt={product.name}
+                onError={(e) => (e.currentTarget.src = Domiduck)}
+              />
+            </div>
+            
+            <div className="md:w-1/2 p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mb-2">
+                    {product.category?.name || "Sin categoría"}
+                  </span>
+                  <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+                </div>
+                <span className="text-2xl font-bold text-red-500">
+                  ${(product.price || 0).toLocaleString()}
+                </span>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <p className="text-gray-600">{product.description}</p>
+                
+                {product.brand && (
+                  <p><strong>Marca:</strong> {product.brand}</p>
+                )}
+                
+                {product.stock !== undefined && (
+                  <p><strong>Stock:</strong> {product.stock}</p>
+                )}
+                
+                {product.expirationDate && (
+                  <p><strong>Fecha de expiración:</strong> {new Date(product.expirationDate).toLocaleDateString()}</p>
+                )}
+                
+                <p>
+                  <strong>Disponibilidad:</strong> {product.available ? "Disponible" : "No disponible"}
+                </p>
+              </div>
+              
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => navigate(`/product/edit/${product.id}`)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
+                >
+                  <Pencil size={16} />
+                  Editar
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition flex items-center gap-2"
+                >
+                  <Trash2 size={16} />
+                  Eliminar
+                </button>
+              </div>
+            </div>
           </div>
           
-          <div className="p-8 md:w-1/2">
-            <div className="flex justify-between items-start">
-              <div>
-                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mb-2">
-                  {product.category?.name || "Sin categoría"}
-                </span>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+          {product.images?.length > 1 && (
+            <div className="p-6 border-t">
+              <h3 className="text-xl font-semibold mb-4">Más imágenes</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {product.images.slice(1).map((img, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={getImageUrl(typeof img === 'string' ? img : img.path)}
+                      className="w-full h-32 object-cover rounded-lg"
+                      alt={`${product.name} ${index + 1}`}
+                    />
+                  </div>
+                ))}
               </div>
-              <span className="text-2xl font-bold text-red-500">
-                ${(product.price || 0).toLocaleString()} {/* Asegurar que siempre haya un valor */}
-              </span>
             </div>
-            
-            <div className="mt-4 space-y-4">
-              <p className="text-gray-600">{product.description}</p>
-              
-              {product.brand && (
-                <p>
-                  <strong>Marca:</strong> {product.brand}
-                </p>
-              )}
-              
-              {product.stock !== undefined && (
-                <p>
-                  <strong>Stock:</strong> {product.stock}
-                </p>
-              )}
-              
-              {product.expirationDate && (
-                <p>
-                  <strong>Fecha de expiración:</strong> {new Date(product.expirationDate).toLocaleDateString()}
-                </p>
-              )}
-              
-              <p>
-                <strong>Disponibilidad:</strong> {product.available ? "Disponible" : "No disponible"}
-              </p>
-            </div>
-            
-            <div className="mt-8 flex space-x-4">
-              <button
-                onClick={() => navigate(`/product/edit/${product.id}`)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
-              >
-                <Pencil size={16} />
-                Editar
-              </button>
-              <button
-                onClick={handleDelete}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition flex items-center gap-2"
-              >
-                <Trash2 size={16} />
-                Eliminar
-              </button>
-            </div>
-          </div>
+          )}
         </div>
-        
-        {product.images?.length > 1 && (
-          <div className="p-6 border-t">
-            <h3 className="text-xl font-semibold mb-4">Más imágenes</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {product.images.slice(1).map((img, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={getImageUrl(typeof img === 'string' ? img : img.path)}
-                    className="w-full h-32 object-cover rounded-lg"
-                    alt={`${product.name} ${index + 1}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
