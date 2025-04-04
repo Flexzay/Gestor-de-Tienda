@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import ProductForm from "./Product";
 import ProductList from "./ProductList";
-import ProductDetail from "./ProductDatail";
+import ProductDetail from "./ProductDatailView";
 import { ProductFormData } from "../../../interface/product";
 import useProduct from "../../../hooks/bashboard/useProduct";
 
