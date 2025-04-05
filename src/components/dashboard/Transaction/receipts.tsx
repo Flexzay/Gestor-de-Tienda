@@ -8,23 +8,25 @@ import { useMemo } from "react";
 const ExpensesIncome = () => {
   const { transactions, addTransaction, totalIncome, totalExpenses, balance } = useTransactions();
 
-  // Memoiza la lista de transacciones para mejorar el rendimiento
   const memoizedTransactions = useMemo(() => transactions, [transactions]);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       {/* Sidebar fijo */}
-      <Sidebar />
+      <div className="hidden md:block md:fixed md:top-0 md:left-0 md:h-full md:w-72 bg-white shadow-md z-10">
+        <Sidebar />
+      </div>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-8">
-        {/* Resumen de transacciones */}
-        <TransactionSummary totalIncome={totalIncome} totalExpenses={totalExpenses} balance={balance} />
+      {/* Contenido principal con margen izquierdo */}
+      <div className="flex-1 p-6 w-full md:ml-72 md:pl-6">
+        <TransactionSummary 
+          totalIncome={totalIncome} 
+          totalExpenses={totalExpenses} 
+          balance={balance} 
+        />
 
-        {/* Formulario para agregar transacción */}
         <TransactionForm onSubmit={addTransaction} />
 
-        {/* Lista de transacciones */}
         <TransactionList transactions={memoizedTransactions} />
       </div>
     </div>

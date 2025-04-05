@@ -33,29 +33,33 @@ export function StaffComponent() {
     handleCloseStaffModal,
   } = useStaffLogic();
 
-  // Evitar recrear funciones innecesariamente
   const closeRoleModal = useCallback(() => setShowRoleModal(false), [setShowRoleModal]);
 
   return (
-    <div className="flex min-h-screen bg-[#F8F8F8] text-gray-800">
-      {/* Sidebar fijo a la izquierda */}
-      <Sidebar />
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#F8F8F8] text-gray-800">
+      {/* Sidebar fijo en pantallas grandes */}
+      <div className="hidden md:block md:fixed md:top-0 md:left-0 md:h-full md:w-72 bg-white shadow-md z-10">
+        <Sidebar />
+      </div>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-6">
-        <HeaderSection onAddRole={() => setShowRoleModal(true)} onAddStaff={() => setShowStaffModal(true)} />
+      {/* Contenido principal con margen izquierdo */}
+      <div className="flex-1 p-6 w-full md:ml-72 md:pl-6">
+        <HeaderSection
+          onAddRole={() => setShowRoleModal(true)}
+          onAddStaff={() => setShowStaffModal(true)}
+        />
 
-        <SearchBar 
-          value={search} 
-          placeholder="Buscar Personal" 
-          onChange={(e) => setSearch(e.target.value)} 
+        <SearchBar
+          value={search}
+          placeholder="Buscar Personal"
+          onChange={(e) => setSearch(e.target.value)}
           aria-label="Buscar en la lista de personal"
         />
 
-        <StaffList 
-          staff={filteredStaff} 
-          onEdit={handleEditMember} 
-          onDelete={handleDeleteMember} 
+        <StaffList
+          staff={filteredStaff}
+          onEdit={handleEditMember}
+          onDelete={handleDeleteMember}
         />
 
         <RoleModal
@@ -85,7 +89,7 @@ export function StaffComponent() {
   );
 }
 
-/* Componente separado para mejorar legibilidad y modularidad */
+/* Header separado para mayor claridad */
 const HeaderSection = ({ onAddRole, onAddStaff }) => (
   <div className="flex flex-col md:flex-row md:justify-between items-center mb-6">
     <h2 className="text-4xl font-bold text-[#301940] text-center md:text-left">

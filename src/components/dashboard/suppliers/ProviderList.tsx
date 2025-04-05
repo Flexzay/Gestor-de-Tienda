@@ -20,7 +20,7 @@ export function ProviderList() {
     deleteProvider,
   } = useProviders();
 
-  // Filtrar proveedores solo cuando `providers` o `searchTerm` cambian
+  // Filtrar proveedores solo cuando cambien providers o searchTerm
   const filteredProviders = useMemo(() => {
     return providers.filter((provider) =>
       provider.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -33,15 +33,17 @@ export function ProviderList() {
   }, [setSearchTerm]);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar fijo a la izquierda */}
-      <Sidebar />
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
+      {/* Sidebar fijo en pantallas grandes */}
+      <div className="hidden md:block md:fixed md:top-0 md:left-0 md:h-full md:w-72 bg-white shadow-md z-10">
+        <Sidebar />
+      </div>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-8">
+      {/* Contenido principal con margen izquierdo y espacio */}
+      <div className="flex-1 p-4 md:p-8 w-full md:ml-72 md:pl-6">
         {/* Título */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-semibold text-gray-800 pl-8 md:pl-0">Proveedores</h2>
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">Proveedores</h2>
           <Truck size={24} className="text-[#ff204e]" />
         </div>
 
