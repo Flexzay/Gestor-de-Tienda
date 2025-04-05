@@ -28,9 +28,6 @@ export default function MembershipComponents() {
           <h1 className="text-2xl pl-14 md:pl-0 font-bold text-gray-900 md:text-3xl">
             Panel de Créditos
           </h1>
-
-
-
           <CreditosActuales creditos={creditos} />
 
           <RecargarCreditos
