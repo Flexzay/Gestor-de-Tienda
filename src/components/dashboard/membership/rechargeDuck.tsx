@@ -1,4 +1,3 @@
-"use client"
 import { DollarSign, Plus, Minus } from "lucide-react"
 
 interface RecargarCreditosProps {
@@ -26,7 +25,9 @@ export function RecargarCreditos({
 
         <div className="mt-2 flex items-center">
           <button
-            onClick={() => setCreditosSeleccionados(Math.max(10, creditosSeleccionados - 10))}
+            onClick={() =>
+              setCreditosSeleccionados(Math.max(50000, creditosSeleccionados - 10000))
+            }
             className="rounded-l-md border border-gray-300 bg-gray-50 p-2 text-gray-500 hover:bg-gray-100"
           >
             <Minus className="h-5 w-5" />
@@ -36,12 +37,17 @@ export function RecargarCreditos({
             type="number"
             id="creditos"
             value={creditosSeleccionados}
-            onChange={(e) => setCreditosSeleccionados(Number(e.target.value))}
+            onChange={(e) => {
+              const value = Number(e.target.value)
+              if (value >= 50000) {
+                setCreditosSeleccionados(value)
+              }
+            }}
             className="w-full border-y border-gray-300 p-2 text-center text-lg"
           />
 
           <button
-            onClick={() => setCreditosSeleccionados(creditosSeleccionados + 10)}
+            onClick={() => setCreditosSeleccionados(creditosSeleccionados + 10000)}
             className="rounded-r-md border border-gray-300 bg-gray-50 p-2 text-gray-500 hover:bg-gray-100"
           >
             <Plus className="h-5 w-5" />
@@ -49,7 +55,7 @@ export function RecargarCreditos({
         </div>
 
         <div className="mt-4 grid grid-cols-4 gap-2">
-          {[10, 50, 100, 200].map((cantidad) => (
+          {[50000, 60000, 70000, 80000].map((cantidad) => (
             <button
               key={cantidad}
               onClick={() => setCreditosSeleccionados(cantidad)}
@@ -66,11 +72,13 @@ export function RecargarCreditos({
       </div>
 
       <div className="mt-6">
-        <button onClick={onRecargar} className="w-full rounded-md bg-rose-600 py-2 text-white hover:bg-rose-700">
+        <button
+          onClick={onRecargar}
+          className="w-full rounded-md bg-rose-600 py-2 text-white hover:bg-rose-700"
+        >
           Recargar Ahora
         </button>
       </div>
     </div>
   )
 }
-
