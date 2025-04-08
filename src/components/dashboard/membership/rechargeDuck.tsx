@@ -1,6 +1,6 @@
-import type React from "react"
-import { useState, useRef } from "react"
-import { DollarSign, Plus, Minus, Upload, X, ImageIcon } from "lucide-react"
+import type React from "react";
+import { useState, useRef } from "react";
+import { DollarSign, Plus, Minus, Upload, X, ImageIcon } from "lucide-react";
 
 interface RecargarCreditosProps {
   creditosSeleccionados: number;
@@ -8,44 +8,43 @@ interface RecargarCreditosProps {
   onRecargar: (comprobante: File | null) => void;
 }
 
-
 export function RecargarCreditos({
   creditosSeleccionados,
   setCreditosSeleccionados,
   onRecargar,
 }: RecargarCreditosProps) {
-  const [comprobante, setComprobante] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [comprobante, setComprobante] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [showError, setShowError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
+    const file = e.target.files?.[0] || null;
     if (file) {
-      setComprobante(file)
-      const url = URL.createObjectURL(file)
-      setPreviewUrl(url)
+      setComprobante(file);
+      setShowError(false); // 👈 Oculta el error si seleccionan una imagen
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
     }
-  }
+  };
 
   const handleRemoveFile = () => {
-    setComprobante(null)
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      setPreviewUrl(null)
-    }
+    setComprobante(null);
+    setPreviewUrl(null);
+    setShowError(false); // limpia también
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   const handleRecargar = () => {
     if (comprobante) {
       onRecargar(comprobante);
     } else {
-      alert("Por favor sube un comprobante antes de continuar.");
+      setShowError(true); // 👈 Mostramos el error visual
     }
   };
-  
+
   return (
     <div className="rounded-lg bg-white p-6 shadow-md">
       <div className="flex items-center gap-3">
@@ -53,6 +52,7 @@ export function RecargarCreditos({
         <h2 className="text-xl font-semibold text-gray-800">Recargar Créditos</h2>
       </div>
 
+      {/* selector de créditos */}
       <div className="mt-6">
         <label htmlFor="creditos" className="block text-sm font-medium text-gray-700">
           Selecciona el número de créditos a recargar
@@ -71,9 +71,9 @@ export function RecargarCreditos({
             id="creditos"
             value={creditosSeleccionados}
             onChange={(e) => {
-              const value = Number(e.target.value)
+              const value = Number(e.target.value);
               if (value >= 50000) {
-                setCreditosSeleccionados(value)
+                setCreditosSeleccionados(value);
               }
             }}
             className="w-full border-y border-gray-300 p-2 text-center text-lg"
@@ -104,7 +104,7 @@ export function RecargarCreditos({
         </div>
       </div>
 
-      {/* Sección para subir comprobante */}
+      {/* comprobante */}
       <div className="mt-6 border-t border-gray-200 pt-6">
         <div className="flex items-center gap-3 mb-4">
           <Upload className="h-5 w-5 text-rose-500" />
@@ -112,12 +112,14 @@ export function RecargarCreditos({
         </div>
 
         <p className="text-sm text-gray-600 mb-4">
-          Por favor sube una imagen del comprobante de tu pago para procesar la recarga.
+        El comprobante debe reflejar el valor exacto de los créditos seleccionados. Adjunta la imagen aquí.
         </p>
 
         {!previewUrl ? (
           <div
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+            className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+              showError ? "border-red-500 bg-red-50" : "border-gray-300 hover:bg-gray-50"
+            }`}
             onClick={() => fileInputRef.current?.click()}
           >
             <ImageIcon className="h-10 w-10 text-gray-400 mx-auto mb-3" />
@@ -130,12 +132,15 @@ export function RecargarCreditos({
               accept="image/png, image/jpeg, image/jpg"
               onChange={handleFileChange}
             />
+            {showError && (
+              <p className="mt-2 text-sm text-red-600 font-medium">Debes subir un comprobante antes de continuar.</p>
+            )}
           </div>
         ) : (
           <div className="relative">
             <div className="relative rounded-lg overflow-hidden border border-gray-200">
               <img
-                src={previewUrl || "/placeholder.svg"}
+                src={previewUrl}
                 alt="Comprobante de pago"
                 className="w-full h-auto max-h-64 object-contain"
               />
@@ -158,11 +163,13 @@ export function RecargarCreditos({
       </div>
 
       <div className="mt-6">
-        <button onClick={handleRecargar} className="w-full rounded-md bg-rose-600 py-2 text-white hover:bg-rose-700">
+        <button
+          onClick={handleRecargar}
+          className="w-full rounded-md bg-rose-600 py-2 text-white hover:bg-rose-700"
+        >
           Recargar Ahora
         </button>
       </div>
     </div>
-  )
+  );
 }
-
