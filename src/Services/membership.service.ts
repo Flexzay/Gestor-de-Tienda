@@ -58,15 +58,6 @@ export const membershipService = {
     return handleResponse(res);
   },
 
-  /**
-   * Obtiene el balance actual de "ducks" (créditos disponibles) para la tienda.
-   */
-  getBalance: async () => {
-    const shopId = storageService.getShopId();
-    if (!shopId) throw new Error("No se encontró shopId.");
-    const res = await fetch(`${BASE_URL}/shop/${shopId}/get_balance`);
-    return handleResponse(res);
-  },
 
   /**
    * Obtiene el historial de compras de "ducks" realizadas en la tienda.
