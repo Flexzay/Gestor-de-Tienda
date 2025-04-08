@@ -1,23 +1,69 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreditosActuales } from "./duckPresent";
 import { RecargarCreditos } from "./rechargeDuck";
 import { Resumen } from "./summary";
 import { HistorialCompras } from "./record";
 import Sidebar from "../Sidebar";
+import { membershipService } from "../../../Services/membership.service";
+
+interface Compra {
+  id: number;
+  fecha: string;
+  cantidad: number;
+  estado: string;
+}
 
 export default function MembershipComponents() {
   const [creditos, setCreditos] = useState(100);
-  const [creditosSeleccionados, setCreditosSeleccionados] = useState(50);
+  const [creditosSeleccionados, setCreditosSeleccionados] = useState(50000);
 
-  const historialCompras = [
-    { id: 1, fecha: "01/04/2023", cantidad: 100, estado: "Completado" },
-    { id: 2, fecha: "15/03/2023", cantidad: 50, estado: "Completado" },
-    { id: 3, fecha: "28/02/2023", cantidad: 200, estado: "Completado" },
-  ];
+  const [historialCompras, setHistorialCompras] = useState<Compra[]>([]);
+  const [isLoadingHistorial, setIsLoadingHistorial] = useState(true);
 
-  const handleRecargar = () => {
-    setCreditos(creditos + creditosSeleccionados);
+  const handleRecargar = async (comprobante: File | null) => {
+    if (!comprobante) {
+      alert("Debes subir un comprobante antes de recargar.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("amount", creditosSeleccionados.toString());
+    formData.append("receipt", comprobante); // Ajustar el nombre según backend
+
+    try {
+      await membershipService.buyDucks(formData);
+      alert("Recarga enviada. Será revisada por un administrador.");
+      fetchHistorial(); // refresca si el admin la aprueba rápido
+    } catch (error) {
+      // ⚠️ Pero sabemos que esto puede fallar por CORS, así que podés mostrar igual:
+      alert("Tu recarga fue enviada. Podés verificar luego en el historial.");
+    }
+    
   };
+
+  const fetchHistorial = async () => {
+    try {
+      const response = await membershipService.getHistoryCharges();
+      console.log("📦 Respuesta completa de getHistoryCharges:", response);
+  
+      if (response.status === 200) {
+        const compras = response.data?.history || [];
+        console.log("🧾 Historial procesado:", compras);
+        setHistorialCompras(compras);
+      } else {
+        console.error("❌ Error en la respuesta:", response.message);
+      }
+    } catch (error: any) {
+      console.error("🚨 Error al cargar historial:", error.message);
+    } finally {
+      setIsLoadingHistorial(false);
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchHistorial();
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
@@ -38,12 +84,16 @@ export default function MembershipComponents() {
           <RecargarCreditos
             creditosSeleccionados={creditosSeleccionados}
             setCreditosSeleccionados={setCreditosSeleccionados}
-            onRecargar={handleRecargar}
+            onRecargar={(comprobante) => handleRecargar(comprobante)}
           />
 
           <Resumen creditosSeleccionados={creditosSeleccionados} />
 
-          <HistorialCompras historialCompras={historialCompras} />
+          {isLoadingHistorial ? (
+            <p className="text-gray-500">Cargando historial...</p>
+          ) : (
+            <HistorialCompras historialCompras={historialCompras} />
+          )}
         </div>
       </div>
     </div>

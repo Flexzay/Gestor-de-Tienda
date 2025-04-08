@@ -62,10 +62,28 @@ export const membershipService = {
   /**
    * Obtiene el historial de compras de "ducks" realizadas en la tienda.
    */
-  getHistoryCharges: async () => {
-    const shopId = storageService.getShopId();
-    if (!shopId) throw new Error("No se encontró shopId.");
-    const res = await fetch(`${BASE_URL}/shop/${shopId}/buy_ducks/history`);
-    return handleResponse(res);
+  async getHistoryCharges() {
+    try {
+      const shopId = storageService.getShopId();
+      const token = storageService.getToken();
+
+      if (!shopId) throw new Error("Shop ID no disponible");
+      if (!token) throw new Error("Token de autenticación no disponible");
+
+      const response = await fetch(`${BASE_URL}/shop/${shopId}/buy_ducks/history`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+
+      return { status: response.status, data: data.data };
+    } catch (error: any) {
+      return { status: 500, message: error.message || "Error en el servidor" };
+    }
   }
 };

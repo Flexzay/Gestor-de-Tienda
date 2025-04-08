@@ -3,10 +3,11 @@ import { useState, useRef } from "react"
 import { DollarSign, Plus, Minus, Upload, X, ImageIcon } from "lucide-react"
 
 interface RecargarCreditosProps {
-  creditosSeleccionados: number
-  setCreditosSeleccionados: (creditos: number) => void
-  onRecargar: () => void
+  creditosSeleccionados: number;
+  setCreditosSeleccionados: (creditos: number) => void;
+  onRecargar: (comprobante: File | null) => void;
 }
+
 
 export function RecargarCreditos({
   creditosSeleccionados,
@@ -38,14 +39,13 @@ export function RecargarCreditos({
   }
 
   const handleRecargar = () => {
-    // Aquí podrías implementar la lógica para enviar el comprobante
-    // junto con la información de la recarga
     if (comprobante) {
-      console.log("Comprobante:", comprobante.name, comprobante.size)
+      onRecargar(comprobante);
+    } else {
+      alert("Por favor sube un comprobante antes de continuar.");
     }
-    onRecargar()
-  }
-
+  };
+  
   return (
     <div className="rounded-lg bg-white p-6 shadow-md">
       <div className="flex items-center gap-3">
