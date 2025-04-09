@@ -40,9 +40,8 @@ function Sidebar() {
     <>
       {/* Sidebar fijo */}
       <aside
-        className={`fixed top-0 left-0 w-72 min-h-screen bg-gray-900 text-white p-5 z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}
+        className={`fixed top-0 left-0 w-72 min-h-screen bg-gray-900 text-white p-5 z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0`}
       >
         <button
           className="md:hidden p-2 text-white bg-gray-700 absolute top-4 left-60 rounded-lg z-50"
@@ -85,11 +84,10 @@ function Sidebar() {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out ${
-                    isActive(item.path)
+                  className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out ${isActive(item.path)
                       ? "bg-[#ff204e] text-white"
                       : "hover:bg-[#ff204e] hover:shadow-lg"
-                  }`}
+                    }`}
                   onClick={() => setIsOpen(false)}
                 >
                   <item.icon size={24} />
@@ -103,11 +101,10 @@ function Sidebar() {
         <div className="mt-6 flex justify-center">
           <Button
             variant="primary"
-            className={`w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 ${
-              isShopOpen
+            className={`w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 ${isShopOpen
                 ? "bg-[#ff204e] text-white hover:bg-[#ff3b60]"
                 : "bg-green-600 text-white hover:bg-green-700"
-            }`}
+              }`}
             icon={Power}
             text={loading ? "Cargando..." : isShopOpen ? "Cerrar Tienda" : "Abrir Tienda"}
             onClick={toggleShopStatus}
