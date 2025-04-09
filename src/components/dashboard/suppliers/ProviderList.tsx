@@ -35,9 +35,7 @@ export function ProviderList() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       {/* Sidebar fijo en pantallas grandes */}
-      <div className="hidden md:block md:fixed md:top-0 md:left-0 md:h-full md:w-72 bg-white shadow-md z-10">
-        <Sidebar />
-      </div>
+      <Sidebar />
 
       {/* Contenido principal con margen izquierdo y espacio */}
       <div className="flex-1 p-4 md:p-8 w-full md:ml-72 md:pl-6">

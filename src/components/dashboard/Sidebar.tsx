@@ -22,30 +22,27 @@ function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [shop, setShop] = useState<{ name: string; image?: string } | null>(null);
   const location = useLocation();
-
   const { isShopOpen, toggleShopStatus, loading } = useShopStatus();
 
   useEffect(() => {
-    const fetchShop = () => {
-      const shopData = shopService.getShopData();
-      if (shopData) {
-        setShop({
-          name: shopData.name,
-          image: shopService.getShopImage() || domiduck,
-        });
-      }
-    };
-    fetchShop();
+    const shopData = shopService.getShopData();
+    if (shopData) {
+      setShop({
+        name: shopData.name,
+        image: shopService.getShopImage() || domiduck,
+      });
+    }
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="flex">
+    <>
+      {/* Sidebar fijo */}
       <aside
-        className={`bg-gray-900 text-white w-72 min-h-screen p-5 fixed top-0 left-0 md:relative transform ${
+        className={`fixed top-0 left-0 w-72 min-h-screen bg-gray-900 text-white p-5 z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out z-50`}
+        } md:translate-x-0`}
       >
         <button
           className="md:hidden p-2 text-white bg-gray-700 absolute top-4 left-60 rounded-lg z-50"
@@ -103,7 +100,6 @@ function Sidebar() {
           </ul>
         </nav>
 
-        {/* Botón Cerrar/Abrir Tienda */}
         <div className="mt-6 flex justify-center">
           <Button
             variant="primary"
@@ -120,6 +116,7 @@ function Sidebar() {
         </div>
       </aside>
 
+      {/* Botón de abrir menú en móvil */}
       {!isOpen && (
         <button
           className="md:hidden p-3 text-white bg-[#ff204e] fixed top-4 left-4 rounded-lg z-50"
@@ -128,8 +125,9 @@ function Sidebar() {
           <Menu size={28} />
         </button>
       )}
-    </div>
+    </>
   );
 }
+
 
 export default Sidebar;
