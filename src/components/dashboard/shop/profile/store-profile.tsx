@@ -8,11 +8,11 @@ import { StorePreview } from "./store-preview"
 export default function StoreProfile() {
   const [activeTab, setActiveTab] = useState("info")
   const [storeData, setStoreData] = useState({
-    name: "Mi Tienda",
+    name: "",
     phone: "",
     whatsapp: "",
     location: "",
-    description: "Descripción de la tienda...",
+    description: "",
     hours: "",
     mainImage: null,
     avatarImage: null,
