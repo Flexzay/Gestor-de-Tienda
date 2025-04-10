@@ -75,7 +75,10 @@ const DashboardContent: React.FC = () => {
       </div>
 
 
-      <ProductList products={products} onEdit={handleEditProduct} />
+      <div className="mt-10 w-full max-h-[calc(100vh-400px)] overflow-y-auto">
+        <ProductList products={products} onEdit={handleEditProduct} />
+      </div>
+
       {/* onDelete={handleDeleteProduct} debe ir despues de onEdit={handleEditProduct} a la hora de implementar la funcion de eliminar producto */}
     </main>
   );
