@@ -14,6 +14,7 @@ import ExpensesIncomePage from "../pages/dashboard/receipts-page";
 import SalesPage from "../pages/dashboard/sales-page";
 import ProductDetail from "../components/dashboard/Product/ProductDatail"; 
 import MenbershipCreditos from "../components/dashboard/membership/membershiComponents"; 
+import ProfilePage from "../pages/dashboard/Profile-page";
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
       <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
       <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
       <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos/></PrivateRoute>} />
+      <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
 
       {/* 🆕 Ruta protegida para ver detalles de productos */}
       <Route path="/product/:id" element={<PrivateRoute><ProductDetail /></PrivateRoute>} />

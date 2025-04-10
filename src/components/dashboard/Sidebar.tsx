@@ -63,7 +63,7 @@ function Sidebar() {
               onError={(e) => (e.currentTarget.src = domiduck)}
             />
             <span className="text-lg font-semibold text-white mt-2">{shop.name}</span>
-            <Link to="/shop-profile" className="text-sm text-[#ff204e] hover:underline mt-1">
+            <Link to="/store-profile" className="text-sm text-[#ff204e] hover:underline mt-1">
               Ver perfil
             </Link>
           </div>
