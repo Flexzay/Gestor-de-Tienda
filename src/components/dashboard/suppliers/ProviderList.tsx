@@ -41,7 +41,7 @@ export function ProviderList() {
       <div className="flex-1 p-4 md:p-8 w-full md:ml-72 md:pl-6">
         {/* Título */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">Proveedores</h2>
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 pl-14 md:pl-0">Proveedores</h2>
           <Truck size={24} className="text-[#ff204e]" />
         </div>
 

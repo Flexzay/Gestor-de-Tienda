@@ -23,11 +23,14 @@ export function Categories() {
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       {/* Sidebar fijo en pantallas grandes */}
       <Sidebar />
-      
+
       {/* Contenido principal con margen izquierdo y espaciado adicional */}
       <div className="flex-1 p-4 md:p-8 w-full md:ml-72 md:pl-6">
         <div className="flex items-center justify-between mb-6 md:mb-8">
-          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">Categorías</h2>
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 pl-14 md:pl-0">
+            Categorías
+          </h2>
+
           <Tag size={24} className="text-[#ff204e]" />
         </div>
 

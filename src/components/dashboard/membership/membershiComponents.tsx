@@ -23,7 +23,7 @@ export default function MembershipComponents() {
       {/* Contenido principal con margen izquierdo en escritorio */}
       <main className="md:ml-72 p-4 md:p-8 bg-gray-100 min-h-screen">
         <div className="flex items-center justify-between mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 pl-14 md:pl-0">
             Panel de Créditos
           </h1>
         </div>
