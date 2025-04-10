@@ -45,7 +45,7 @@ const DashboardContent: React.FC = () => {
   };
 
   return (
-    <main className="p-6 bg-gray-100 w-full h-screen overflow-y-auto md:ml-72">
+    <main className="p-6 bg-gray-100 w-full min-h-screen overflow-y-auto md:ml-72">
 
       <button
         onClick={() => setIsAdding(true)}
@@ -67,13 +67,13 @@ const DashboardContent: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <DashboardCard title="Total Productos" value={products.length.toString()} icon={<Package className="text-[#fff5f7]" size={24} />} />
-        <DashboardCard title="Total Proveedores" value="2" icon={<Truck className="text-[#ffffff]" size={24} />} />
-        <DashboardCard title="Total Métodos de Pago" value="3" icon={<Wallet className="text-[#ffffff]" size={24} />} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <DashboardCard title="Total Productos" value={products.length.toString()} icon={<Package className="text-[#fff5f7]" size={20} />} />
+        <DashboardCard title="Total Proveedores" value="2" icon={<Truck className="text-[#ffffff]" size={20} />} />
+        <DashboardCard title="Total Métodos de Pago" value="3" icon={<Wallet className="text-[#ffffff]" size={20} />} />
         <DashboardImageCard />
-
       </div>
+
 
       <ProductList products={products} onEdit={handleEditProduct} />
       {/* onDelete={handleDeleteProduct} debe ir despues de onEdit={handleEditProduct} a la hora de implementar la funcion de eliminar producto */}

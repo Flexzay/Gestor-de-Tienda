@@ -46,13 +46,12 @@ const ProductList: React.FC<ProductListProps> = ({
   }, [products, currentPage, itemsPerPage]);
 
   return (
-    <div className="mt-8 w-full pb-30">
+    <div className="mt-8 w-full pb-20">
       {showTitle && (
         <h3 className="text-3xl font-bold mb-6 text-gray-900">🛒 Nuestros Productos</h3>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-full">
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full min-h-[200px]">
         {currentProducts.map((product) => {
           const firstImage = product.images?.length
             ? typeof product.images[0] === "string"
@@ -63,13 +62,12 @@ const ProductList: React.FC<ProductListProps> = ({
           return (
             <div
               key={product.id}
-              className="relative bg-white shadow-lg rounded-2xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-xl border border-gray-200 max-w-full"
-            >
+              className="relative bg-white shadow-lg rounded-2xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-xl border border-gray-200 w-full">
 
               <div className="relative w-full h-56 bg-gray-100">
                 <img
                   src={getImageUrl(firstImage)}
-                  className="w-full h-full max-w-full object-cover transition-transform duration-300 hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   alt={product.name}
                   onError={(e) => (e.currentTarget.src = Domiduck)}
                 />
