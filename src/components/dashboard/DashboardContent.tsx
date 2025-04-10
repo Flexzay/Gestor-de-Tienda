@@ -47,6 +47,7 @@ const DashboardContent: React.FC = () => {
   return (
     <main className="p-6 bg-gray-100 w-full min-h-[100vh] overflow-y-scroll md:ml-72">
 
+
       <button
         onClick={() => setIsAdding(true)}
         className="mb-4 px-6 py-3 text-xl font-semibold text-white bg-[#ff204e] rounded-lg hover:bg-[#ff3b61] transition-all duration-300"
@@ -75,10 +76,7 @@ const DashboardContent: React.FC = () => {
       </div>
 
 
-      <div className="mt-10 w-full max-h-[calc(100vh-400px)] overflow-y-auto">
-        <ProductList products={products} onEdit={handleEditProduct} />
-      </div>
-
+      <ProductList products={products} onEdit={handleEditProduct} />
       {/* onDelete={handleDeleteProduct} debe ir despues de onEdit={handleEditProduct} a la hora de implementar la funcion de eliminar producto */}
     </main>
   );
