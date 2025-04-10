@@ -31,7 +31,7 @@ function Header() {
         <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={24} className="text-gray-800" /> : <Menu size={24} className="text-gray-800" />}
         </button>
-        <h1 className="text-2xl font-bold text-gray-800 pl-4">Bienvenido</h1>
+        <h1 className="text-2xl font-bold text-gray-800 pl-72">Bienvenido</h1>
       </div>
 
       {/* Barra de búsqueda en pantallas grandes */}
