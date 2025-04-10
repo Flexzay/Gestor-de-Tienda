@@ -45,7 +45,8 @@ const DashboardContent: React.FC = () => {
   };
 
   return (
-    <main className="p-6 bg-gray-100 min-h-screen ml-72 overflow-x-hidden">
+    <main className="p-6 bg-gray-100 min-h-screen overflow-x-hidden ml-0 lg:ml-72">
+
 
       <button
         onClick={() => setIsAdding(true)}
