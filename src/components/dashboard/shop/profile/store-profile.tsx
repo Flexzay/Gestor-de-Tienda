@@ -1,9 +1,10 @@
 import { useState } from "react"
-import { Save } from "lucide-react"
+import { Save, ArrowLeft } from "lucide-react"
 import { StoreInfo } from "./store-info"
 import { StoreImages } from "./store-images"
 import { OrderConfig } from "./order-config"
 import { StorePreview } from "./store-preview"
+import { Link } from "react-router-dom"
 
 export default function StoreProfile() {
   const [activeTab, setActiveTab] = useState("info")
@@ -25,10 +26,10 @@ export default function StoreProfile() {
   const [avatarImagePreview, setAvatarImagePreview] = useState(null)
 
   const updateStoreData = (field, value) => {
-    setStoreData({
-      ...storeData,
+    setStoreData(prev => ({
+      ...prev,
       [field]: value,
-    })
+    }))
   }
 
   const saveProfile = () => {
@@ -40,7 +41,17 @@ export default function StoreProfile() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <header className="border-b bg-white sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto py-4 px-4 flex justify-between items-center">
+          {/* Botón de volver */}
+          <Link
+            to="/dashboard"
+            className="flex items-center text-gray-600 hover:text-[#ff204e] transition-colors duration-300"
+          >
+            <ArrowLeft className="mr-2" size={24} />
+            <span className="font-medium">Volver al Dashboard</span>
+          </Link>
+
           <h1 className="text-xl font-bold text-gray-800">Perfil de Tienda</h1>
+
           <button
             onClick={saveProfile}
             className="flex items-center bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-md transition-colors"
@@ -93,7 +104,9 @@ export default function StoreProfile() {
                   </div>
                 )}
 
-                {activeTab === "config" && <OrderConfig storeData={storeData} updateStoreData={updateStoreData} />}
+                {activeTab === "config" && (
+                  <OrderConfig storeData={storeData} updateStoreData={updateStoreData} />
+                )}
               </div>
             </div>
           </div>
@@ -109,4 +122,3 @@ export default function StoreProfile() {
     </div>
   )
 }
-
