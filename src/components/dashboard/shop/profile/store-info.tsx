@@ -1,4 +1,3 @@
-
 import { Clock, MapPin, Phone, MessageCircle } from "lucide-react"
 
 export function StoreInfo({ storeData, updateStoreData }) {
@@ -19,7 +18,7 @@ export function StoreInfo({ storeData, updateStoreData }) {
           value={storeData.name}
           onChange={handleInputChange}
           placeholder="Ingrese el nombre de su tienda"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
         />
       </div>
 
@@ -38,7 +37,7 @@ export function StoreInfo({ storeData, updateStoreData }) {
             onChange={handleInputChange}
             placeholder="Ingrese su número de celular"
             type="tel"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
           />
         </div>
       </div>
@@ -58,7 +57,7 @@ export function StoreInfo({ storeData, updateStoreData }) {
             onChange={handleInputChange}
             placeholder="Ingrese su número de WhatsApp"
             type="tel"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
           />
         </div>
       </div>
@@ -77,7 +76,7 @@ export function StoreInfo({ storeData, updateStoreData }) {
             value={storeData.location}
             onChange={handleInputChange}
             placeholder="Ingrese la dirección de su tienda"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
           />
         </div>
       </div>
@@ -96,7 +95,7 @@ export function StoreInfo({ storeData, updateStoreData }) {
             value={storeData.hours}
             onChange={handleInputChange}
             placeholder="Ej: Lun-Vie: 9am-6pm, Sáb: 10am-2pm"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
           />
         </div>
       </div>
@@ -112,7 +111,7 @@ export function StoreInfo({ storeData, updateStoreData }) {
           onChange={handleInputChange}
           placeholder="Describa su tienda"
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
         />
       </div>
     </div>

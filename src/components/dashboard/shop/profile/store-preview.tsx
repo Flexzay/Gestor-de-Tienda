@@ -90,7 +90,7 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
           </div>
 
           <div className="mt-6">
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md flex items-center justify-center transition-colors">
+            <button className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2 px-4 rounded-md flex items-center justify-center transition-colors">
               Ver productos
               <ChevronRight className="ml-2 h-4 w-4" />
             </button>

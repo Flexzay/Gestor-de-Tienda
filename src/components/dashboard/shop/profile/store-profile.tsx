@@ -43,7 +43,7 @@ export default function StoreProfile() {
           <h1 className="text-xl font-bold text-gray-800">Perfil de Tienda</h1>
           <button
             onClick={saveProfile}
-            className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+            className="flex items-center bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-md transition-colors"
           >
             <Save className="mr-2 h-4 w-4" />
             Guardar Cambios
@@ -61,7 +61,7 @@ export default function StoreProfile() {
                   onClick={() => setActiveTab("info")}
                   className={`flex-1 py-3 px-4 text-center font-medium ${
                     activeTab === "info"
-                      ? "text-blue-600 border-b-2 border-blue-600"
+                      ? "text-rose-600 border-b-2 border-rose-600"
                       : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
@@ -71,7 +71,7 @@ export default function StoreProfile() {
                   onClick={() => setActiveTab("config")}
                   className={`flex-1 py-3 px-4 text-center font-medium ${
                     activeTab === "config"
-                      ? "text-blue-600 border-b-2 border-blue-600"
+                      ? "text-rose-600 border-b-2 border-rose-600"
                       : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
