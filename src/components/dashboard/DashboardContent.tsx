@@ -67,11 +67,26 @@ const DashboardContent: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <DashboardCard title="Total Productos" value={products.length.toString()} icon={<Package className="text-[#fff5f7]" size={20} />} />
-        <DashboardCard title="Total Proveedores" value="2" icon={<Truck className="text-[#ffffff]" size={20} />} />
-        <DashboardCard title="Total Métodos de Pago" value="3" icon={<Wallet className="text-[#ffffff]" size={20} />} />
-        <DashboardImageCard />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+        <DashboardCard
+          title="Total Productos"
+          value={products.length.toString()}
+          icon={<Package className="text-white" size={20} />}
+          className="xl:col-span-1"
+        />
+        <DashboardCard
+          title="Total Proveedores"
+          value="2"
+          icon={<Truck className="text-white" size={20} />}
+          className="xl:col-span-1"
+        />
+        <DashboardCard
+          title="Total Métodos de Pago"
+          value="3"
+          icon={<Wallet className="text-white" size={20} />}
+          className="xl:col-span-1"
+        />
+        <DashboardImageCard className="xl:col-span-1" />
       </div>
 
 
