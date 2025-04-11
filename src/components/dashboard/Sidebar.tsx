@@ -6,7 +6,7 @@ import { Button } from "./shop/Button";
 import Domiduck from "../../assets/img/horizontal-logo.svg";
 import domiduck from "../../assets/img/domiduck.svg";
 import { useShopStatus } from "../../hooks/bashboard/useShopStatus";
-import { environment } from "../../config/environmet";
+
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +51,7 @@ function Sidebar() {
             <img
               src={shop.image}
               alt={shop.name}
-              className="h-16 w-16 rounded-full object-cover border-2 border-[#ff204e] shadow-lg"
+              className="h-20 w-20 rounded-full border-2 border-[#ff204e] shadow-lg bg-white object-cover object-center"
               onError={(e) => (e.currentTarget.src = domiduck)}
             />
 
