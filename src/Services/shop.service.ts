@@ -85,11 +85,18 @@ export const shopService = {
    */
   async updateImageShop(imageType: string, formData: FormData) {
     const shopId = storageService.getShopId();
-    return axios.post(`${BASE_URL}/shop/${shopId}/images/${imageType}`, formData, {
+    const uploadRes = await axios.post(`${BASE_URL}/shop/${shopId}/images/${imageType}`, formData, {
       headers: {
         Authorization: `Bearer ${storageService.getToken()}`,
       },
     });
+  
+    const updatedShop = await this.getShop();
+  
+    
+    storageService.setShopData(updatedShop.data.data);
+  
+    return uploadRes; 
   },
 
   /**

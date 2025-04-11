@@ -1,22 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import {
-  Home,
-  Users,
-  Tags,
-  Boxes,
-  Wallet,
-  Coins,
-  BadgeDollarSign,
-  Menu,
-  Power,
-  WalletCards,
-} from "lucide-react";
+import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards, } from "lucide-react";
 import { useState, useEffect } from "react";
 import { shopService } from "../../Services/shop.service";
 import { Button } from "./shop/Button";
 import Domiduck from "../../assets/img/horizontal-logo.svg";
 import domiduck from "../../assets/img/domiduck.svg";
 import { useShopStatus } from "../../hooks/bashboard/useShopStatus";
+import { environment } from "../../config/environmet";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,10 +19,12 @@ function Sidebar() {
     if (shopData) {
       setShop({
         name: shopData.name,
-        image: shopService.getShopImage() || domiduck,
+        image: shopService.getShopImage() || domiduck
+
       });
     }
   }, []);
+  
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -85,8 +77,8 @@ function Sidebar() {
                 <Link
                   to={item.path}
                   className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out ${isActive(item.path)
-                      ? "bg-[#ff204e] text-white"
-                      : "hover:bg-[#ff204e] hover:shadow-lg"
+                    ? "bg-[#ff204e] text-white"
+                    : "hover:bg-[#ff204e] hover:shadow-lg"
                     }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -102,8 +94,8 @@ function Sidebar() {
           <Button
             variant="primary"
             className={`w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 ${isShopOpen
-                ? "bg-[#ff204e] text-white hover:bg-[#ff3b60]"
-                : "bg-green-600 text-white hover:bg-green-700"
+              ? "bg-[#ff204e] text-white hover:bg-[#ff3b60]"
+              : "bg-green-600 text-white hover:bg-green-700"
               }`}
             icon={Power}
             text={loading ? "Cargando..." : isShopOpen ? "Cerrar Tienda" : "Abrir Tienda"}
