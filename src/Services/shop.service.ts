@@ -84,12 +84,19 @@ export const shopService = {
    */
   async updateShop(data: any) {
     const shopId = storageService.getShopId();
-    return axios.put(`${BASE_URL}/shop/${shopId}`, data, {
+    const res = await axios.put(`${BASE_URL}/shop/${shopId}`, data, {
       headers: {
         Authorization: `Bearer ${storageService.getToken()}`,
       },
     });
+  
+    // 🔥 Importante: actualizar datos en localStorage después del cambio
+    const updatedShop = await this.getShop();
+    storageService.setShopData(updatedShop.data.data);
+  
+    return res;
   },
+  
 
   /**
    * Subir imagen de la tienda.
