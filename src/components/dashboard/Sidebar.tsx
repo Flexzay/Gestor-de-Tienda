@@ -24,7 +24,7 @@ function Sidebar() {
       });
     }
   }, []);
-  
+
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -54,6 +54,7 @@ function Sidebar() {
               className="h-16 w-16 rounded-full object-cover border-2 border-[#ff204e] shadow-lg"
               onError={(e) => (e.currentTarget.src = domiduck)}
             />
+
             <span className="text-lg font-semibold text-white mt-2">{shop.name}</span>
             <Link to="/store-profile" className="text-sm text-[#ff204e] hover:underline mt-1">
               Ver perfil

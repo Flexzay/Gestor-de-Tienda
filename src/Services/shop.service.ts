@@ -29,9 +29,22 @@ export const shopService = {
    */
   getShopImage(): string | undefined {
     const shopData = storageService.getShopData();
-    return shopData?.media?.front?.path || undefined;
+    if (!shopData?.media) return undefined;
+  
+    const avatarPath = shopData.media.avatar?.path;
+    const frontPath = shopData.media.front?.path;
+  
+    if (avatarPath) {;
+      return `${environment.s3Storage}${avatarPath}`;
+    }
+  
+    if (frontPath) {
+      return `${environment.s3Storage}${frontPath}`;
+    }
+    return undefined;
   },
-
+  
+  
   /**
    * Obtener el balance actual de la tienda.
    */
