@@ -1,11 +1,16 @@
-import { Clock, MapPin, Phone, Star, Truck, ChevronRight } from "lucide-react"
+import { Clock, MapPin, Phone, Star, Truck } from "lucide-react"
 
 export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }) {
+  // Formatear los horarios en una sola línea
+  const formattedHours = (storeData.timetable || [])
+    .filter(item => item.dia && item.hora)
+    .map(item => `${item.dia}: ${item.hora}`)
+    .join(" • ")
+
   return (
     <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-800">Vista previa</h2>
-        
       </div>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -54,29 +59,31 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
           </div>
 
           <div className="mt-4 space-y-3">
-            <p className="text-gray-600">{storeData.description || "Descripción de la tienda..."}</p>
+            <p className="text-gray-600">
+              {storeData.description?.trim() || "Descripción de la tienda..."}
+            </p>
 
-            {storeData.location && (
+            {storeData.location?.trim() && (
               <div className="flex items-start text-sm">
                 <MapPin className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
                 <span>{storeData.location}</span>
               </div>
             )}
 
-            {storeData.hours && (
+            {formattedHours && (
               <div className="flex items-start text-sm">
                 <Clock className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
-                <span>{storeData.hours}</span>
+                <span>{formattedHours}</span>
               </div>
             )}
 
-            {(storeData.phone || storeData.whatsapp) && (
+            {(storeData.phone?.trim() || storeData.whatsapp?.trim()) && (
               <div className="flex items-start text-sm">
                 <Phone className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
                 <span>
-                  {storeData.phone && `Tel: ${storeData.phone}`}
+                  {storeData.phone?.trim() && `Tel: ${storeData.phone}`}
                   {storeData.phone && storeData.whatsapp && " • "}
-                  {storeData.whatsapp && `WhatsApp: ${storeData.whatsapp}`}
+                  {storeData.whatsapp?.trim() && `WhatsApp: ${storeData.whatsapp}`}
                 </span>
               </div>
             )}
@@ -88,8 +95,6 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
               </div>
             )}
           </div>
-
-          
         </div>
 
         {/* Información de pedido */}

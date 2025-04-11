@@ -5,6 +5,23 @@ export function StoreInfo({ storeData, updateStoreData }) {
     const { name, value } = e.target
     updateStoreData(name, value)
   }
+  const handleTimetableChange = (index, field, value) => {
+    const newTimetable = [...storeData.timetable]
+    newTimetable[index][field] = value
+    updateStoreData("timetable", newTimetable)
+  }
+
+  const handleAddTimetable = () => {
+    const newTimetable = [...(storeData.timetable || [])]
+    newTimetable.push({ dia: "", hora: "" })
+    updateStoreData("timetable", newTimetable)
+  }
+
+  const handleRemoveTimetable = (index) => {
+    const newTimetable = [...storeData.timetable]
+    newTimetable.splice(index, 1)
+    updateStoreData("timetable", newTimetable)
+  }
 
   return (
     <div className="space-y-4">
@@ -77,17 +94,45 @@ export function StoreInfo({ storeData, updateStoreData }) {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="hours" className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700">
           Horarios de atención
         </label>
-        <input
-          id="hours"
-          name="hours"
-          value={storeData.hours}
-          onChange={handleInputChange}
-          placeholder="Ej: Lun-Vie: 9am-6pm, Sáb: 10am-2pm"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-        />
+
+        {storeData.timetable?.map((item, index) => (
+          <div key={index} className="flex gap-2 items-center">
+            <input
+              type="text"
+              name={`dia-${index}`}
+              value={item.dia}
+              onChange={(e) => handleTimetableChange(index, "dia", e.target.value)}
+              placeholder="Día (ej: lunes)"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
+            />
+            <input
+              type="text"
+              name={`hora-${index}`}
+              value={item.hora}
+              onChange={(e) => handleTimetableChange(index, "hora", e.target.value)}
+              placeholder="Horario (ej: 9:00 - 18:00)"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
+            />
+            <button
+              type="button"
+              onClick={() => handleRemoveTimetable(index)}
+              className="text-red-600 font-bold hover:underline"
+            >
+              ✖
+            </button>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={handleAddTimetable}
+          className="mt-2 text-sm text-rose-600 font-semibold hover:underline"
+        >
+          + Agregar día
+        </button>
       </div>
 
       <div className="space-y-2">
