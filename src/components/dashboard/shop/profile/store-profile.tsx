@@ -6,6 +6,7 @@ import { OrderConfig } from "./order-config"
 import { StorePreview } from "./store-preview"
 import { Link } from "react-router-dom"
 import { shopService } from "../../../../Services/shop.service"
+import { environment } from "../../../../config/environmet"
 
 export default function StoreProfile() {
   const [activeTab, setActiveTab] = useState("info")
@@ -26,8 +27,8 @@ export default function StoreProfile() {
     timetable: []
   })
 
-  const [mainImagePreview, setMainImagePreview] = useState(null)
-  const [avatarImagePreview, setAvatarImagePreview] = useState(null)
+  const [mainImagePreview, setMainImagePreview] = useState<string | null>(null)
+  const [avatarImagePreview, setAvatarImagePreview] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [saveMessage, setSaveMessage] = useState("")
 
@@ -48,8 +49,8 @@ export default function StoreProfile() {
           location: shop.location || "",
           description: shop.description || "",
           hours: formatTimetable(shop.timetable),
-          mainImage: shop.media?.front || null,
-          avatarImage: shop.media?.avatar || null,
+          mainImage: shop.media?.front?.path || null,
+          avatarImage: shop.media?.avatar?.path || null,
           deliveryFee: shop.val_own_delivery || "",
           minOrderValue: shop.val_min_bills || "",
           ownDelivery: shop.own_delivery || false,
@@ -58,27 +59,30 @@ export default function StoreProfile() {
           timetable: shop.timetable || []
         })
 
+        // Cargar imágenes existentes
         if (shop.media?.front?.path) {
-          setMainImagePreview(`${import.meta.env.VITE_S3_URL}${shop.media.front.path}`)
+          const imageUrl = `${environment.s3Storage}${shop.media.front.path}`
+          setMainImagePreview(imageUrl)
         }
         if (shop.media?.avatar?.path) {
-          setAvatarImagePreview(`${import.meta.env.VITE_S3_URL}${shop.media.avatar.path}`)
+          const imageUrl = `${environment.s3Storage}${shop.media.avatar.path}`
+          setAvatarImagePreview(imageUrl)
         }
       }
     } catch (error) {
-      alert("Error al cargar los datos de la tienda")
-      console.error(error)
+      console.error("Error loading shop data:", error)
+      setSaveMessage("Error al cargar los datos de la tienda")
     } finally {
       setIsLoading(false)
     }
   }
 
-  const formatTimetable = (timetable) => {
+  const formatTimetable = (timetable: any[]) => {
     if (!timetable || !Array.isArray(timetable)) return ""
     return timetable.map(time => `${time.day}: ${time.open} - ${time.close}`).join(", ")
   }
 
-  const updateStoreData = (field, value) => {
+  const updateStoreData = (field: string, value: any) => {
     setStoreData(prev => ({
       ...prev,
       [field]: value,
@@ -108,7 +112,7 @@ export default function StoreProfile() {
         val_min_bills: storeData.minOrderValue
       })
 
-      // Guardar imágenes si hay nuevas
+      // Guardar imágenes si hay nuevas (File objects)
       if (storeData.mainImage instanceof File) {
         const formData = new FormData()
         formData.append('image', storeData.mainImage)
@@ -122,9 +126,11 @@ export default function StoreProfile() {
       }
 
       setSaveMessage("Perfil guardado correctamente")
+      // Recargar datos para mostrar las imágenes actualizadas
+      await loadShopData()
     } catch (error) {
+      console.error("Error saving shop data:", error)
       setSaveMessage("Error al guardar los cambios")
-      console.error(error)
     } finally {
       setIsLoading(false)
       setTimeout(() => setSaveMessage(""), 3000)
@@ -170,7 +176,11 @@ export default function StoreProfile() {
 
       <main className="flex-1 max-w-7xl mx-auto py-6 px-4">
         {saveMessage && (
-          <div className={`mb-4 p-3 rounded-md ${saveMessage.includes("Error") ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+          <div className={`mb-4 p-3 rounded-md ${
+            saveMessage.includes("Error") 
+              ? "bg-red-100 text-red-700" 
+              : "bg-green-100 text-green-700"
+          }`}>
             {saveMessage}
           </div>
         )}

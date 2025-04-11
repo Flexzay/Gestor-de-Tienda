@@ -1,5 +1,4 @@
 import { Camera, Upload } from "lucide-react"
-
 export function StoreImages({
   mainImagePreview,
   avatarImagePreview,
@@ -7,25 +6,45 @@ export function StoreImages({
   setAvatarImagePreview,
   updateStoreData,
 }) {
-  const handleMainImageChange = (e) => {
+  // Función para manejar cambios en las imágenes
+  const handleImageChange = (e, type) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      
+      // Validaciones básicas
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor seleccione un archivo de imagen válido')
+        return
+      }
+
       const reader = new FileReader()
       reader.onload = (event) => {
-        setMainImagePreview(event.target?.result)
-        updateStoreData("mainImage", e.target.files[0])
+        if (type === 'main') {
+          setMainImagePreview(event.target.result)
+          updateStoreData("mainImage", file) // Guardamos el File para el upload
+        } else {
+          setAvatarImagePreview(event.target.result)
+          updateStoreData("avatarImage", file) // Guardamos el File para el upload
+        }
       }
-      reader.readAsDataURL(e.target.files[0])
+      reader.readAsDataURL(file)
     }
   }
 
-  const handleAvatarImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setAvatarImagePreview(event.target?.result)
-        updateStoreData("avatarImage", e.target.files[0])
-      }
-      reader.readAsDataURL(e.target.files[0])
+  // Función para eliminar imágenes
+  const removeImage = (type) => {
+    if (type === 'main') {
+      setMainImagePreview(null)
+      updateStoreData("mainImage", null)
+      // Limpiar input file
+      const input = document.getElementById("mainImage")
+      if (input) input.value = ""
+    } else {
+      setAvatarImagePreview(null)
+      updateStoreData("avatarImage", null)
+      // Limpiar input file
+      const input = document.getElementById("avatarImage")
+      if (input) input.value = ""
     }
   }
 
@@ -38,17 +57,20 @@ export function StoreImages({
           {mainImagePreview ? (
             <div className="relative w-full h-48">
               <img
-                src={mainImagePreview}
+                src={typeof mainImagePreview === 'string' ? 
+                     mainImagePreview : 
+                     URL.createObjectURL(mainImagePreview)}
                 alt="Imagen principal"
                 className="w-full h-full object-cover rounded-md"
               />
-              <button
-                className="absolute bottom-2 right-2 bg-white text-gray-700 px-2 py-1 text-sm rounded-md shadow-sm border border-gray-300 hover:bg-gray-50 flex items-center"
-                onClick={() => document.getElementById("mainImage").click()}
-              >
-                <Camera className="h-4 w-4 mr-1" />
-                Cambiar
-              </button>
+              <div className="absolute inset-0 flex items-end justify-end p-2">
+                <button
+                  onClick={() => removeImage('main')}
+                  className="bg-white text-gray-700 p-1 rounded-full shadow hover:bg-gray-100"
+                >
+                  ✖
+                </button>
+              </div>
             </div>
           ) : (
             <div className="py-8 flex flex-col items-center">
@@ -56,13 +78,19 @@ export function StoreImages({
               <p className="text-sm text-gray-500 mb-2">Seleccione una imagen principal</p>
               <button
                 className="bg-white text-gray-700 px-3 py-1.5 text-sm rounded-md shadow-sm border border-gray-300 hover:bg-gray-50"
-                onClick={() => document.getElementById("mainImage").click()}
+                onClick={() => document.getElementById("mainImage")?.click()}
               >
                 Seleccionar Imagen
               </button>
             </div>
           )}
-          <input id="mainImage" type="file" accept="image/*" className="hidden" onChange={handleMainImageChange} />
+          <input
+            id="mainImage"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => handleImageChange(e, 'main')}
+          />
         </div>
       </div>
 
@@ -72,20 +100,21 @@ export function StoreImages({
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
           {avatarImagePreview ? (
             <div className="flex flex-col items-center">
-              <div className="w-32 h-32 mb-4 relative">
+              <div className="relative w-32 h-32 mb-4">
                 <img
-                  src={avatarImagePreview}
+                  src={typeof avatarImagePreview === 'string' ? 
+                       avatarImagePreview : 
+                       URL.createObjectURL(avatarImagePreview)}
                   alt="Avatar"
                   className="w-32 h-32 object-cover rounded-full"
                 />
+                <button
+                  onClick={() => removeImage('avatar')}
+                  className="absolute -top-2 -right-2 bg-white text-gray-700 p-1 rounded-full shadow hover:bg-gray-100"
+                >
+                  ✖
+                </button>
               </div>
-              <button
-                className="bg-white text-gray-700 px-2 py-1 text-sm rounded-md shadow-sm border border-gray-300 hover:bg-gray-50 flex items-center"
-                onClick={() => document.getElementById("avatarImage").click()}
-              >
-                <Camera className="h-4 w-4 mr-1" />
-                Cambiar
-              </button>
             </div>
           ) : (
             <div className="py-8 flex flex-col items-center">
@@ -94,13 +123,19 @@ export function StoreImages({
               </div>
               <button
                 className="bg-white text-gray-700 px-3 py-1.5 text-sm rounded-md shadow-sm border border-gray-300 hover:bg-gray-50"
-                onClick={() => document.getElementById("avatarImage").click()}
+                onClick={() => document.getElementById("avatarImage")?.click()}
               >
                 Seleccionar Avatar
               </button>
             </div>
           )}
-          <input id="avatarImage" type="file" accept="image/*" className="hidden" onChange={handleAvatarImageChange} />
+          <input
+            id="avatarImage"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => handleImageChange(e, 'avatar')}
+          />
         </div>
       </div>
     </div>
