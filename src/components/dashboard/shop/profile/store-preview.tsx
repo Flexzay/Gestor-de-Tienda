@@ -5,7 +5,7 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
     <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-800">Vista previa</h2>
-        <div className="text-sm text-gray-500">Como verán los clientes su tienda</div>
+        
       </div>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">

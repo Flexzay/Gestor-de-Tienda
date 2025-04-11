@@ -66,38 +66,28 @@ export function StoreInfo({ storeData, updateStoreData }) {
         <label htmlFor="location" className="block text-sm font-medium text-gray-700">
           Ubicación
         </label>
-        <div className="flex items-center">
-          <span className="inline-flex items-center px-3 py-2 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-            <MapPin className="w-4 h-4" />
-          </span>
-          <input
-            id="location"
-            name="location"
-            value={storeData.location}
-            onChange={handleInputChange}
-            placeholder="Ingrese la dirección de su tienda"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-          />
-        </div>
+        <input
+          id="location"
+          name="location"
+          value={storeData.location}
+          onChange={handleInputChange}
+          placeholder="Ingrese la dirección de su tienda"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+        />
       </div>
 
       <div className="space-y-2">
         <label htmlFor="hours" className="block text-sm font-medium text-gray-700">
           Horarios de atención
         </label>
-        <div className="flex items-center">
-          <span className="inline-flex items-center px-3 py-2 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
-            <Clock className="w-4 h-4" />
-          </span>
-          <input
-            id="hours"
-            name="hours"
-            value={storeData.hours}
-            onChange={handleInputChange}
-            placeholder="Ej: Lun-Vie: 9am-6pm, Sáb: 10am-2pm"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-          />
-        </div>
+        <input
+          id="hours"
+          name="hours"
+          value={storeData.hours}
+          onChange={handleInputChange}
+          placeholder="Ej: Lun-Vie: 9am-6pm, Sáb: 10am-2pm"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+        />
       </div>
 
       <div className="space-y-2">
