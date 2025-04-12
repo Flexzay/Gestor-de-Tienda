@@ -76,7 +76,6 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
                 <span>{formattedHours}</span>
               </div>
             )}
-
             {(storeData.phone?.trim() || storeData.whatsapp?.trim()) && (
               <div className="flex items-start text-sm">
                 <Phone className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
@@ -85,6 +84,27 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
                   {storeData.phone && storeData.whatsapp && " • "}
                   {storeData.whatsapp?.trim() && `WhatsApp: ${storeData.whatsapp}`}
                 </span>
+              </div>
+            )}
+
+            {storeData.latitud && storeData.longitud && (
+              <div>
+                <div className="flex items-start text-sm mb-2">
+                  <MapPin className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
+                  <span>
+                    Lat: {Number(storeData.latitud).toFixed(6)}, Lng: {Number(storeData.longitud).toFixed(6)}
+                  </span>
+                </div>
+                <div className="rounded-md overflow-hidden border border-gray-200">
+                  <iframe
+                    title="Ubicación de la tienda"
+                    width="100%"
+                    height="200"
+                    loading="lazy"
+                    style={{ border: 0 }}
+                    src={`https://www.google.com/maps?q=${storeData.latitud},${storeData.longitud}&z=15&output=embed`}
+                  />
+                </div>
               </div>
             )}
 

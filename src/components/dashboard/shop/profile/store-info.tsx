@@ -1,62 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Clock, MapPin, Phone, MessageCircle } from "lucide-react";
-import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
+import { MapPicker } from "./MapPicker";
 
 const defaultCenter = {
-  lat: -12.0464,  // Latitud de Lima por defecto
-  lng: -77.0428   // Longitud de Lima por defecto
-};
-
-const containerStyle = {
-  width: '100%',
-  height: '400px'
+  lat: 2.5686,    // Coordenadas precisas de San José del Guaviare
+  lng: -72.6406
 };
 
 export function StoreInfo({ storeData, updateStoreData }) {
   const [showMap, setShowMap] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState({
-    lat: storeData.latitud || defaultCenter.lat,
-    lng: storeData.longitud || defaultCenter.lng
-  });
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Manejador para cambios en inputs normales
+  // Inicializar ubicación
+  useEffect(() => {
+    const lat = parseFloat(storeData.latitud);
+    const lng = parseFloat(storeData.longitud);
+    
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setSelectedLocation({ lat, lng });
+    } else {
+      setSelectedLocation(defaultCenter);
+    }
+  }, [storeData.latitud, storeData.longitud]);
+
+  // Resetear al abrir el modal
+  useEffect(() => {
+    if (showMap) {
+      const lat = parseFloat(storeData.latitud);
+      const lng = parseFloat(storeData.longitud);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        setSelectedLocation({ lat, lng });
+      } else {
+        setSelectedLocation(defaultCenter);
+      }
+    }
+  }, [showMap]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     updateStoreData(name, value);
   };
 
-  // Manejador para cambios en horarios
   const handleTimetableChange = (index, field, value) => {
     const newTimetable = [...storeData.timetable];
     newTimetable[index][field] = value;
     updateStoreData("timetable", newTimetable);
   };
 
-  // Agregar nuevo horario
   const handleAddTimetable = () => {
     const newTimetable = [...(storeData.timetable || [])];
     newTimetable.push({ dia: "", hora: "" });
     updateStoreData("timetable", newTimetable);
   };
 
-  // Eliminar horario
   const handleRemoveTimetable = (index) => {
     const newTimetable = [...storeData.timetable];
     newTimetable.splice(index, 1);
     updateStoreData("timetable", newTimetable);
   };
 
-  // Cuando se hace clic en el mapa
-  const handleMapClick = (e) => {
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
-    setSelectedLocation({ lat, lng });
+  const handleLocationChange = (location: { lat: number; lng: number }) => {
+    setSelectedLocation(location);
   };
 
-  // Confirmar la ubicación seleccionada
   const confirmLocation = () => {
-    updateStoreData("latitud", selectedLocation.lat);
-    updateStoreData("longitud", selectedLocation.lng);
+    if (selectedLocation) {
+      updateStoreData("latitud", selectedLocation.lat.toString());
+      updateStoreData("longitud", selectedLocation.lng.toString());
+    }
     setShowMap(false);
   };
 
@@ -157,38 +169,22 @@ export function StoreInfo({ storeData, updateStoreData }) {
             <h2 className="text-xl font-bold mb-4">Selecciona la ubicación de tu tienda</h2>
             
             <div className="h-96 w-full mb-4 rounded-lg overflow-hidden border border-gray-300">
-              <LoadScript
-                googleMapsApiKey="TU_API_KEY_DE_GOOGLE_MAPS"
-                loadingElement={<div className="h-full w-full flex items-center justify-center">Cargando mapa...</div>}
-              >
-                <GoogleMap
-                  mapContainerStyle={containerStyle}
-                  center={selectedLocation}
-                  zoom={15}
-                  onClick={handleMapClick}
-                  options={{
-                    streetViewControl: false,
-                    mapTypeControl: false,
-                    fullscreenControl: false
-                  }}
-                >
-                  <Marker 
-                    position={selectedLocation} 
-                    draggable={true}
-                    onDragEnd={handleMapClick}
-                  />
-                </GoogleMap>
-              </LoadScript>
+              {selectedLocation && (
+                <MapPicker 
+                  selectedLocation={selectedLocation}
+                  onLocationChange={handleLocationChange}
+                />
+              )}
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Latitud</label>
                 <input
-                  type="text"
-                  value={selectedLocation.lat}
+                  type="number"
+                  value={selectedLocation?.lat || ''}
                   onChange={(e) => setSelectedLocation(prev => ({
-                    ...prev,
+                    ...(prev || defaultCenter),
                     lat: parseFloat(e.target.value) || 0
                   }))}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -197,10 +193,10 @@ export function StoreInfo({ storeData, updateStoreData }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Longitud</label>
                 <input
-                  type="text"
-                  value={selectedLocation.lng}
+                  type="number"
+                  value={selectedLocation?.lng || ''}
                   onChange={(e) => setSelectedLocation(prev => ({
-                    ...prev,
+                    ...(prev || defaultCenter),
                     lng: parseFloat(e.target.value) || 0
                   }))}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
