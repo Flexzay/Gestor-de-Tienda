@@ -1,59 +1,26 @@
 import { useState, useEffect, useReducer } from "react";
 import { productService } from "../../Services/product.service";
-import { ProductFormData, ProductImage } from "../../interface/product";
+import { ProductFormData } from "../../interface/product";
 
 type Action =
   | { type: "CHANGE_INPUT"; field: string; value: any }
-  | { type: "UPDATE_INGREDIENT"; index: number; field: 'name' | 'quantity'; value: string }
-  | { type: "ADD_INGREDIENT" }
-  | { type: "REMOVE_INGREDIENT"; index: number }
-  | { type: "TOGGLE_AVAILABLE" }
   | { type: "ADD_IMAGES"; files: File[]; previews: string[] }
   | { type: "REMOVE_IMAGE"; index: number }
-  | { type: "REMOVE_EXISTING_IMAGE"; index: number }
-  | { type: "RESET_FORM"; initialState: ProductFormData };
+  | { type: "REMOVE_EXISTING_IMAGE"; index: number };
 
 const formReducer = (state: ProductFormData, action: Action): ProductFormData => {
   switch (action.type) {
     case "CHANGE_INPUT":
       return { ...state, [action.field]: action.value };
 
-    case "UPDATE_INGREDIENT":
-      const updatedIngredients = [...(state.ingredients || [])];
-      updatedIngredients[action.index] = {
-        ...updatedIngredients[action.index],
-        [action.field]: action.value
-      };
-      return {
-        ...state,
-        ingredients: updatedIngredients
-      };
-      
-    case "ADD_INGREDIENT":
-      return {
-        ...state,
-        ingredients: [...(state.ingredients || []), { name: "", quantity: "" }]
-      };
-      
-    case "REMOVE_INGREDIENT":
-      return {
-        ...state,
-        ingredients: (state.ingredients || []).filter((_, i) => i !== action.index)
-      };
-      
-    case "TOGGLE_AVAILABLE":
-      return {
-        ...state,
-        available: !state.available
-      };
-
     case "ADD_IMAGES":
       const newFiles = action.files.filter(
-        (file) => !state.images.some((existing) =>
-          typeof existing === "string"
-            ? false
-            : (existing as File).name === file.name
-        )
+        (file) =>
+          !state.images.some((existing) =>
+            typeof existing === "string"
+              ? false
+              : (existing as File).name === file.name
+          )
       );
       const newPreviews = action.previews.slice(0, newFiles.length);
       return {
@@ -77,28 +44,19 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
         deletedImages: [...(state.deletedImages || []), deleted],
       };
 
-    case "RESET_FORM":
-      return { ...action.initialState };
-
     default:
       return state;
   }
 };
 
-interface UseProductOptions {
-  onSubmit: (data: ProductFormData) => Promise<void>;
-  onClose: () => void;
-  initialData?: ProductFormData;
-}
-
-const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
+const useProduct = ({ onSubmit, initialData, onClose }) => {
   const [products, setProducts] = useState<ProductFormData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
-  const initialState: ProductFormData = {
+  const [formData, dispatch] = useReducer(formReducer, {
     id: initialData?.id || undefined,
     name: initialData?.name || "",
     description: initialData?.description || "",
@@ -108,7 +66,6 @@ const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
     stock: initialData?.stock || 0,
     expirationDate: initialData?.expirationDate || "",
     available: initialData?.available ?? true,
-    ingredients: initialData?.ingredients || [],
     images: [],
     previews: [],
     existingImages: initialData?.images?.map((img: any) => ({
@@ -116,17 +73,18 @@ const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
       url: typeof img === 'string' ? img : img.url
     })) || [],
     deletedImages: [],
-  };
-
-  const [formData, dispatch] = useReducer(formReducer, initialState);
+  });
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await productService.getProducts();
-      if (response.status === 200 && response.data) {
-        setProducts(Array.isArray(response.data) ? response.data : []);
-      }
+      const data = response.status === 200 && response.data
+        ? Array.isArray(response.data)
+          ? response.data
+          : response.data.data || []
+        : [];
+      setProducts(data);
     } catch (error) {
       console.error("Error al obtener productos:", error);
       setError("Error al obtener productos");
@@ -135,45 +93,18 @@ const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
     }
   };
 
-  const resetForm = () => {
-    dispatch({ type: "RESET_FORM", initialState });
-  };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target;
-    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-    
-    dispatch({
-      type: "CHANGE_INPUT",
-      field: name,
-      value: type === 'checkbox' ? checked : value
-    });
-    setFieldErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const updateIngredient = (index: number, field: 'name' | 'quantity', value: string) => {
-    dispatch({ type: "UPDATE_INGREDIENT", index, field, value });
-  };
-
-  const addIngredient = () => {
-    dispatch({ type: "ADD_INGREDIENT" });
-  };
-
-  const removeIngredient = (index: number) => {
-    dispatch({ type: "REMOVE_INGREDIENT", index });
-  };
-
-  const toggleAvailable = () => {
-    dispatch({ type: "TOGGLE_AVAILABLE" });
+    dispatch({ type: "CHANGE_INPUT", field: e.target.name, value: e.target.value });
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     if (files.length > 0) {
       try {
-        const compressedFiles = await Promise.all(files.map(compressImage));
+        const compressedFiles = await Promise.all(files.map((file) => compressImage(file)));
         const previews = compressedFiles.map((file) => URL.createObjectURL(file));
         dispatch({ type: "ADD_IMAGES", files: compressedFiles, previews });
         setFieldErrors((prev) => ({ ...prev, images: "" }));
@@ -192,6 +123,7 @@ const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
           throw new Error("No se encontró la imagen a eliminar");
         }
   
+        // Si tiene ID, es una imagen guardada en la base de datos
         if (imageToRemove.id) {
           const result = await productService.deleteImage(imageToRemove.id);
           if (!result.success) {
@@ -199,9 +131,15 @@ const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
           }
         }
         
-        dispatch({ type: "REMOVE_EXISTING_IMAGE", index });
+        dispatch({ 
+          type: "REMOVE_EXISTING_IMAGE", 
+          index 
+        });
       } else {
-        dispatch({ type: "REMOVE_IMAGE", index });
+        dispatch({ 
+          type: "REMOVE_IMAGE", 
+          index 
+        });
       }
     } catch (error) {
       console.error("Error al eliminar imagen:", error);
@@ -209,46 +147,44 @@ const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
     }
   };
 
-  const handleNextStep = () => {
-    // Validación antes de avanzar
-    const errors: Record<string, string> = {};
-    
-    if (step === 0) {
-      if (!formData.name.trim()) errors.name = "Nombre es requerido";
-      if (!formData.description.trim()) errors.description = "Descripción es requerida";
-      if (formData.price <= 0) errors.price = "Precio debe ser mayor a 0";
-      if (!formData.category_id) errors.category_id = "Selecciona una categoría";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
-    
-    setStep((prev) => prev + 1);
-  };
-
+  const handleNextStep = () => setStep((prev) => prev + 1);
   const handlePrevStep = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
-      // Validación final
-      if (formData.previews.length === 0 && formData.existingImages?.length === 0) {
-        setFieldErrors({ images: "Debes subir al menos una imagen" });
-        return;
-      }
-
-      await onSubmit(formData);
-      await fetchProducts();
-      resetForm();
+      await onSubmit({ ...formData });
       onClose();
     } catch (error) {
-      console.error("Error al guardar producto:", error);
-      setError("Hubo un error al guardar el producto");
+      setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createProduct = async (product: ProductFormData) => {
+    setLoading(true);
+    try {
+      const response = await productService.createProduct(product);
+      if (response.status === 201) fetchProducts();
+    } catch (error) {
+      console.error("Error al crear producto:", error);
+      setError("No se pudo crear el producto.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProduct = async (id: string, product: ProductFormData) => {
+    setLoading(true);
+    try {
+      const response = await productService.updateProduct(id, product);
+      if (response.status === 200) fetchProducts();
+    } catch (error) {
+      console.error("Error al actualizar producto:", error);
+      setError("No se pudo actualizar el producto.");
     } finally {
       setLoading(false);
     }
@@ -265,23 +201,20 @@ const useProduct = ({ onSubmit, onClose, initialData }: UseProductOptions) => {
     formData,
     step,
     fieldErrors,
+    createProduct,
+    updateProduct,
     fetchProducts,
     handleChange,
-    updateIngredient,
-    addIngredient,
-    removeIngredient,
-    toggleAvailable,
     handleImageChange,
     removeImage,
     handleNextStep,
     handlePrevStep,
     handleSubmit,
-    resetForm
   };
 };
 
-// Función para comprimir imágenes
-const compressImage = async (file: File, maxSizeMB = 3, quality = 0.8): Promise<File> => {
+// Utilidad para comprimir imágenes
+export const compressImage = (file: File, maxSizeMB = 3, quality = 0.8): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
