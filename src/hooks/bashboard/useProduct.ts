@@ -6,8 +6,7 @@ type Action =
   | { type: "CHANGE_INPUT"; field: string; value: any }
   | { type: "ADD_IMAGES"; files: File[]; previews: string[] }
   | { type: "REMOVE_IMAGE"; index: number }
-  | { type: "REMOVE_EXISTING_IMAGE"; index: number }
-  | { type: "ADD_EXISTING_IMAGE"; image: any; index: number };
+  | { type: "REMOVE_EXISTING_IMAGE"; index: number };
 
 const formReducer = (state: ProductFormData, action: Action): ProductFormData => {
   switch (action.type) {
@@ -45,15 +44,6 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
         deletedImages: [...(state.deletedImages || []), deleted],
       };
 
-    case "ADD_EXISTING_IMAGE":
-      const newExistingImages = [...(state.existingImages || [])];
-      newExistingImages.splice(action.index, 0, action.image);
-      return {
-        ...state,
-        existingImages: newExistingImages,
-        deletedImages: state.deletedImages?.filter(img => img.id !== action.image.id) || [],
-      };
-
     default:
       return state;
   }
@@ -65,7 +55,6 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const [formData, dispatch] = useReducer(formReducer, {
     id: initialData?.id || undefined,
@@ -99,11 +88,6 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     } catch (error) {
       console.error("Error al obtener productos:", error);
       setError("Error al obtener productos");
-      setSnackbar({
-        open: true,
-        message: "Error al obtener productos",
-        severity: "error"
-      });
     } finally {
       setLoading(false);
     }
@@ -126,11 +110,6 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
         setFieldErrors((prev) => ({ ...prev, images: "" }));
       } catch (error) {
         setError("Algunas imágenes no pudieron comprimirse.");
-        setSnackbar({
-          open: true,
-          message: "Algunas imágenes no pudieron comprimirse",
-          severity: "error"
-        });
       }
     }
   };
@@ -144,39 +123,27 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
           throw new Error("No se encontró la imagen a eliminar");
         }
   
-        // Optimistic UI update
-        dispatch({ type: "REMOVE_EXISTING_IMAGE", index });
-        
+        // Si tiene ID, es una imagen guardada en la base de datos
         if (imageToRemove.id) {
           const result = await productService.deleteImage(imageToRemove.id);
-          
           if (!result.success) {
-            // Revertir si falla
-            dispatch({ 
-              type: "ADD_EXISTING_IMAGE", 
-              image: imageToRemove, 
-              index 
-            });
             throw new Error(result.message);
-          } else {
-            // Actualizar UI para reflejar el cambio
-            setSnackbar({
-              open: true,
-              message: "Imagen eliminada correctamente",
-              severity: "success"
-            });
           }
         }
+        
+        dispatch({ 
+          type: "REMOVE_EXISTING_IMAGE", 
+          index 
+        });
       } else {
-        dispatch({ type: "REMOVE_IMAGE", index });
+        dispatch({ 
+          type: "REMOVE_IMAGE", 
+          index 
+        });
       }
     } catch (error) {
       console.error("Error al eliminar imagen:", error);
-      setSnackbar({
-        open: true,
-        message: error instanceof Error ? error.message : "Error al eliminar imagen",
-        severity: "error"
-      });
+      setError(error instanceof Error ? error.message : "Error desconocido al eliminar imagen");
     }
   };
 
@@ -190,18 +157,8 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     try {
       await onSubmit({ ...formData });
       onClose();
-      setSnackbar({
-        open: true,
-        message: "Producto guardado correctamente",
-        severity: "success"
-      });
     } catch (error) {
       setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");
-      setSnackbar({
-        open: true,
-        message: "Error al guardar el producto",
-        severity: "error"
-      });
     } finally {
       setLoading(false);
     }
@@ -211,22 +168,10 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     setLoading(true);
     try {
       const response = await productService.createProduct(product);
-      if (response.status === 201) {
-        fetchProducts();
-        setSnackbar({
-          open: true,
-          message: "Producto creado correctamente",
-          severity: "success"
-        });
-      }
+      if (response.status === 201) fetchProducts();
     } catch (error) {
       console.error("Error al crear producto:", error);
       setError("No se pudo crear el producto.");
-      setSnackbar({
-        open: true,
-        message: "Error al crear producto",
-        severity: "error"
-      });
     } finally {
       setLoading(false);
     }
@@ -236,22 +181,10 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     setLoading(true);
     try {
       const response = await productService.updateProduct(id, product);
-      if (response.status === 200) {
-        fetchProducts();
-        setSnackbar({
-          open: true,
-          message: "Producto actualizado correctamente",
-          severity: "success"
-        });
-      }
+      if (response.status === 200) fetchProducts();
     } catch (error) {
       console.error("Error al actualizar producto:", error);
       setError("No se pudo actualizar el producto.");
-      setSnackbar({
-        open: true,
-        message: "Error al actualizar producto",
-        severity: "error"
-      });
     } finally {
       setLoading(false);
     }
@@ -268,8 +201,6 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     formData,
     step,
     fieldErrors,
-    snackbar,
-    setSnackbar,
     createProduct,
     updateProduct,
     fetchProducts,
@@ -282,7 +213,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   };
 };
 
-// Utilidad para comprimir imágenes (sin cambios)
+// Utilidad para comprimir imágenes
 export const compressImage = (file: File, maxSizeMB = 3, quality = 0.8): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
