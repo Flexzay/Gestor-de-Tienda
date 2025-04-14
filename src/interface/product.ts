@@ -1,8 +1,13 @@
-import Category from './category'; 
+import Category from './category';
 
 interface ProductImage {
   id: number | null;
   url: string;
+}
+
+interface Ingredient {
+  name: string;
+  quantity: string;
 }
 
 export interface ProductFormData {
@@ -10,12 +15,13 @@ export interface ProductFormData {
   name: string;
   category_id: number;
   category?: Category;
+  price: number;
+  description: string;
+  available: boolean;
   brand: string;
   stock: number;
   expirationDate?: string;
-  available: boolean;
-  price: number;
-  description: string;
+  ingredients?: Ingredient[];
   images: (string | File)[];
   existingImages?: ProductImage[];
   deletedImages?: ProductImage[];

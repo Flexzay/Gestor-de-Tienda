@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { ArrowLeft } from "lucide-react"
 import type { ProductFormData } from "../../../interface/product"

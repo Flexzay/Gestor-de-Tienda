@@ -4,6 +4,8 @@ import { ProductFormData } from "../../interface/product";
 
 type Action =
   | { type: "CHANGE_INPUT"; field: string; value: any }
+  | { type: "SET_INGREDIENTS"; ingredients: { name: string; quantity: string }[] }
+  | { type: "TOGGLE_AVAILABLE" }
   | { type: "ADD_IMAGES"; files: File[]; previews: string[] }
   | { type: "REMOVE_IMAGE"; index: number }
   | { type: "REMOVE_EXISTING_IMAGE"; index: number };
@@ -12,6 +14,12 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
   switch (action.type) {
     case "CHANGE_INPUT":
       return { ...state, [action.field]: action.value };
+
+    case "SET_INGREDIENTS":
+      return { ...state, ingredients: action.ingredients };
+
+    case "TOGGLE_AVAILABLE":
+      return { ...state, available: !state.available };
 
     case "ADD_IMAGES":
       const newFiles = action.files.filter(
@@ -41,7 +49,7 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
       return {
         ...state,
         existingImages: state.existingImages?.filter((_, i) => i !== action.index) || [],
-        deletedImages: [...(state.deletedImages || []), deleted],
+        deletedImages: deleted ? [...(state.deletedImages || []), deleted] : [...(state.deletedImages || [])],
       };
 
     default:
@@ -118,11 +126,11 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     try {
       if (isExisting) {
         const imageToRemove = formData.existingImages?.[index];
-        
+
         if (!imageToRemove) {
           throw new Error("No se encontró la imagen a eliminar");
         }
-  
+
         // Si tiene ID, es una imagen guardada en la base de datos
         if (imageToRemove.id) {
           const result = await productService.deleteImage(imageToRemove.id);
@@ -130,15 +138,15 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
             throw new Error(result.message);
           }
         }
-        
-        dispatch({ 
-          type: "REMOVE_EXISTING_IMAGE", 
-          index 
+
+        dispatch({
+          type: "REMOVE_EXISTING_IMAGE",
+          index
         });
       } else {
-        dispatch({ 
-          type: "REMOVE_IMAGE", 
-          index 
+        dispatch({
+          type: "REMOVE_IMAGE",
+          index
         });
       }
     } catch (error) {
