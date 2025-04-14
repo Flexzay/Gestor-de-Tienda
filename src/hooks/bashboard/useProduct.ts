@@ -2,29 +2,48 @@ import { useState, useEffect, useReducer } from "react";
 import { productService } from "../../Services/product.service";
 import { ProductFormData } from "../../interface/product";
 
-const formReducer = (state: any, action: any) => {
+type Action =
+  | { type: "CHANGE_INPUT"; field: string; value: any }
+  | { type: "ADD_IMAGES"; files: File[]; previews: string[] }
+  | { type: "REMOVE_IMAGE"; index: number }
+  | { type: "REMOVE_EXISTING_IMAGE"; index: number };
+
+const formReducer = (state: ProductFormData, action: Action): ProductFormData => {
   switch (action.type) {
     case "CHANGE_INPUT":
       return { ...state, [action.field]: action.value };
+
     case "ADD_IMAGES":
+      const newFiles = action.files.filter(
+        (file) =>
+          !state.images.some((existing) =>
+            typeof existing === "string"
+              ? false
+              : (existing as File).name === file.name
+          )
+      );
+      const newPreviews = action.previews.slice(0, newFiles.length);
       return {
         ...state,
-        images: [...state.images, ...action.files],
-        previews: [...state.previews, ...action.previews],
+        images: [...state.images, ...newFiles],
+        previews: [...(state.previews || []), ...newPreviews],
       };
+
     case "REMOVE_IMAGE":
       return {
         ...state,
-        images: state.images.filter((_img: any, index: number) => index !== action.index),
-        previews: state.previews.filter((_preview: any, index: number) => index !== action.index),
+        images: state.images.filter((_, index) => index !== action.index),
+        previews: (state.previews || []).filter((_, index) => index !== action.index),
       };
-      case "REMOVE_EXISTING_IMAGE":
-        return {
-          ...state,
-          existingImages: state.existingImages.filter((_, index) => index !== action.index),
-          deletedImages: [...(state.deletedImages || []), state.existingImages[action.index]],
-        };
-      
+
+    case "REMOVE_EXISTING_IMAGE":
+      const deleted = state.existingImages?.[action.index];
+      return {
+        ...state,
+        existingImages: state.existingImages?.filter((_, i) => i !== action.index) || [],
+        deletedImages: [...(state.deletedImages || []), deleted],
+      };
+
     default:
       return state;
   }
@@ -38,27 +57,35 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, dispatch] = useReducer(formReducer, {
+    id: initialData?.id || undefined,
     name: initialData?.name || "",
     description: initialData?.description || "",
-    price: initialData?.price || "",
-    category_id: initialData?.category?.id || "",
+    price: initialData?.price || 0,
+    category_id: initialData?.category?.id || 0,
+    brand: initialData?.brand || "",
+    stock: initialData?.stock || 0,
+    expirationDate: initialData?.expirationDate || "",
     available: initialData?.available ?? true,
     images: [],
-    previews: initialData?.images?.length ? initialData.images : [],
-    existingImages: initialData?.images?.map((img: any) => 
-      typeof img === 'string' 
-        ? { id: null, url: img } 
+    previews: [],
+    existingImages: initialData?.images?.map((img: any) =>
+      typeof img === "string"
+        ? { id: null, url: img }
         : { id: Number(img.id), url: img.url }
-    ) || []
-    
-
+    ) || [],
+    deletedImages: [],
   });
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await productService.getProducts();
-      setProducts(response.status === 200 && response.data ? (Array.isArray(response.data) ? response.data : response.data.data || []) : []);
+      const data = response.status === 200 && response.data
+        ? Array.isArray(response.data)
+          ? response.data
+          : response.data.data || []
+        : [];
+      setProducts(data);
     } catch (error) {
       console.error("Error al obtener productos:", error);
       setError("Error al obtener productos");
@@ -67,7 +94,9 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     dispatch({ type: "CHANGE_INPUT", field: e.target.name, value: e.target.value });
     setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
@@ -76,8 +105,8 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     if (files.length > 0) {
       try {
-        const compressedFiles = await Promise.all(files.map(file => compressImage(file)));
-        const previews = compressedFiles.map(file => URL.createObjectURL(file));
+        const compressedFiles = await Promise.all(files.map((file) => compressImage(file)));
+        const previews = compressedFiles.map((file) => URL.createObjectURL(file));
         dispatch({ type: "ADD_IMAGES", files: compressedFiles, previews });
         setFieldErrors((prev) => ({ ...prev, images: "" }));
       } catch (error) {
@@ -87,42 +116,31 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   };
 
   const removeImage = async (index: number, isExisting: boolean) => {
-    if (isExisting && formData.existingImages) {
-      const imageToDelete = formData.existingImages[index];
-  
-      // Verificar que el ID es numérico antes de hacer la petición
-      if (imageToDelete?.id && !isNaN(Number(imageToDelete.id))) {
-        try {
-          console.log(`🛠️ Eliminando imagen con ID: ${imageToDelete.id}`);
-          await productService.deleteImage(imageToDelete.id); 
-        } catch (error) {
-          console.error(`❌ Error eliminando imagen:`, error);
-        }
-      } else {
-        console.error("❌ No se encontró un ID válido para la imagen.");
+    if (isExisting) {
+      const imageToRemove = formData.existingImages?.[index];
+      const imageId = imageToRemove?.id;
+      if (!imageId) return console.error("ID de imagen no válido");
+
+      try {
+        await productService.deleteImage(imageId);
+        dispatch({ type: "REMOVE_EXISTING_IMAGE", index });
+      } catch (err) {
+        console.error("Error eliminando la imagen:", err);
       }
     } else {
       dispatch({ type: "REMOVE_IMAGE", index });
     }
   };
-  
-  
-  
 
-  const handleNextStep = () => {
-    setStep((prev) => prev + 1);
-  };
-
-  const handlePrevStep = () => {
-    setStep((prev) => prev - 1);
-  };
+  const handleNextStep = () => setStep((prev) => prev + 1);
+  const handlePrevStep = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      onSubmit(formData);
+      await onSubmit({ ...formData });
       onClose();
     } catch (error) {
       setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");
@@ -135,9 +153,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     setLoading(true);
     try {
       const response = await productService.createProduct(product);
-      if (response.status === 201) {
-        fetchProducts(); // Actualizar lista después de crear un producto
-      }
+      if (response.status === 201) fetchProducts();
     } catch (error) {
       console.error("Error al crear producto:", error);
       setError("No se pudo crear el producto.");
@@ -150,9 +166,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     setLoading(true);
     try {
       const response = await productService.updateProduct(id, product);
-      if (response.status === 200) {
-        fetchProducts(); // Actualizar lista después de editar un producto
-      }
+      if (response.status === 200) fetchProducts();
     } catch (error) {
       console.error("Error al actualizar producto:", error);
       setError("No se pudo actualizar el producto.");
@@ -160,12 +174,6 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
       setLoading(false);
     }
   };
-
-
-
-
-
-
 
   useEffect(() => {
     fetchProducts();
@@ -175,12 +183,12 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     products,
     loading,
     error,
-    fetchProducts,
     formData,
     step,
     fieldErrors,
     createProduct,
     updateProduct,
+    fetchProducts,
     handleChange,
     handleImageChange,
     removeImage,
@@ -190,6 +198,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   };
 };
 
+// Utilidad para comprimir imágenes
 export const compressImage = (file: File, maxSizeMB = 3, quality = 0.8): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

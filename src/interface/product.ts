@@ -8,8 +8,8 @@ interface ProductImage {
 export interface ProductFormData {
   id?: number;
   name: string;
-  category_id: number; 
-  category?: Category; 
+  category_id: number;
+  category?: Category;
   brand: string;
   stock: number;
   expirationDate?: string;

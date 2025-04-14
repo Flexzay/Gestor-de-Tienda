@@ -73,23 +73,55 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
 
                 {fieldErrors.images && <p className="text-red-500 text-sm">{fieldErrors.images}</p>}
 
-                <div className="mt-4 grid grid-cols-3 gap-4">
-                  {formData.existingImages?.map((img, index) => (
-                    <div key={img.id || index} className="relative">
-                      <img
-                        src={img.url.startsWith("http") ? img.url : `/uploads/${img.url}`}
-                        alt={`Imagen ${index}`}
-                        className="w-full h-32 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index, true)}
-                        className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                {/* Imágenes existentes + nuevas separadas */}
+                <div className="mt-4 space-y-6">
+                  {formData.existingImages?.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Imágenes guardadas</h4>
+                      <div className="grid grid-cols-3 gap-4">
+                        {formData.existingImages.map((img, index) => (
+                          <div key={img.id || index} className="relative">
+                            <img
+                              src={img.url.startsWith("http") ? img.url : `/uploads/${img.url}`}
+                              alt={`Imagen ${index}`}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index, true)}
+                              className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  )}
+
+                  {formData.previews?.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Nuevas imágenes</h4>
+                      <div className="grid grid-cols-3 gap-4">
+                        {formData.previews.map((preview, index) => (
+                          <div key={`preview-${index}`} className="relative">
+                            <img
+                              src={preview}
+                              alt={`Preview ${index}`}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index, false)}
+                              className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
