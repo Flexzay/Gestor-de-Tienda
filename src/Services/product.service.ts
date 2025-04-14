@@ -270,7 +270,7 @@ export const productService = {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
-
+  
       const response = await fetch(`${environment.baseUrl}/product/images/${imageId}`, {
         method: "DELETE",
         headers: {
@@ -278,13 +278,29 @@ export const productService = {
           "Content-Type": "application/json"
         },
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Error al eliminar la imagen: ${response.statusText}`);
+  
+      // Si la respuesta es exitosa pero no tiene contenido
+      if (response.status === 204 || response.status === 200) {
+        return { 
+          success: true, 
+          message: "Imagen eliminada correctamente" 
+        };
       }
-
-      return { success: true, message: "Imagen eliminada correctamente" };
+  
+      // Si hay contenido, intentar parsearlo
+      try {
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || `Error ${response.status}`);
+        }
+        return { success: true, message: "Imagen eliminada correctamente", data };
+      } catch (e) {
+        // Si falla el JSON pero la respuesta fue exitosa
+        if (response.ok) {
+          return { success: true, message: "Imagen eliminada correctamente" };
+        }
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
     } catch (error: any) {
       console.error("Error en deleteImage:", error);
       return {
