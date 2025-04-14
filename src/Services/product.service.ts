@@ -56,11 +56,11 @@ export const productService = {
       const token = storageService.getToken();
       const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
       const shopId = shop.id;
-  
+
       if (!token || !shopId) {
         throw new Error("Falta el token o el shop_id.");
       }
-  
+
       // 1. Crear producto base
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
@@ -79,24 +79,24 @@ export const productService = {
           expirationDate: productData.expirationDate,
         }),
       });
-  
+
       if (!response.ok) throw new Error("Error al crear el producto.");
       const createdProduct = await response.json();
-  
+
       // 2. Subir nuevas imágenes
       const filesToUpload = productData.images.filter((img) => img instanceof File) as File[];
       let uploadedImages: ProductImage[] = [];
-  
+
       if (filesToUpload.length) {
         uploadedImages = await this.uploadImages(createdProduct.data.id, filesToUpload);
       }
-  
+
       // 3. Combinar imágenes nuevas + existentes (si había)
       const allImages: ProductImage[] = [
         ...(productData.existingImages || []),
         ...uploadedImages
       ];
-  
+
       return {
         status: response.status,
         data: {
@@ -108,7 +108,7 @@ export const productService = {
           }
         }
       };
-  
+
     } catch (error: any) {
       console.error("❌ Error al crear el producto:", error);
       return {
@@ -117,7 +117,7 @@ export const productService = {
       };
     }
   },
-  
+
   /**
    * Obtener todos los productos
    */
@@ -147,7 +147,11 @@ export const productService = {
         data: data.data.map((product: any) => ({
           ...product,
           images: product.images?.length
-            ? product.images.map((img: any) => `${S3_BUCKET_URL}${img.path}`)
+            ? product.images.map((img: any) => ({
+              id: img.id, 
+              url: `${S3_BUCKET_URL}${img.path}`,
+              path: img.path
+            }))
             : [],
           category: product.category || {
             id: product.category_id,
@@ -172,13 +176,13 @@ export const productService = {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
-  
+
       // 1. Eliminar imágenes marcadas como borradas
       const deleted = productData.deletedImages || [];
       for (const img of deleted) {
         if (img?.id) await this.deleteImage(img.id);
       }
-  
+
       // 2. Actualizar producto base
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
@@ -197,22 +201,22 @@ export const productService = {
           expirationDate: productData.expirationDate,
         }),
       });
-  
+
       if (!response.ok) throw new Error("Error al actualizar el producto.");
-  
+
       // 3. Subir nuevas imágenes
       const filesToUpload = productData.images.filter((img) => img instanceof File) as File[];
       let uploadedImages: ProductImage[] = [];
-  
+
       if (filesToUpload.length) {
         uploadedImages = await this.uploadImages(productId, filesToUpload);
       }
-  
+
       const finalImages: ProductImage[] = [
         ...(productData.existingImages?.filter(img => !deleted.find(d => d.id === img.id)) || []),
         ...uploadedImages
       ];
-  
+
       return {
         status: 200,
         data: {
@@ -233,7 +237,7 @@ export const productService = {
       };
     }
   },
-  
+
 
   /**
    * Obtener detalles de un producto
@@ -266,26 +270,26 @@ export const productService = {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
-  
+
       const response = await fetch(`${environment.baseUrl}/product/images/${imageId}`, {
         method: "DELETE",
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
         },
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `Error al eliminar la imagen: ${response.statusText}`);
       }
-  
+
       return { success: true, message: "Imagen eliminada correctamente" };
     } catch (error: any) {
       console.error("Error en deleteImage:", error);
-      return { 
-        success: false, 
-        message: error.message || "Error al eliminar la imagen" 
+      return {
+        success: false,
+        message: error.message || "Error al eliminar la imagen"
       };
     }
   },

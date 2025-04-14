@@ -68,11 +68,10 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     available: initialData?.available ?? true,
     images: [],
     previews: [],
-    existingImages: initialData?.images?.map((img: any) =>
-      typeof img === "string"
-        ? { id: null, url: img }
-        : { id: Number(img.id), url: img.url }
-    ) || [],
+    existingImages: initialData?.images?.map((img: any) => ({
+      id: img.id ? Number(img.id) : null,
+      url: typeof img === 'string' ? img : img.url
+    })) || [],
     deletedImages: [],
   });
 
@@ -119,15 +118,19 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     try {
       if (isExisting) {
         const imageToRemove = formData.existingImages?.[index];
-        if (!imageToRemove?.id) {
-          throw new Error("La imagen no tiene un ID válido");
+        
+        if (!imageToRemove) {
+          throw new Error("No se encontró la imagen a eliminar");
         }
   
-        const result = await productService.deleteImage(imageToRemove.id);
-        if (!result.success) {
-          throw new Error(result.message);
+        // Si tiene ID, es una imagen guardada en la base de datos
+        if (imageToRemove.id) {
+          const result = await productService.deleteImage(imageToRemove.id);
+          if (!result.success) {
+            throw new Error(result.message);
+          }
         }
-  
+        
         dispatch({ 
           type: "REMOVE_EXISTING_IMAGE", 
           index 
@@ -140,7 +143,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
       }
     } catch (error) {
       console.error("Error al eliminar imagen:", error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : "Error desconocido al eliminar imagen");
     }
   };
 
