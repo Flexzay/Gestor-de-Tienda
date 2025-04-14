@@ -6,38 +6,40 @@ import ProductList from "./Product/ProductList";
 import { Package, Truck, Wallet } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
+import { productService } from "../../Services/product.service";
 
 const DashboardContent: React.FC = () => {
-  const { products, createProduct, updateProduct, fetchProducts } = useProduct({});
-
-
-  // deleteProduct debe ir despues de createProduct y updateProduct a la hora de implementar la funcion de eliminar producto
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
+  const { products, fetchProducts, loading } = useProduct({
+    onSubmit: async (productData) => {
+      if (selectedProduct?.id) {
+        await productService.updateProduct(selectedProduct.id.toString(), productData);
+      } else {
+        await productService.createProduct(productData);
+      }
+    },
+    onClose: () => {
+      setIsAdding(false);
+      setSelectedProduct(null);
+    },
+    initialData: selectedProduct
+  });
 
   const handleAddProduct = async (product: ProductFormData) => {
     try {
-      if (selectedProduct?.id !== undefined) {
-        await updateProduct(selectedProduct.id, product);
+      if (selectedProduct?.id) {
+        await productService.updateProduct(selectedProduct.id.toString(), product);
       } else {
-        await createProduct(product);
+        await productService.createProduct(product);
       }
-
-      // ✅ Llamar a fetchProducts para recargar la lista
       await fetchProducts();
-
       setIsAdding(false);
       setSelectedProduct(null);
     } catch (error) {
       console.error("Error al guardar producto:", error);
     }
   };
-
-
-  // const handleDeleteProduct = async (productToDelete: ProductFormData) => {
-  //   if (!window.confirm(`¿Seguro que deseas desactivar "${productToDelete.name}"?`)) return;
-  //   await deleteProduct(productToDelete.id);
-  // };
 
   const handleEditProduct = (product: ProductFormData) => {
     setSelectedProduct(product);
@@ -46,8 +48,6 @@ const DashboardContent: React.FC = () => {
 
   return (
     <main className="p-6 bg-gray-100 min-h-screen overflow-x-hidden ml-0 lg:ml-72">
-
-
       <button
         onClick={() => setIsAdding(true)}
         className="mb-4 px-6 py-3 text-xl font-semibold text-white bg-[#ff204e] rounded-lg hover:bg-[#ff3b61] transition-all duration-300"
@@ -57,13 +57,24 @@ const DashboardContent: React.FC = () => {
 
       {isAdding && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <button onClick={() => { setIsAdding(false); setSelectedProduct(null); }}
-              className="absolute top-2 right-2 text-gray-500 hover:text-red-500">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl relative">
+            <button 
+              onClick={() => {
+                setIsAdding(false);
+                setSelectedProduct(null);
+              }}
+              className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
+            >
               ✖
             </button>
-            <AddProductForm onClose={() => { setIsAdding(false); setSelectedProduct(null); }}
-              onSubmit={handleAddProduct} initialData={selectedProduct} />
+            <AddProductForm 
+              onClose={() => {
+                setIsAdding(false);
+                setSelectedProduct(null);
+              }}
+              onSubmit={handleAddProduct} 
+              initialData={selectedProduct} 
+            />
           </div>
         </div>
       )}
@@ -87,9 +98,7 @@ const DashboardContent: React.FC = () => {
         <DashboardImageCard />
       </div>
 
-
       <ProductList products={products} onEdit={handleEditProduct} />
-      {/* onDelete={handleDeleteProduct} debe ir despues de onEdit={handleEditProduct} a la hora de implementar la funcion de eliminar producto */}
     </main>
   );
 };

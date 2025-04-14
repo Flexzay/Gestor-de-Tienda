@@ -184,6 +184,27 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         <span>{new Date(product.expirationDate).toLocaleDateString()}</span>
                       </div>
                     )}
+
+                    {product.available !== undefined && (
+                      <div className="flex items-center">
+                        <span className="font-medium text-gray-700 mr-2">Disponibilidad:</span>
+                        <span className={product.available ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                          {product.available ? "Disponible 🟢" : "No disponible 🔴"}
+                        </span>
+                      </div>
+                    )}
+
+                    {product.ingredients && product.ingredients.length > 0 && (
+                      <div className="flex items-start">
+                        <span className="font-medium text-gray-700 mr-2">Ingredientes:</span>
+                        <span className="text-gray-700">
+                          {Array.isArray(product.ingredients)
+                            ? product.ingredients.join(", ")
+                            : product.ingredients}
+                        </span>
+                      </div>
+                    )}
+
                   </div>
                 </div>
               </div>

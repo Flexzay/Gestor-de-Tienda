@@ -17,11 +17,11 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
     handleNextStep,
     handlePrevStep,
     handleSubmit,
+    updateIngredient,
+    addIngredient,
+    removeIngredient,
+    toggleAvailable
   } = useProduct({ onSubmit, initialData, onClose });
-
-  function dispatch(_arg0: { type: string; }): void {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div className="fixed inset-0 bg-gray-100 bg-opacity-90 backdrop-blur-md flex justify-center items-center px-4 z-50">
@@ -106,7 +106,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                         id="available"
                         name="available"
                         checked={formData.available}
-                        onChange={() => dispatch({ type: "TOGGLE_AVAILABLE" })}
+                        onChange={toggleAvailable}
                         className="sr-only"
                       />
                       <div
@@ -137,59 +137,22 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                     <div key={index} className="flex items-center gap-4">
                       <input
                         type="text"
-                        name={`ingredients[${index}].name`}
                         value={ingredient.name}
-                        onChange={(e) => {
-                          const newIngredients = [...(formData.ingredients || [])];
-                          newIngredients[index] = {
-                            ...newIngredients[index],
-                            name: e.target.value,
-                          };
-                          handleChange({
-                            target: {
-                              name: "ingredients",
-                              value: newIngredients,
-                            },
-                          } as any);
-
-                        }}
+                        onChange={(e) => updateIngredient(index, 'name', e.target.value)}
                         placeholder="Nombre del ingrediente"
                         className="flex-1 p-3 border rounded-lg"
                       />
                       <input
                         type="text"
-                        name={`ingredients[${index}].quantity`}
                         value={ingredient.quantity}
-                        onChange={(e) => {
-                          const newIngredients = [...(formData.ingredients || [])];
-                          newIngredients[index] = {
-                            ...newIngredients[index],
-                            quantity: e.target.value,
-                          };
-                          handleChange({
-                            target: {
-                              name: "ingredients",
-                              value: newIngredients,
-                            },
-                          } as any);
-                        }}
+                        onChange={(e) => updateIngredient(index, 'quantity', e.target.value)}
                         placeholder="Cantidad"
                         className="w-1/3 p-3 border rounded-lg"
                       />
                       {index > 0 && (
                         <button
                           type="button"
-                          onClick={() => {
-                            const newIngredients = (formData.ingredients ?? []).filter(
-                              (_, i) => i !== index
-                            );
-                            handleChange({
-                              target: {
-                                name: "ingredients",
-                                value: newIngredients,
-                              },
-                            } as any);
-                          }}
+                          onClick={() => removeIngredient(index)}
                           className="p-2 text-red-500 hover:text-red-700"
                         >
                           <Minus size={20} />
@@ -199,18 +162,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                   ))}
                   <button
                     type="button"
-                    onClick={() => {
-                      const newIngredients = [
-                        ...(formData.ingredients || []),
-                        { name: "", quantity: "" },
-                      ];
-                      handleChange({
-                        target: {
-                          name: "ingredients",
-                          value: newIngredients,
-                        },
-                      } as any);
-                    }}
+                    onClick={addIngredient}
                     className="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2"
                   >
                     <Plus size={16} />
@@ -237,18 +189,14 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                 {fieldErrors.images && <p className="text-red-500 text-sm">{fieldErrors.images}</p>}
 
                 <div className="mt-4 space-y-6">
-                  {formData.existingImages && formData.existingImages.length > 0 && (
+                  {formData.existingImages?.length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold mb-2">Imágenes guardadas</h4>
                       <div className="grid grid-cols-3 gap-4">
                         {formData.existingImages.map((img, index) => (
                           <div key={img.id || index} className="relative">
                             <img
-                              src={
-                                img.url.startsWith("http")
-                                  ? img.url
-                                  : `/uploads/${img.url}`
-                              }
+                              src={img.url.startsWith("http") ? img.url : `/uploads/${img.url}`}
                               alt={`Imagen ${index}`}
                               className="w-full h-32 object-cover rounded-lg"
                             />
@@ -265,7 +213,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                     </div>
                   )}
 
-                  {formData.previews && formData.previews.length > 0 && (
+                  {formData.previews?.length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold mb-2">Nuevas imágenes</h4>
                       <div className="grid grid-cols-3 gap-4">

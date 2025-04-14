@@ -18,11 +18,11 @@ const getImageUrl = (img?: string) => {
   return img.startsWith("http") ? img : `${environment.s3Storage}${img}`;
 };
 
-const ProductList: React.FC<ProductListProps> = ({ 
-  products, 
-  onEdit, 
-  onDelete, 
-  showTitle = true 
+const ProductList: React.FC<ProductListProps> = ({
+  products,
+  onEdit,
+  onDelete,
+  showTitle = true
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,12 +87,18 @@ const ProductList: React.FC<ProductListProps> = ({
                 <p className="text-sm text-gray-600 mb-3 line-clamp-2 flex-1">
                   {product.description}
                 </p>
-                
+
+
                 {/* Precio y acciones */}
                 <div className="flex items-center justify-between mt-auto">
-                  <span className="text-xl font-bold text-red-500">
-                    ${product.price.toLocaleString()}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-xl font-bold text-red-500">
+                      ${product.price.toLocaleString()}
+                    </span>
+                    <span className={`text-sm font-medium ${product.available ? "text-green-600" : "text-red-500"}`}>
+                      {product.available ? "🟢 Disponible" : "🔴 No disponible"}
+                    </span>
+                  </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => navigate(`/product/${product.id}`)}
@@ -117,6 +123,7 @@ const ProductList: React.FC<ProductListProps> = ({
                     </button>
                   </div>
                 </div>
+
               </div>
             </div>
           );

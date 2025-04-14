@@ -1,6 +1,6 @@
 import Category from './category';
 
-interface ProductImage {
+export interface ProductImage {
   id: number | null;
   url: string;
 }

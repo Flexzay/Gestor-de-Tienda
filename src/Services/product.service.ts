@@ -77,6 +77,7 @@ export const productService = {
           brand: productData.brand,
           stock: productData.stock,
           expirationDate: productData.expirationDate,
+          ingredients: productData.ingredients,
         }),
       });
 
@@ -157,6 +158,7 @@ export const productService = {
             id: product.category_id,
             name: product.category_name || "Sin categoría",
             count_products: product.category_count
+            
           }
         })),
       };
@@ -199,6 +201,7 @@ export const productService = {
           brand: productData.brand,
           stock: productData.stock,
           expirationDate: productData.expirationDate,
+          ingredients: productData.ingredients,
         }),
       });
 
