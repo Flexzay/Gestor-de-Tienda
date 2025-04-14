@@ -116,19 +116,31 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   };
 
   const removeImage = async (index: number, isExisting: boolean) => {
-    if (isExisting) {
-      const imageToRemove = formData.existingImages?.[index];
-      const imageId = imageToRemove?.id;
-      if (!imageId) return console.error("ID de imagen no válido");
-
-      try {
-        await productService.deleteImage(imageId);
-        dispatch({ type: "REMOVE_EXISTING_IMAGE", index });
-      } catch (err) {
-        console.error("Error eliminando la imagen:", err);
+    try {
+      if (isExisting) {
+        const imageToRemove = formData.existingImages?.[index];
+        if (!imageToRemove?.id) {
+          throw new Error("La imagen no tiene un ID válido");
+        }
+  
+        const result = await productService.deleteImage(imageToRemove.id);
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+  
+        dispatch({ 
+          type: "REMOVE_EXISTING_IMAGE", 
+          index 
+        });
+      } else {
+        dispatch({ 
+          type: "REMOVE_IMAGE", 
+          index 
+        });
       }
-    } else {
-      dispatch({ type: "REMOVE_IMAGE", index });
+    } catch (error) {
+      console.error("Error al eliminar imagen:", error);
+      setError(error.message);
     }
   };
 

@@ -266,22 +266,27 @@ export const productService = {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
-
+  
       const response = await fetch(`${environment.baseUrl}/product/images/${imageId}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
       });
-
+  
       if (!response.ok) {
-        throw new Error(`Error ${response.status} - ${await response.text()}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error al eliminar la imagen: ${response.statusText}`);
       }
-
-      console.log(`✅ Imagen ${imageId} eliminada correctamente.`);
-      return { status: response.status, message: "Imagen eliminada con éxito" };
-
+  
+      return { success: true, message: "Imagen eliminada correctamente" };
     } catch (error: any) {
-      console.error(`❌ Error eliminando imagen:`, error.message);
-      return { status: 500, message: error.message };
+      console.error("Error en deleteImage:", error);
+      return { 
+        success: false, 
+        message: error.message || "Error al eliminar la imagen" 
+      };
     }
   },
 
