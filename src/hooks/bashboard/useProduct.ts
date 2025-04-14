@@ -143,22 +143,28 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
         if (!imageToRemove) {
           throw new Error("No se encontró la imagen a eliminar");
         }
-
-        // Optimistic UI update - elimina la imagen visualmente primero
+  
+        // Optimistic UI update
         dispatch({ type: "REMOVE_EXISTING_IMAGE", index });
         
-        // Si tiene ID, es una imagen guardada en la base de datos
         if (imageToRemove.id) {
           const result = await productService.deleteImage(imageToRemove.id);
           
           if (!result.success) {
-            // Si falla, revertir el cambio visual
+            // Revertir si falla
             dispatch({ 
               type: "ADD_EXISTING_IMAGE", 
               image: imageToRemove, 
               index 
             });
             throw new Error(result.message);
+          } else {
+            // Actualizar UI para reflejar el cambio
+            setSnackbar({
+              open: true,
+              message: "Imagen eliminada correctamente",
+              severity: "success"
+            });
           }
         }
       } else {
@@ -166,7 +172,6 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
       }
     } catch (error) {
       console.error("Error al eliminar imagen:", error);
-      setError(error instanceof Error ? error.message : "Error desconocido al eliminar imagen");
       setSnackbar({
         open: true,
         message: error instanceof Error ? error.message : "Error al eliminar imagen",

@@ -279,28 +279,29 @@ export const productService = {
         },
       });
   
-      // Si la respuesta es exitosa pero no tiene contenido
-      if (response.status === 204 || response.status === 200) {
-        return { 
-          success: true, 
-          message: "Imagen eliminada correctamente" 
-        };
+      // Manejo mejorado de respuestas
+      if (response.status === 204) {
+        return { success: true, message: "Imagen eliminada correctamente" };
       }
   
-      // Si hay contenido, intentar parsearlo
+      const responseText = await response.text();
+      let responseData;
+      
       try {
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || `Error ${response.status}`);
-        }
-        return { success: true, message: "Imagen eliminada correctamente", data };
-      } catch (e) {
-        // Si falla el JSON pero la respuesta fue exitosa
-        if (response.ok) {
-          return { success: true, message: "Imagen eliminada correctamente" };
-        }
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        responseData = { message: responseText || `Error ${response.status}` };
       }
+  
+      if (!response.ok) {
+        throw new Error(responseData.message || `Error ${response.status}`);
+      }
+  
+      return { 
+        success: true, 
+        message: "Imagen eliminada correctamente",
+        data: responseData
+      };
     } catch (error: any) {
       console.error("Error en deleteImage:", error);
       return {
