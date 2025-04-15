@@ -1,12 +1,12 @@
 import Category from './category';
 
 export interface ProductImage {
-  id: number | null;
+  id: number ;
   url: string;
 }
 
 interface Ingredient {
-  name: string;
+  type: string;
   quantity: string;
 }
 

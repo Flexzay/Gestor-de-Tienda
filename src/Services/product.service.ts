@@ -1,6 +1,6 @@
 import { environment } from "../config/environmet";
 import { storageService } from "../Services/storage.service";
-import { ProductFormData } from "../interface/product";
+import { ProductFormData, ProductImage } from "../interface/product";
 
 const API_URL = `${environment.baseUrl}/product`;
 const S3_BUCKET_URL = environment.s3Storage;
@@ -61,6 +61,12 @@ export const productService = {
         throw new Error("Falta el token o el shop_id.");
       }
 
+      // Convertir ingredientes a formato seguro
+      const ingredients = productData.ingredients?.map(ing => ({
+        type: ing.tipo,
+        quantity: ing.cantidad
+      })) || [];
+
       // 1. Crear producto base
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
@@ -77,6 +83,7 @@ export const productService = {
           brand: productData.brand,
           stock: productData.stock,
           expirationDate: productData.expirationDate,
+          ingredients: ingredients,
         }),
       });
 
@@ -102,6 +109,7 @@ export const productService = {
         data: {
           ...createdProduct.data,
           images: allImages,
+          ingredients: ingredients,
           category: {
             id: productData.category_id,
             name: "",
@@ -126,39 +134,44 @@ export const productService = {
       const token = storageService.getToken();
       const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
       const shopId = shop.id;
-
+  
       if (!token || !shopId) {
         throw new Error("Falta el token o el shop_id.");
       }
-
+  
       const response = await fetch(`${API_URL}/${shopId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.message || `Error ${response.status}`);
       }
-
-      return {
-        status: response.status,
-        data: data.data.map((product: any) => ({
-          ...product,
-          images: product.images?.length
-            ? product.images.map((img: any) => ({
+  
+      const processedData = data.data.map((product: any) => ({
+        ...product,
+        images: product.images?.length
+          ? product.images.map((img: any) => ({
               id: img.id, 
               url: `${S3_BUCKET_URL}${img.path}`,
               path: img.path
             }))
-            : [],
-          category: product.category || {
-            id: product.category_id,
-            name: product.category_name || "Sin categoría",
-            count_products: product.category_count
-          }
-        })),
+          : [],
+        category: product.category || {
+          id: product.category_id,
+          name: product.category_name || "Sin categoría",
+          count_products: product.category_count
+        },
+        ingredients: product.ingredients || [], 
+      }));
+  
+      console.log("📦 Productos obtenidos:", processedData); // 👈 Aquí el log
+  
+      return {
+        status: response.status,
+        data: processedData,
       };
     } catch (error: any) {
       console.error("Error obteniendo productos:", error);
@@ -168,6 +181,7 @@ export const productService = {
       };
     }
   },
+  
 
   /**
    * Actualizar un producto
@@ -199,6 +213,7 @@ export const productService = {
           brand: productData.brand,
           stock: productData.stock,
           expirationDate: productData.expirationDate,
+          ingredients: productData.ingredients,
         }),
       });
 

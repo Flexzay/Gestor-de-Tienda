@@ -1,9 +1,12 @@
 import { useState, useEffect, useReducer } from "react";
 import { productService } from "../../Services/product.service";
-import { ProductFormData } from "../../interface/product";
+import { ProductFormData, ProductImage, Ingredient } from "../../interface/product";
 
 type Action =
   | { type: "CHANGE_INPUT"; field: string; value: any }
+  | { type: "ADD_INGREDIENT"; ingredient: Ingredient }
+  | { type: "REMOVE_INGREDIENT"; index: number }
+  | { type: "UPDATE_INGREDIENT"; index: number; ingredient: Ingredient }
   | { type: "ADD_IMAGES"; files: File[]; previews: string[] }
   | { type: "REMOVE_IMAGE"; index: number }
   | { type: "REMOVE_EXISTING_IMAGE"; index: number };
@@ -13,14 +16,31 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
     case "CHANGE_INPUT":
       return { ...state, [action.field]: action.value };
 
+    case "ADD_INGREDIENT":
+      return {
+        ...state,
+        ingredients: [...(state.ingredients || []), action.ingredient],
+      };
+
+    case "REMOVE_INGREDIENT":
+      return {
+        ...state,
+        ingredients: (state.ingredients || []).filter((_, i) => i !== action.index),
+      };
+
+    case "UPDATE_INGREDIENT":
+      const updatedIngredients = [...(state.ingredients || [])];
+      updatedIngredients[action.index] = action.ingredient;
+      return {
+        ...state,
+        ingredients: updatedIngredients,
+      };
+
     case "ADD_IMAGES":
       const newFiles = action.files.filter(
-        (file) =>
-          !state.images.some((existing) =>
-            typeof existing === "string"
-              ? false
-              : (existing as File).name === file.name
-          )
+        (file) => !state.images.some((existing) =>
+          typeof existing === "string" ? false : (existing as File).name === file.name
+        )
       );
       const newPreviews = action.previews.slice(0, newFiles.length);
       return {
@@ -57,7 +77,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, dispatch] = useReducer(formReducer, {
-    id: initialData?.id || undefined,
+    id: initialData?.id,
     name: initialData?.name || "",
     description: initialData?.description || "",
     price: initialData?.price || 0,
@@ -68,11 +88,9 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     available: initialData?.available ?? true,
     images: [],
     previews: [],
-    existingImages: initialData?.images?.map((img: any) => ({
-      id: img.id ? Number(img.id) : null,
-      url: typeof img === 'string' ? img : img.url
-    })) || [],
+    existingImages: initialData?.images || [],
     deletedImages: [],
+    ingredients: initialData?.ingredients || [],
   });
 
   const fetchProducts = async () => {
@@ -123,23 +141,14 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
           throw new Error("No se encontró la imagen a eliminar");
         }
   
-        // Si tiene ID, es una imagen guardada en la base de datos
-        if (imageToRemove.id) {
-          const result = await productService.deleteImage(imageToRemove.id);
-          if (!result.success) {
-            throw new Error(result.message);
-          }
+        const result = await productService.deleteImage(imageToRemove.id);
+        if (!result.success) {
+          throw new Error(result.message);
         }
         
-        dispatch({ 
-          type: "REMOVE_EXISTING_IMAGE", 
-          index 
-        });
+        dispatch({ type: "REMOVE_EXISTING_IMAGE", index });
       } else {
-        dispatch({ 
-          type: "REMOVE_IMAGE", 
-          index 
-        });
+        dispatch({ type: "REMOVE_IMAGE", index });
       }
     } catch (error) {
       console.error("Error al eliminar imagen:", error);
@@ -177,7 +186,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     }
   };
 
-  const updateProduct = async (id: string, product: ProductFormData) => {
+  const updateProduct = async (id: number, product: ProductFormData) => {
     setLoading(true);
     try {
       const response = await productService.updateProduct(id, product);
@@ -201,6 +210,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     formData,
     step,
     fieldErrors,
+    dispatch,
     createProduct,
     updateProduct,
     fetchProducts,
@@ -213,8 +223,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
   };
 };
 
-// Utilidad para comprimir imágenes
-export const compressImage = (file: File, maxSizeMB = 3, quality = 0.8): Promise<File> => {
+const compressImage = (file: File, maxSizeMB = 3, quality = 0.8): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);

@@ -12,13 +12,13 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
     loading,
     error,
     fieldErrors,
+    dispatch,
     handleChange,
     handleImageChange,
     removeImage,
     handleNextStep,
     handlePrevStep,
     handleSubmit,
-    setFormData,
   } = useProduct({ onSubmit, initialData, onClose });
 
   const [showIngredientForm, setShowIngredientForm] = useState(false);
@@ -26,20 +26,31 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
 
   const handleAddIngredient = () => {
     if (!newIngredient.tipo || !newIngredient.cantidad) return;
-    const updated = [...(formData.ingredients || []), newIngredient];
-    setFormData({ ...formData, ingredients: updated });
+    
+    dispatch({ 
+      type: "ADD_INGREDIENT", 
+      ingredient: newIngredient 
+    });
+    
     setNewIngredient({ tipo: "", cantidad: "" });
   };
 
-  const handleRemoveIngredient = (index) => {
-    const updated = formData.ingredients.filter((_, i) => i !== index);
-    setFormData({ ...formData, ingredients: updated });
+  const handleRemoveIngredient = (index: number) => {
+    dispatch({ 
+      type: "REMOVE_INGREDIENT", 
+      index 
+    });
   };
 
-  const updateIngredient = (index, updatedIngredient) => {
-    const updated = [...formData.ingredients];
-    updated[index] = updatedIngredient;
-    setFormData({ ...formData, ingredients: updated });
+  const updateIngredient = (index: number, field: string, value: string) => {
+    const currentIngredients = [...formData.ingredients];
+    const updatedIngredient = { ...currentIngredients[index], [field]: value };
+    
+    dispatch({
+      type: "UPDATE_INGREDIENT",
+      index,
+      ingredient: updatedIngredient
+    });
   };
 
   return (
@@ -149,14 +160,14 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                   </div>
                 </div>
 
-                {/* INGREDIENTES */}
+                {/* SECCIÓN DE INGREDIENTES */}
                 <div className="space-y-4">
                   <button
                     type="button"
                     onClick={() => setShowIngredientForm((prev) => !prev)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                   >
-                    <Plus className="inline mr-2" size={16} />{" "}
+                    <Plus className="inline mr-2" size={16} />  
                     {showIngredientForm ? "Ocultar Ingredientes" : "Agregar Ingredientes"}
                   </button>
 
@@ -193,18 +204,14 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                               <input
                                 type="text"
                                 value={ing.tipo}
-                                onChange={(e) =>
-                                  updateIngredient(i, { ...ing, tipo: e.target.value })
-                                }
+                                onChange={(e) => updateIngredient(i, 'tipo', e.target.value)}
                                 className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
                                 placeholder="Ingrediente"
                               />
                               <input
                                 type="text"
                                 value={ing.cantidad}
-                                onChange={(e) =>
-                                  updateIngredient(i, { ...ing, cantidad: e.target.value })
-                                }
+                                onChange={(e) => updateIngredient(i, 'cantidad', e.target.value)}
                                 className="w-1/3 px-3 py-2 border border-gray-300 rounded-md"
                                 placeholder="Cantidad"
                               />
