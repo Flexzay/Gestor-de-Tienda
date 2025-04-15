@@ -1,4 +1,4 @@
-import { Menu, LogOut, X } from "lucide-react";
+import { Menu, LogOut, X, Truck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { authService } from "../../Services/auth.service";
 import { shopService } from "../../Services/shop.service";
@@ -34,10 +34,18 @@ function Header() {
         <h1 className="text-2xl font-bold text-gray-800 md:pl-72">Bienvenido</h1>
       </div>
 
-      
 
       {/* Contenedor de balance y logout */}
       <div className="flex items-center space-x-4">
+
+        <button
+          onClick={() => alert("Domiciliario solicitado")} // Cambia por la lógica real
+          className="flex items-center gap-2 bg-[#ff204e] text-white px-4 py-2 rounded-full hover:bg-[#ff3b60] transition-all"
+        >
+          <Truck size={20} />
+          <span className="hidden md:inline">Solicitar Domiciliario</span>
+        </button>
+
         {/* Balance de Ducks visible siempre */}
         <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-200 via-yellow-100 to-white border border-yellow-300 rounded-full px-4 py-1 shadow-sm">
           <span className="text-base font-semibold text-yellow-800">
