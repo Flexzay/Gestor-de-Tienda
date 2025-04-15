@@ -43,8 +43,10 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
   };
 
   const updateIngredient = (index: number, field: string, value: string) => {
-    const currentIngredients = [...formData.ingredients];
-    const updatedIngredient = { ...currentIngredients[index], [field]: value };
+    const updatedIngredient = {
+      ...formData.data_table[index],
+      [field]: value,
+    };
 
     dispatch({
       type: "UPDATE_INGREDIENT",
@@ -52,6 +54,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
       ingredient: updatedIngredient,
     });
   };
+
 
   return (
     <div className="fixed inset-0 bg-gray-100 bg-opacity-90 backdrop-blur-md flex justify-center items-center px-4 z-50 overflow-y-auto">
@@ -173,15 +176,15 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                       <div className="flex gap-4">
                         <input
                           type="text"
-                          value={newIngredient.item}  // Cambio 'tipo' a 'item'
-                          onChange={(e) => setNewIngredient({ ...newIngredient, item: e.target.value })}  // Cambié 'tipo' a 'item'
+                          value={newIngredient.item}
+                          onChange={(e) => setNewIngredient({ ...newIngredient, item: e.target.value })}
                           placeholder="Ingrediente"
                           className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
                         />
                         <input
                           type="text"
-                          value={newIngredient.value}  // Cambio 'cantidad' a 'value'
-                          onChange={(e) => setNewIngredient({ ...newIngredient, value: e.target.value })}  // Cambié 'cantidad' a 'value'
+                          value={newIngredient.value}
+                          onChange={(e) => setNewIngredient({ ...newIngredient, value: e.target.value })}
                           placeholder="Cantidad"
                           className="w-1/3 px-3 py-2 border border-gray-300 rounded-md"
                         />
@@ -194,21 +197,21 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                         </button>
                       </div>
 
-                      {formData.ingredients?.length > 0 && (
+                      {formData.data_table?.length > 0 && (
                         <div className="space-y-2">
-                          {formData.ingredients.map((ing, i) => (
+                          {formData.data_table.map((ing, i) => (
                             <div key={i} className="flex items-center gap-4">
                               <input
                                 type="text"
-                                value={ing.item}  // Cambio 'tipo' a 'item'
-                                onChange={(e) => updateIngredient(i, 'item', e.target.value)}  // Cambié 'tipo' a 'item'
+                                value={ing.item}
+                                onChange={(e) => updateIngredient(i, "item", e.target.value)}
                                 className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
                                 placeholder="Ingrediente"
                               />
                               <input
                                 type="text"
-                                value={ing.value}  // Cambio 'cantidad' a 'value'
-                                onChange={(e) => updateIngredient(i, 'value', e.target.value)}  // Cambié 'cantidad' a 'value'
+                                value={ing.value}
+                                onChange={(e) => updateIngredient(i, "value", e.target.value)}
                                 className="w-1/3 px-3 py-2 border border-gray-300 rounded-md"
                                 placeholder="Cantidad"
                               />
@@ -223,10 +226,10 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                           ))}
                         </div>
                       )}
-
                     </div>
                   )}
                 </div>
+
               </div>
             )}
 
