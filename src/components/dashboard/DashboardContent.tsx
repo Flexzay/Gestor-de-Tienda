@@ -3,7 +3,7 @@ import AddProductForm from "./Product/Product";
 import DashboardCard from "./DashboardCard";
 import DashboardImageCard from "./DashboardImageCard";
 import ProductList from "./Product/ProductList";
-import { Package, Truck, Wallet } from "lucide-react";
+import { Package, Truck, Wallet, Plus } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
 
@@ -50,10 +50,12 @@ const DashboardContent: React.FC = () => {
 
       <button
         onClick={() => setIsAdding(true)}
-        className="mb-4 px-6 py-3 text-xl font-semibold text-white bg-[#ff204e] rounded-lg hover:bg-[#ff3b61] transition-all duration-300"
+        className="group mb-6 flex items-center gap-3 px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-[#ff204e] to-[#ff4b70] rounded-xl shadow-md hover:shadow-xl transition-transform duration-300 transform hover:scale-105"
       >
+        <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
         Agregar Producto
       </button>
+
 
       {isAdding && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
