@@ -22,34 +22,34 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
   } = useProduct({ onSubmit, initialData, onClose });
 
   const [showIngredientForm, setShowIngredientForm] = useState(false);
-  const [newIngredient, setNewIngredient] = useState({ tipo: "", cantidad: "" });
+  const [newIngredient, setNewIngredient] = useState({ item: "", value: "" });
 
   const handleAddIngredient = () => {
-    if (!newIngredient.tipo || !newIngredient.cantidad) return;
-    
-    dispatch({ 
-      type: "ADD_INGREDIENT", 
-      ingredient: newIngredient 
+    if (!newIngredient.item || !newIngredient.value) return;
+
+    dispatch({
+      type: "ADD_INGREDIENT",
+      ingredient: newIngredient,
     });
-    
-    setNewIngredient({ tipo: "", cantidad: "" });
+
+    setNewIngredient({ item: "", value: "" });
   };
 
   const handleRemoveIngredient = (index: number) => {
-    dispatch({ 
-      type: "REMOVE_INGREDIENT", 
-      index 
+    dispatch({
+      type: "REMOVE_INGREDIENT",
+      index,
     });
   };
 
   const updateIngredient = (index: number, field: string, value: string) => {
     const currentIngredients = [...formData.ingredients];
     const updatedIngredient = { ...currentIngredients[index], [field]: value };
-    
+
     dispatch({
       type: "UPDATE_INGREDIENT",
       index,
-      ingredient: updatedIngredient
+      ingredient: updatedIngredient,
     });
   };
 
@@ -139,20 +139,17 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                           className="sr-only"
                         />
                         <div
-                          className={`block w-14 h-8 rounded-full transition-colors ${
-                            formData.available ? "bg-green-500" : "bg-red-400"
-                          }`}
+                          className={`block w-14 h-8 rounded-full transition-colors ${formData.available ? "bg-green-500" : "bg-red-400"
+                            }`}
                         ></div>
                         <div
-                          className={`dot absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition duration-300 ease-in-out shadow ${
-                            formData.available ? "transform translate-x-6" : ""
-                          }`}
+                          className={`dot absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition duration-300 ease-in-out shadow ${formData.available ? "transform translate-x-6" : ""
+                            }`}
                         ></div>
                       </div>
                       <span
-                        className={`ml-3 text-sm font-medium ${
-                          formData.available ? "text-green-600" : "text-red-600"
-                        }`}
+                        className={`ml-3 text-sm font-medium ${formData.available ? "text-green-600" : "text-red-600"
+                          }`}
                       >
                         {formData.available ? "Activo" : "Inactivo"}
                       </span>
@@ -167,7 +164,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                     onClick={() => setShowIngredientForm((prev) => !prev)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                   >
-                    <Plus className="inline mr-2" size={16} />  
+                    <Plus className="inline mr-2" size={16} />
                     {showIngredientForm ? "Ocultar Ingredientes" : "Agregar Ingredientes"}
                   </button>
 
@@ -176,15 +173,15 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                       <div className="flex gap-4">
                         <input
                           type="text"
-                          value={newIngredient.tipo}
-                          onChange={(e) => setNewIngredient({ ...newIngredient, tipo: e.target.value })}
+                          value={newIngredient.item}  // Cambio 'tipo' a 'item'
+                          onChange={(e) => setNewIngredient({ ...newIngredient, item: e.target.value })}  // Cambié 'tipo' a 'item'
                           placeholder="Ingrediente"
                           className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
                         />
                         <input
                           type="text"
-                          value={newIngredient.cantidad}
-                          onChange={(e) => setNewIngredient({ ...newIngredient, cantidad: e.target.value })}
+                          value={newIngredient.value}  // Cambio 'cantidad' a 'value'
+                          onChange={(e) => setNewIngredient({ ...newIngredient, value: e.target.value })}  // Cambié 'cantidad' a 'value'
                           placeholder="Cantidad"
                           className="w-1/3 px-3 py-2 border border-gray-300 rounded-md"
                         />
@@ -203,15 +200,15 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                             <div key={i} className="flex items-center gap-4">
                               <input
                                 type="text"
-                                value={ing.tipo}
-                                onChange={(e) => updateIngredient(i, 'tipo', e.target.value)}
+                                value={ing.item}  // Cambio 'tipo' a 'item'
+                                onChange={(e) => updateIngredient(i, 'item', e.target.value)}  // Cambié 'tipo' a 'item'
                                 className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
                                 placeholder="Ingrediente"
                               />
                               <input
                                 type="text"
-                                value={ing.cantidad}
-                                onChange={(e) => updateIngredient(i, 'cantidad', e.target.value)}
+                                value={ing.value}  // Cambio 'cantidad' a 'value'
+                                onChange={(e) => updateIngredient(i, 'value', e.target.value)}  // Cambié 'cantidad' a 'value'
                                 className="w-1/3 px-3 py-2 border border-gray-300 rounded-md"
                                 placeholder="Cantidad"
                               />
@@ -226,6 +223,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                           ))}
                         </div>
                       )}
+
                     </div>
                   )}
                 </div>

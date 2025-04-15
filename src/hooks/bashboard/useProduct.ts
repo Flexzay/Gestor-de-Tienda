@@ -4,9 +4,9 @@ import { ProductFormData, ProductImage, ProductIngredient } from "../../interfac
 
 type Action =
   | { type: "CHANGE_INPUT"; field: string; value: any }
-  | { type: "ADD_INGREDIENT"; ingredient: Ingredient }
+  | { type: "ADD_INGREDIENT"; ingredient: ProductIngredient }
   | { type: "REMOVE_INGREDIENT"; index: number }
-  | { type: "UPDATE_INGREDIENT"; index: number; ingredient: Ingredient }
+  | { type: "UPDATE_INGREDIENT"; index: number; ingredient: ProductIngredient }
   | { type: "ADD_IMAGES"; files: File[]; previews: string[] }
   | { type: "REMOVE_IMAGE"; index: number }
   | { type: "REMOVE_EXISTING_IMAGE"; index: number };
@@ -19,21 +19,21 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
     case "ADD_INGREDIENT":
       return {
         ...state,
-        ingredients: [...(state.ingredients || []), action.ingredient],
+        data_table: [...(state.data_table || []), action.ingredient],
       };
 
     case "REMOVE_INGREDIENT":
       return {
         ...state,
-        ingredients: (state.ingredients || []).filter((_, i) => i !== action.index),
+        data_table: (state.data_table || []).filter((_, i) => i !== action.index),
       };
 
     case "UPDATE_INGREDIENT":
-      const updatedIngredients = [...(state.ingredients || [])];
+      const updatedIngredients = [...(state.data_table || [])];
       updatedIngredients[action.index] = action.ingredient;
       return {
         ...state,
-        ingredients: updatedIngredients,
+        data_table: updatedIngredients,
       };
 
     case "ADD_IMAGES":
@@ -90,7 +90,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     previews: [],
     existingImages: initialData?.images || [],
     deletedImages: [],
-    ingredients: initialData?.ingredients || [],
+    data_table: initialData?.data_table || [],
   });
 
   const fetchProducts = async () => {
