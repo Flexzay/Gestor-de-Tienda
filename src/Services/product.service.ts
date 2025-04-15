@@ -112,7 +112,7 @@ export const productService = {
               ...uploadedImages
             ];
           }
-        } catch (uploadError) {
+         } catch (uploadError) {
           console.error("Error uploading images, but product was created:", uploadError);
           // Continuar aunque falle la subida de imágenes
         }

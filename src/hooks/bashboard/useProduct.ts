@@ -163,8 +163,10 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    try {
+    try { 
       await onSubmit({ ...formData });
+      console.log("🧪 ENVIANDO FORM DATA: ", formData);
+
       onClose();
     } catch (error) {
       setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");

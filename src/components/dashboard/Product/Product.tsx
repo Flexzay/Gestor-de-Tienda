@@ -167,58 +167,58 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                     onClick={() => setShowIngredientForm((prev) => !prev)}
                     className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                   >
-                    <Plus className="inline mr-2" size={16} />
-                    {showIngredientForm ? "Ocultar Ingredientes" : "Agregar Ingredientes"}
+                    {showIngredientForm ? "Ocultar Ingredientes" : "Agregar Ingredientes al Producto"}
                   </button>
 
                   {showIngredientForm && (
-                    <div className="space-y-4">
-                      <div className="flex gap-4">
+                    <div className="space-y-4 border border-gray-300 rounded-md p-4">
+                      <p className="text-sm text-gray-600 mb-2">Agrega los ingredientes del producto con sus cantidades:</p>
+
+                      <div className="flex flex-col md:flex-row gap-4 items-center">
                         <input
                           type="text"
                           value={newIngredient.item}
                           onChange={(e) => setNewIngredient({ ...newIngredient, item: e.target.value })}
-                          placeholder="Ingrediente"
-                          className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
+                          placeholder="Ej: Carne"
+                          className="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md"
                         />
                         <input
                           type="text"
                           value={newIngredient.value}
                           onChange={(e) => setNewIngredient({ ...newIngredient, value: e.target.value })}
-                          placeholder="Cantidad"
-                          className="w-1/3 px-3 py-2 border border-gray-300 rounded-md"
+                          placeholder="Ej: 200gr"
+                          className="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md"
                         />
                         <button
                           type="button"
                           onClick={handleAddIngredient}
-                          className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                         >
-                          <Plus size={16} />
+                          Agregar ingrediente
                         </button>
                       </div>
 
                       {formData.data_table?.length > 0 && (
-                        <div className="space-y-2">
+                        <div className="mt-4 space-y-2">
+                          <p className="text-sm font-medium text-gray-700">Ingredientes agregados:</p>
                           {formData.data_table.map((ing, i) => (
-                            <div key={i} className="flex items-center gap-4">
+                            <div key={i} className="flex gap-2 items-center">
                               <input
                                 type="text"
                                 value={ing.item}
                                 onChange={(e) => updateIngredient(i, "item", e.target.value)}
-                                className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
-                                placeholder="Ingrediente"
+                                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md"
                               />
                               <input
                                 type="text"
                                 value={ing.value}
                                 onChange={(e) => updateIngredient(i, "value", e.target.value)}
-                                className="w-1/3 px-3 py-2 border border-gray-300 rounded-md"
-                                placeholder="Cantidad"
+                                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md"
                               />
                               <button
                                 type="button"
                                 onClick={() => handleRemoveIngredient(i)}
-                                className="p-2 text-red-500 hover:text-red-700"
+                                className="text-red-600 hover:text-red-800"
                               >
                                 <Trash2 />
                               </button>
@@ -229,6 +229,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                     </div>
                   )}
                 </div>
+
 
               </div>
             )}
