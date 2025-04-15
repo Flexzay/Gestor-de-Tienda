@@ -1,13 +1,14 @@
 import Category from './category';
 
 export interface ProductImage {
-  id: number ;
+  id: number;
   url: string;
+  path?: string;
 }
 
-interface Ingredient {
-  type: string;
-  quantity: string;
+export interface ProductIngredient {
+  item: string;  
+  value: string; 
 }
 
 export interface ProductFormData {
@@ -21,7 +22,7 @@ export interface ProductFormData {
   brand: string;
   stock: number;
   expirationDate?: string;
-  ingredients?: Ingredient[];
+  data_table?: ProductIngredient[]; 
   images: (string | File)[];
   existingImages?: ProductImage[];
   deletedImages?: ProductImage[];

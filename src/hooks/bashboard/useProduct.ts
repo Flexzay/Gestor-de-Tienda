@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from "react";
 import { productService } from "../../Services/product.service";
-import { ProductFormData, ProductImage, Ingredient } from "../../interface/product";
+import { ProductFormData, ProductImage, ProductIngredient } from "../../interface/product";
 
 type Action =
   | { type: "CHANGE_INPUT"; field: string; value: any }

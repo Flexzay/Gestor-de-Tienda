@@ -52,76 +52,86 @@ export const productService = {
    * Crear un nuevo producto
    */
   async createProduct(productData: ProductFormData) {
+    const token = storageService.getToken();
+    const shopId = storageService.getShopId();
+
+    if (!token || !shopId) {
+      throw new Error("Authentication required: Missing token or shopId");
+    }
+
     try {
-      const token = storageService.getToken();
-      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
-      const shopId = shop.id;
-
-      if (!token || !shopId) {
-        throw new Error("Falta el token o el shop_id.");
-      }
-
-      // Convertir ingredientes a formato seguro
-      const ingredients = productData.ingredients?.map(ing => ({
-        type: ing.tipo,
-        quantity: ing.cantidad
-      })) || [];
-
-      // 1. Crear producto base
-      const response = await fetch(`${API_URL}/${shopId}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: productData.name,
-          description: productData.description,
-          price: productData.price,
-          category_id: productData.category_id,
-          available: productData.available,
-          brand: productData.brand,
-          stock: productData.stock,
-          expirationDate: productData.expirationDate,
-          ingredients: ingredients,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Error al crear el producto.");
-      const createdProduct = await response.json();
-
-      // 2. Subir nuevas imágenes
-      const filesToUpload = productData.images.filter((img) => img instanceof File) as File[];
-      let uploadedImages: ProductImage[] = [];
-
-      if (filesToUpload.length) {
-        uploadedImages = await this.uploadImages(createdProduct.data.id, filesToUpload);
-      }
-
-      // 3. Combinar imágenes nuevas + existentes (si había)
-      const allImages: ProductImage[] = [
-        ...(productData.existingImages || []),
-        ...uploadedImages
-      ];
-
-      return {
-        status: response.status,
-        data: {
-          ...createdProduct.data,
-          images: allImages,
-          ingredients: ingredients,
-          category: {
-            id: productData.category_id,
-            name: "",
-          }
-        }
+      // 1. Preparar los datos para el producto principal
+      const productPayload = {
+        name: productData.name,
+        description: productData.description,
+        price: productData.price,
+        category_id: productData.category_id,
+        available: productData.available,
+        brand: productData.brand || null,
+        stock: productData.stock || 0,
+        expirationDate: productData.expirationDate || null,
+        data_table: productData.data_table?.map(ingredient => ({
+          item: ingredient.item,
+          value: ingredient.value
+        })) || []
       };
 
-    } catch (error: any) {
-      console.error("❌ Error al crear el producto:", error);
+      console.log("Creating product with payload:", productPayload);
+
+      // 2. Crear el producto principal
+      const createResponse = await fetch(`${API_URL}/${shopId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(productPayload)
+      });
+
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json().catch(() => null);
+        throw new Error(errorData?.message || `Failed to create product: ${createResponse.statusText}`);
+      }
+
+      const createdProduct = await createResponse.json();
+      console.log("Product created successfully:", createdProduct);
+
+      // 3. Manejar las imágenes si existen
+      if (productData.images && productData.images.length > 0) {
+        try {
+          const filesToUpload = productData.images.filter(img => img instanceof File) as File[];
+          
+          if (filesToUpload.length > 0) {
+            console.log("Uploading product images...");
+            const uploadedImages = await this.uploadImages(createdProduct.data.id, filesToUpload);
+            console.log("Images uploaded successfully:", uploadedImages);
+            
+            // Actualizar el producto con las nuevas imágenes
+            createdProduct.data.images = [
+              ...(productData.existingImages || []),
+              ...uploadedImages
+            ];
+          }
+        } catch (uploadError) {
+          console.error("Error uploading images, but product was created:", uploadError);
+          // Continuar aunque falle la subida de imágenes
+        }
+      }
+
       return {
+        success: true,
+        status: createResponse.status,
+        data: createdProduct.data,
+        message: "Product created successfully"
+      };
+
+    } catch (error) {
+      console.error("Error in createProduct service:", error);
+      return {
+        success: false,
         status: 500,
-        message: error.message || "Error al crear el producto"
+        message: error instanceof Error ? error.message : "Unknown error occurred while creating product",
+        error: error
       };
     }
   },
@@ -164,7 +174,8 @@ export const productService = {
           name: product.category_name || "Sin categoría",
           count_products: product.category_count
         },
-        ingredients: product.ingredients || [], 
+        data_table: product.data_table || []
+        
       }));
   
       console.log("📦 Productos obtenidos:", processedData); // 👈 Aquí el log
@@ -213,7 +224,10 @@ export const productService = {
           brand: productData.brand,
           stock: productData.stock,
           expirationDate: productData.expirationDate,
-          ingredients: productData.ingredients,
+          data_table: productData.data_table?.map(ingredient => ({
+            item: ingredient.item,
+            value: ingredient.value
+          })) || []
         }),
       });
 
