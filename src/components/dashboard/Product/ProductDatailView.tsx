@@ -194,16 +194,19 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                       </div>
                     )}
 
-                    {product.ingredients && product.ingredients.length > 0 && (
-                      <div className="flex items-start">
-                        <span className="font-medium text-gray-700 mr-2">Ingredientes:</span>
-                        <span className="text-gray-700">
-                          {Array.isArray(product.ingredients)
-                            ? product.ingredients.join(", ")
-                            : product.ingredients}
-                        </span>
+                    {FormData.data_table?.length > 0 && !showIngredientForm && (
+                      <div className="mt-4 space-y-2 border border-gray-200 p-4 rounded-md bg-gray-50">
+                        <p className="text-sm font-medium text-gray-700 mb-2">Ingredientes actuales:</p>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+                          {formData.data_table.map((ing, i) => (
+                            <li key={i}>
+                              <span className="font-medium">{ing.item}</span>: {ing.value}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
+
 
                   </div>
                 </div>
