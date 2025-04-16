@@ -74,7 +74,8 @@ const ProductList: React.FC<ProductListProps> = ({
                   alt={product.name}
                   onError={(e) => (e.currentTarget.src = Domiduck)}
                 />
-                <div className="absolute bottom-0 left-0 bg-black bg-opacity-70 text-white px-3 py-1 text-xs rounded-tr-xl z-10">
+                {/* Categoría del producto */}
+                <div className="absolute bottom-3 left-3 bg-neutral-50 text-black text-xs font-medium py-1 px-4 rounded-full shadow-md opacity-95">
                   {product.category?.name || "Sin categoría"}
                 </div>
               </div>
@@ -88,17 +89,24 @@ const ProductList: React.FC<ProductListProps> = ({
                   {product.description}
                 </p>
 
-
                 {/* Precio y acciones */}
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex flex-col">
+                <div className="flex items-center justify-between mt-auto space-x-4">
+                  <div className="flex flex-col space-y-2">
                     <span className="text-xl font-bold text-red-500">
                       ${product.price.toLocaleString()}
                     </span>
-                    <span className={`text-sm font-medium ${product.available ? "text-green-600" : "text-red-500"}`}>
+                    <div
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                        product.available
+                          ? "bg-green-200 text-green-700"
+                          : "bg-red-200 text-red-700"
+                      }`}
+                    >
                       {product.available ? "🟢 Disponible" : "🔴 No disponible"}
-                    </span>
+                    </div>
                   </div>
+
+                  {/* Acciones de edición y eliminación */}
                   <div className="flex gap-2">
                     <button
                       onClick={() => navigate(`/product/${product.id}`)}
@@ -115,7 +123,7 @@ const ProductList: React.FC<ProductListProps> = ({
                       <Pencil size={18} />
                     </button>
                     <button
-                      onClick={() => onDelete?.(product.id)}
+                      onClick={() => product.id !== undefined && onDelete?.(product.id)}
                       className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition"
                       title="Eliminar"
                     >
@@ -123,7 +131,6 @@ const ProductList: React.FC<ProductListProps> = ({
                     </button>
                   </div>
                 </div>
-
               </div>
             </div>
           );
