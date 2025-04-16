@@ -1,8 +1,7 @@
 import { Truck } from "lucide-react"
 import { useStore } from "../StoreContext";
 
-export function OrderConfig() {
-  const { storeData, updateStoreData } = useStore();
+export function OrderConfig({ storeData, updateStoreData }) {
   const handleInputChange = (e) => {
     const { name, value } = e.target
     updateStoreData(name, value)

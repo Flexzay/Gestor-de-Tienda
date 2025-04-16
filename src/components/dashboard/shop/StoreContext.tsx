@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { shopService } from "../../../Services/shop.service";
+import { createContext, useContext, useState } from "react";
 
 const StoreContext = createContext(null);
 
@@ -8,37 +7,11 @@ export function StoreProvider({ children }) {
     ownDelivery: false,
     deliveryFee: 0,
     minOrderValue: 0,
+    // Otros valores iniciales si es necesario
   });
 
-  // Obtener datos reales desde el backend al montar
-  useEffect(() => {
-    const shop = shopService.getShopData();
-    if (shop) {
-      setStoreData({
-        ownDelivery: shop.ownDelivery || false,
-        deliveryFee: shop.deliveryFee || 0,
-        minOrderValue: shop.minOrderValue || 0,
-      });
-    }
-  }, []);
-
-  // Actualiza estado y guarda en backend
-  const updateStoreData = async (key, value) => {
-    const newData = { ...storeData, [key]: value };
-    setStoreData(newData);
-
-    try {
-      await shopService.updateShop({ [key]: value });
-      // Actualiza el localStorage para mantener sincronizado
-      const local = shopService.getShopData();
-      if (local) {
-        local[key] = value;
-        localStorage.setItem("shop_data", JSON.stringify(local));
-      }
-    } catch (error) {
-      console.error("Error actualizando tienda:", error);
-      alert("Ocurrió un error al guardar los datos.");
-    }
+  const updateStoreData = (key, value) => {
+    setStoreData((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
