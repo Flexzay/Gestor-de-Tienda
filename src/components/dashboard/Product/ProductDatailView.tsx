@@ -164,20 +164,24 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
                   <h3 className="text-lg font-semibold mb-3 text-gray-800">Detalles del producto</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    {/* Marca */}
                     {product.brand && (
                       <div className="flex items-center">
                         <span className="font-medium text-gray-700 mr-2">Marca:</span>
                         <span>{product.brand}</span>
                       </div>
                     )}
-                    {product.stock !== undefined && (
-                      <div className="flex items-center">
-                        <span className="font-medium text-gray-700 mr-2">Stock:</span>
-                        <span className={`${product.stock > 0 ? "text-green-600" : "text-red-600"} font-medium`}>
-                          {product.stock} {product.stock === 1 ? "unidad" : "unidades"}
-                        </span>
-                      </div>
-                    )}
+
+                    {/* Stock */}
+                    <div className="flex items-center">
+                      <span className="font-medium text-gray-700 mr-2">Stock:</span>
+                      <span className={`${product.stock > 0 ? "text-green-600" : "text-red-600"} font-medium`}>
+                        {product.stock} {product.stock === 1 ? "unidad" : "unidades"}
+                      </span>
+                    </div>
+
+                    {/* Fecha de expiración */}
                     {product.expirationDate && (
                       <div className="flex items-center">
                         <span className="font-medium text-gray-700 mr-2">Fecha de expiración:</span>
@@ -185,29 +189,30 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                       </div>
                     )}
 
-                    {product.available !== undefined && (
-                      <div className="flex items-center">
-                        <span className="font-medium text-gray-700 mr-2">Disponibilidad:</span>
-                        <span className={product.available ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-                          {product.available ? "Disponible 🟢" : "No disponible 🔴"}
-                        </span>
+                    {/* Disponibilidad */}
+                    <div className="flex items-center">
+                      <span className="font-medium text-gray-700 mr-2">Disponibilidad:</span>
+                      <span className={product.available ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                        {product.available ? "Disponible 🟢" : "No disponible 🔴"}
+                      </span>
+                    </div>
+
+                    {product.data_table && product.data_table.length > 0 ? (
+                      <div className="md:col-span-2">
+                        <div className="mt-4 space-y-2 border border-gray-200 p-4 rounded-md bg-gray-50">
+                          <h3 className="text-lg font-semibold mb-2 text-gray-800">Ingredientes</h3>
+                          <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+                            {product.data_table.map((ing, i) => (
+                              <li key={i} className="flex justify-between">
+                                <span>
+                                  <span className="font-medium">{ing.item}</span>: {ing.value}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
-                    )}
-
-                    {FormData.data_table?.length > 0 && !showIngredientForm && (
-                      <div className="mt-4 space-y-2 border border-gray-200 p-4 rounded-md bg-gray-50">
-                        <p className="text-sm font-medium text-gray-700 mb-2">Ingredientes actuales:</p>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                          {formData.data_table.map((ing, i) => (
-                            <li key={i}>
-                              <span className="font-medium">{ing.item}</span>: {ing.value}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-
+                    ) : null}
                   </div>
                 </div>
               </div>
