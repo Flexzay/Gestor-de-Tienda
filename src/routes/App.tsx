@@ -12,36 +12,41 @@ import SuppliersPage from "../pages/dashboard/Providers";
 import PaymentMethodPage from "../pages/dashboard/paymentMetthod-page";
 import ExpensesIncomePage from "../pages/dashboard/receipts-page";
 import SalesPage from "../pages/dashboard/sales-page";
-import ProductDetail from "../components/dashboard/Product/ProductDatail"; 
-import MenbershipCreditos from "../components/dashboard/membership/membershiComponents"; 
+import ProductDetail from "../components/dashboard/Product/ProductDatail";
+import MenbershipCreditos from "../components/dashboard/membership/membershiComponents";
 import ProfilePage from "../pages/dashboard/Profile-page";
+
+import { StoreProvider } from "../components/dashboard/shop/StoreContext";
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/verify-code" element={<VerifyCode />} />
+    <StoreProvider>
 
-      <Route path="/select-store" element={<PrivateRoute><SelectStorePage /></PrivateRoute>} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/verify-code" element={<VerifyCode />} />
 
-      <Route path="/404" element={<Navigate to="/" replace />} />
-      <Route path="*" element={<NotFoundPage />} />
+        <Route path="/select-store" element={<PrivateRoute><SelectStorePage /></PrivateRoute>} />
 
-      {/* Rutas protegidas del Dashboard */}
-      <Route path="/Dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/Staff" element={<PrivateRoute><Staff /></PrivateRoute>} />
-      <Route path="/Category" element={<PrivateRoute><CategoryPage /></PrivateRoute>} />
-      <Route path="/Suppliers" element={<PrivateRoute><SuppliersPage /></PrivateRoute>} />
-      <Route path="/Payment-methods" element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
-      <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
-      <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
-      <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos/></PrivateRoute>} />
-      <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+        <Route path="/404" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
 
-      {/* 🆕 Ruta protegida para ver detalles de productos */}
-      <Route path="/product/:id" element={<PrivateRoute><ProductDetail /></PrivateRoute>} />
-    </Routes>
+        {/* Rutas protegidas del Dashboard */}
+        <Route path="/Dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/Staff" element={<PrivateRoute><Staff /></PrivateRoute>} />
+        <Route path="/Category" element={<PrivateRoute><CategoryPage /></PrivateRoute>} />
+        <Route path="/Suppliers" element={<PrivateRoute><SuppliersPage /></PrivateRoute>} />
+        <Route path="/Payment-methods" element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
+        <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
+        <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
+        <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos /></PrivateRoute>} />
+        <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+
+        {/* 🆕 Ruta protegida para ver detalles de productos */}
+        <Route path="/product/:id" element={<PrivateRoute><ProductDetail /></PrivateRoute>} />
+      </Routes>
+    </StoreProvider>
   );
 };
 

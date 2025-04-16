@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards,Truck } from "lucide-react";
+import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards, Truck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { shopService } from "../../Services/shop.service";
 import { Button } from "./shop/Button";
 import Domiduck from "../../assets/img/horizontal-logo.svg";
 import domiduck from "../../assets/img/domiduck.svg";
 import { useShopStatus } from "../../hooks/bashboard/useShopStatus";
+import { useStore } from "./shop/StoreContext";
+
 
 
 function Sidebar() {
@@ -13,6 +15,8 @@ function Sidebar() {
   const [shop, setShop] = useState<{ name: string; image?: string } | null>(null);
   const location = useLocation();
   const { isShopOpen, toggleShopStatus, loading } = useShopStatus();
+  const { storeData, updateStoreData } = useStore();
+
 
   useEffect(() => {
     const shopData = shopService.getShopData();
@@ -107,11 +111,15 @@ function Sidebar() {
 
         <Button
           variant="secondary"
-          className="w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 bg-blue-600 text-white hover:bg-blue-700 mt-3"
+          className={`w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 ${storeData.ownDelivery
+              ? "bg-rose-600 hover:bg-rose-700"
+              : "bg-blue-600 hover:bg-blue-700"
+            } mt-3`}
           icon={Truck}
-          text="Activar domicilio propio"
-          onClick={() => alert("Domicilio propio activado")} // Puedes cambiar esto por tu lógica real
+          text={storeData.ownDelivery ? "Desactivar domicilio propio" : "Activar domicilio propio"}
+          onClick={() => updateStoreData("ownDelivery", !storeData.ownDelivery)}
         />
+
 
       </aside>
 
