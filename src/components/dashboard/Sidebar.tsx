@@ -105,14 +105,6 @@ function Sidebar() {
           />
         </div>
 
-        <Button
-          variant="secondary"
-          className="w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 bg-blue-600 text-white hover:bg-blue-700 mt-3"
-          icon={Truck}
-          text="Activar domicilio propio"
-          onClick={() => alert("Domicilio propio activado")} // Puedes cambiar esto por tu lógica real
-        />
-
       </aside>
 
       {/* Botón de abrir menú en móvil */}
