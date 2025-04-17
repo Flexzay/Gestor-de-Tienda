@@ -15,13 +15,12 @@ import SalesPage from "../pages/dashboard/sales-page";
 import ProductDetail from "../components/dashboard/Product/ProductDatail";
 import MenbershipCreditos from "../components/dashboard/membership/membershiComponents";
 import ProfilePage from "../pages/dashboard/Profile-page";
-
 import { StoreProvider } from "../components/dashboard/shop/StoreContext";
+import {OrderConfig} from "../components/dashboard/shop/profile/order-config"; 
 
 const App = () => {
   return (
     <StoreProvider>
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -40,10 +39,10 @@ const App = () => {
         <Route path="/Payment-methods" element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
         <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
         <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
-        <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos /></PrivateRoute>} />
-        <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+        <Route path="/Membership" element={<PrivateRoute><MenbershipCreditos /></PrivateRoute>} />
+        <Route path="/store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+        <Route path="/order-config" element={<PrivateRoute><OrderConfig /></PrivateRoute>} />
 
-        {/* 🆕 Ruta protegida para ver detalles de productos */}
         <Route path="/product/:id" element={<PrivateRoute><ProductDetail /></PrivateRoute>} />
       </Routes>
     </StoreProvider>

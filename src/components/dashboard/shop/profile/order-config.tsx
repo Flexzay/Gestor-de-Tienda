@@ -1,11 +1,13 @@
-import { Truck } from "lucide-react"
+import { Truck } from "lucide-react";
 import { useStore } from "../StoreContext";
 
-export function OrderConfig({ storeData, updateStoreData }) {
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    updateStoreData(name, value)
-  }
+export function OrderConfig() {
+  const { storeData, updateStoreData } = useStore();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    updateStoreData(name as keyof typeof storeData, Number(value));
+  };
 
   return (
     <div className="space-y-4">
@@ -64,5 +66,5 @@ export function OrderConfig({ storeData, updateStoreData }) {
         <Truck className="w-5 h-5 ml-auto text-rose-400" />
       </div>
     </div>
-  )
+  );
 }
