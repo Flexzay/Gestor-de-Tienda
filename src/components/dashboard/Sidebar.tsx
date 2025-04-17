@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards,Truck } from "lucide-react";
+import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards } from "lucide-react";
 import { useState, useEffect } from "react";
 import { shopService } from "../../Services/shop.service";
 import { Button } from "./shop/Button";
