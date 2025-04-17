@@ -1,15 +1,10 @@
-import { Truck } from "lucide-react";
-import { useStore } from "../StoreContext";
+import { Truck } from "lucide-react"
 
-export function OrderConfig() {
-  const { storeData, updateStoreData } = useStore();
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    // Convertir a número y asegurarse de que no sea NaN
-    const numericValue = Number(value);
-    updateStoreData(name as keyof typeof storeData, isNaN(numericValue) ? 0 : numericValue);
-  };
+export function OrderConfig({ storeData, updateStoreData }) {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    updateStoreData(name, value)
+  }
 
   return (
     <div className="space-y-4">
@@ -22,7 +17,7 @@ export function OrderConfig() {
           <input
             id="deliveryFee"
             name="deliveryFee"
-            value={storeData.deliveryFee.toString()} // Convertir a string para el input
+            value={storeData.deliveryFee}
             onChange={handleInputChange}
             type="number"
             placeholder="0.00"
@@ -40,7 +35,7 @@ export function OrderConfig() {
           <input
             id="minOrderValue"
             name="minOrderValue"
-            value={storeData.minOrderValue.toString()} // Convertir a string para el input
+            value={storeData.minOrderValue}
             onChange={handleInputChange}
             type="number"
             placeholder="0.00"
@@ -68,5 +63,5 @@ export function OrderConfig() {
         <Truck className="w-5 h-5 ml-auto text-rose-400" />
       </div>
     </div>
-  );
+  )
 }
