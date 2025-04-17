@@ -25,20 +25,17 @@ const usePaymentMethods = () => {
 
   const fetchPaymentMethods = async () => {
     try {
-      const shopData = await PaymentMethodsService.getPaymentMethods();
-      setPaymentMethods(shopData.methods || []);  
+      const response = await PaymentMethodsService.getPaymentMethods();
+      setPaymentMethods(response.data || []);
     } catch (error) {
-      console.error("Error al obtener los métodos de pago", error);
     }
   };
-
   const fetchConfigurations = async () => {
     try {
       const config = await PaymentMethodsService.getConfigurations();
       setInstitutionOptions(config.data?.institutions || []);
       setAccountTypes(config.data?.types || []);
     } catch (error) {
-      console.error("Error al obtener configuraciones", error);
     }
   };
 

@@ -37,14 +37,14 @@ const PaymentMethodsService = {
   getPaymentMethods: async () => {
     const shopId = storageService.getShopData()?.id;
     if (!shopId) throw new Error("⚠️ No se encontró shopId en localStorage");
-
+  
     try {
       const response = await fetch(`${environment.baseUrl}/shop/${shopId}/methods`, {
         headers: getAuthHeaders(),
       });
-      return await handleResponse(response);
+      const data = await handleResponse(response);
+      return data;
     } catch (error) {
-      console.error("❌ Error al obtener métodos de pago:", error);
       throw error;
     }
   },

@@ -5,7 +5,6 @@ import Sidebar from "../Sidebar";
 import PaymentForm from "./PaymentForm";
 import PaymentList from "./PaymentList";
 import usePaymentMethods from "../../../hooks/bashboard/usePaymentMethods";
-import type { PaymentMethod } from "../../../interface/paymentMethod";
 
 export function PaymentMethods() {
   const {
@@ -51,8 +50,8 @@ export function PaymentMethods() {
         />
 
         <div className="mt-4">
-          <PaymentList
-            shopData={{ methods: paymentMethods }} // Pasa los métodos como un objeto con propiedad methods
+        <PaymentList
+            shopData={{ methods: paymentMethods }} 
             toggleActive={toggleActive}
             editPaymentMethod={editPaymentMethod}
             deletePaymentMethod={deletePaymentMethod}
