@@ -6,7 +6,9 @@ export function OrderConfig() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    updateStoreData(name as keyof typeof storeData, Number(value));
+    // Convertir a número y asegurarse de que no sea NaN
+    const numericValue = Number(value);
+    updateStoreData(name as keyof typeof storeData, isNaN(numericValue) ? 0 : numericValue);
   };
 
   return (
@@ -20,7 +22,7 @@ export function OrderConfig() {
           <input
             id="deliveryFee"
             name="deliveryFee"
-            value={storeData.deliveryFee}
+            value={storeData.deliveryFee.toString()} // Convertir a string para el input
             onChange={handleInputChange}
             type="number"
             placeholder="0.00"
@@ -38,7 +40,7 @@ export function OrderConfig() {
           <input
             id="minOrderValue"
             name="minOrderValue"
-            value={storeData.minOrderValue}
+            value={storeData.minOrderValue.toString()} // Convertir a string para el input
             onChange={handleInputChange}
             type="number"
             placeholder="0.00"

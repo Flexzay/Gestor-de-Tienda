@@ -1,11 +1,9 @@
-// StoreContext.tsx
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 interface StoreData {
   ownDelivery: boolean;
   deliveryFee: number;
   minOrderValue: number;
-  // Agrega otros campos si es necesario
 }
 
 interface StoreContextType {
@@ -17,22 +15,30 @@ const StoreContext = createContext<StoreContextType | null>(null);
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [storeData, setStoreData] = useState<StoreData>(() => {
-    // Intenta cargar del localStorage al inicializar
-    const savedData = localStorage.getItem('storeData');
-    return savedData ? JSON.parse(savedData) : {
+    if (typeof window !== 'undefined') {
+      const savedData = localStorage.getItem('storeData');
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        return {
+          ownDelivery: parsedData.ownDelivery || false,
+          deliveryFee: Number(parsedData.deliveryFee) || 0,
+          minOrderValue: Number(parsedData.minOrderValue) || 0,
+        };
+      }
+    }
+    return {
       ownDelivery: false,
       deliveryFee: 0,
       minOrderValue: 0,
     };
   });
 
+  useEffect(() => {
+    localStorage.setItem('storeData', JSON.stringify(storeData));
+  }, [storeData]);
+
   const updateStoreData = (key: keyof StoreData, value: any) => {
-    setStoreData((prev) => {
-      const newData = { ...prev, [key]: value };
-      // Guarda en localStorage cada cambio
-      localStorage.setItem('storeData', JSON.stringify(newData));
-      return newData;
-    });
+    setStoreData(prev => ({ ...prev, [key]: value }));
   };
 
   return (
