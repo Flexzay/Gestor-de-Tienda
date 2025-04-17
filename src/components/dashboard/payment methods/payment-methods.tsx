@@ -9,11 +9,13 @@ import type { PaymentMethod } from "../../../interface/paymentMethod";
 
 export function PaymentMethods() {
   const {
-    paymentMethods,
+    paymentMethods, // Esto ya contiene los métodos de pago
     editingMethod,
     formData,
     imageSelected,
     formError,
+    institutionOptions,
+    accountTypes,
     setFormData,
     setImageSelected,
     setEditingMethod,
@@ -44,11 +46,13 @@ export function PaymentMethods() {
           handleFileChange={handleFileChange}
           handleSubmit={handleSubmit}
           editingMethod={editingMethod}
+          institutionOptions={institutionOptions}
+          accountTypes={accountTypes}
         />
 
         <div className="mt-4">
           <PaymentList
-            paymentMethods={paymentMethods}
+            shopData={{ methods: paymentMethods }} // Pasa los métodos como un objeto con propiedad methods
             toggleActive={toggleActive}
             editPaymentMethod={editPaymentMethod}
             deletePaymentMethod={deletePaymentMethod}
