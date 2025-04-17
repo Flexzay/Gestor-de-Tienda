@@ -56,13 +56,6 @@ const DashboardContent: React.FC = () => {
         Agregar Producto
       </button>
 
-      <button
-        className="mb-6 ml-auto block text-sm bg-white px-4 py-2 rounded-full shadow hover:shadow-md border text-gray-700 hover:text-[#ff204e]"
-      >
-        Ver resumen diario
-      </button>
-
-
       {isAdding && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
