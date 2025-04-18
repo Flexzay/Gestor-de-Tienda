@@ -136,10 +136,10 @@ const usePaymentMethods = () => {
   const editPaymentMethod = (method: PaymentMethod) => {
     setEditingMethod(method);
     setFormData({
-      name_account: method.name_account,
+      name_account: method.name_account || "", 
       entidad: method.entidad,
       type_account: method.type_account,
-      nit_cc: method.nit_cc,
+      nit_cc: method.nit_cc || "",
       account: method.account || "",
       link_payment: method.link_payment || "",
     });
