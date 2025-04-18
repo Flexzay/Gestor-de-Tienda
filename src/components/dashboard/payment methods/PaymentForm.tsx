@@ -43,6 +43,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Nombre de la cuenta */}
+        {!isEfectivo && (
         <div>
           <label className="block font-medium text-gray-700 mb-1">Nombre de la Cuenta</label>
           <input
@@ -55,6 +56,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             required={!isEfectivo}
           />
         </div>
+        )}
+
+   
 
         {/* Entidad */}
         <div>
@@ -78,6 +82,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Tipo de cuenta */}
+        {!isEfectivo && (
         <div>
           <label className="block font-medium text-gray-700 mb-1">Tipo de Cuenta</label>
           <select
@@ -95,6 +100,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             ))}
           </select>
         </div>
+        )}
+
+        
 
         {/* NIT / CC */}
         {!isEfectivo && (
