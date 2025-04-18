@@ -104,18 +104,16 @@ const PaymentMethodsService = {
   updatePaymentMethod: async (paymentMethodId: string, paymentMethod: FormData) => {
     const shopId = storageService.getShopData()?.id;
     if (!shopId) throw new Error("⚠️ No se encontró shopId en localStorage");
-  
+
     try {
       const response = await fetch(`${environment.baseUrl}/shop/${shopId}/methods/${paymentMethodId}/update`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${storageService.getToken()}`
-        },
-        body: paymentMethod
+        headers: { Authorization: `Bearer ${storageService.getToken()}` },
+        body: paymentMethod,
       });
       return await handleResponse(response);
     } catch (error) {
-      console.error("❌ Error:", error);
+      console.error("❌ Error al actualizar el método de pago:", error);
       throw error;
     }
   },
