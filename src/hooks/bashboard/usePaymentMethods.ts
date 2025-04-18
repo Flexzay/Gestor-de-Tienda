@@ -105,7 +105,6 @@ const usePaymentMethods = () => {
       fetchPaymentMethods();
       resetForm();
     } catch (error) {
-      console.error("Error al guardar el método de pago", error);
       setFormError("Hubo un problema al guardar el método de pago.");
     }
   };
@@ -129,7 +128,6 @@ const usePaymentMethods = () => {
       await PaymentMethodsService.changeStatusPaymentMethod(method.id);
       fetchPaymentMethods();
     } catch (error) {
-      console.error("Error al cambiar estado", error);
     }
   };
 
@@ -151,7 +149,6 @@ const usePaymentMethods = () => {
       await PaymentMethodsService.deletePaymentMethod(id);
       fetchPaymentMethods();
     } catch (error) {
-      console.error("Error al eliminar método", error);
     }
   };
 

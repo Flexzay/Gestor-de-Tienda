@@ -3,7 +3,7 @@ import { Edit2, Trash2, Check,CreditCard } from "lucide-react";
 import type { PaymentMethod } from "../../../interface/paymentMethod";
 
 interface PaymentListProps {
-  shopData: { methods?: PaymentMethod[] }; // Hacer methods opcional
+  shopData: { methods?: PaymentMethod[] }; 
   toggleActive: (method: PaymentMethod) => void;
   editPaymentMethod: (method: PaymentMethod) => void;
   deletePaymentMethod: (id: number) => void;
@@ -16,7 +16,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
   deletePaymentMethod,
 }) => {
   const paymentMethods = shopData?.methods || [];
-  console.log("Métodos de pago:", paymentMethods);
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
