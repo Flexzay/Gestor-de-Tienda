@@ -44,7 +44,7 @@ const PaymentMethodsService = {
       });
       const data = await handleResponse(response);
       return data;
-    } catch (error) {
+    } catch (error) { 
       throw error;
     }
   },
