@@ -8,7 +8,7 @@ import usePaymentMethods from "../../../hooks/bashboard/usePaymentMethods";
 
 export function PaymentMethods() {
   const {
-    paymentMethods, // Esto ya contiene los métodos de pago
+    paymentMethods, 
     editingMethod,
     formData,
     imageSelected,
