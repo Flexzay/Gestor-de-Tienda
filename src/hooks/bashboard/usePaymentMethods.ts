@@ -79,6 +79,10 @@ const usePaymentMethods = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    console.log("Datos a enviar:", {
+      ...formData,
+      imageSelected: imageSelected ? "Imagen cargada" : "Sin imagen"
+    });
 
     try {
       const form = new FormData();
@@ -134,9 +138,9 @@ const usePaymentMethods = () => {
   const editPaymentMethod = (method: PaymentMethod) => {
     setEditingMethod(method);
     setFormData({
-      name_account: method.name_account || "", 
+      name_account: method.name_account || "",
       entidad: method.entidad,
-      type_account: method.type_account,
+      type_account: method.type_account || "",
       nit_cc: method.nit_cc || "",
       account: method.account || "",
       link_payment: method.link_payment || "",
