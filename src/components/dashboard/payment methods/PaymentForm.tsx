@@ -97,18 +97,19 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         </div>
 
         {/* NIT / CC */}
-        <div>
-          <label className="block font-medium text-gray-700 mb-1">NIT/CC</label>
-          <input
-            name="nit_cc"
-            value={formData.nit_cc}
-            onChange={handleInputChange}
-            placeholder="Ej: 123456789"
-            className="w-full border border-gray-300 p-3 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            disabled={isEfectivo}
-            required={!isEfectivo}
-          />
-        </div>
+        {!isEfectivo && (
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">NIT/CC</label>
+            <input
+              name="nit_cc"
+              value={formData.nit_cc}
+              onChange={handleInputChange}
+              placeholder="Ej: 123456789"
+              className="w-full border border-gray-300 p-3 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+        )}
       </div>
 
       {!isEfectivo && (
