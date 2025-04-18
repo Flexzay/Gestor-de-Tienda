@@ -69,7 +69,7 @@ function Sidebar() {
               { icon: Users, label: "Personal-API", path: "/Staff" },
               { icon: Tags, label: "Categoría", path: "/Category" },
               { icon: Boxes, label: "Proveedores-API", path: "/Suppliers" },
-              { icon: Wallet, label: "Métodos de Pago-API", path: "/Payment-methods" },
+              { icon: Wallet, label: "Métodos de Pago", path: "/Payment-methods" },
               { icon: Coins, label: "Gastos - Ingresos-API", path: "/Income" },
               { icon: BadgeDollarSign, label: "Ventas-API", path: "/Sales" },
               { icon: WalletCards, label: "Membresía", path: "/Membership" },
