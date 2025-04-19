@@ -33,7 +33,10 @@ function Header() {
         <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={24} className="text-gray-800" /> : <Menu size={24} className="text-gray-800" />}
         </button>
-        <h1 className="text-2xl font-bold text-gray-800 md:pl-72">Bienvenido</h1>
+        <h1 className="text-xl font-bold text-gray-800 md:pl-72">
+          <span className="hidden md:block">Bienvenido</span>
+        </h1>
+
       </div>
 
       {/* Contenedor de balance y logout */}
@@ -74,9 +77,6 @@ function Header() {
             <X size={24} className="text-gray-800" />
           </button>
           <nav className="mt-8 space-y-4">
-            <a href="#" className="block text-gray-700 hover:text-[#ff204e] transition">Inicio</a>
-            <a href="#" className="block text-gray-700 hover:text-[#ff204e] transition">Perfil</a>
-            <a href="#" className="block text-gray-700 hover:text-[#ff204e] transition">Ajustes</a>
             <button onClick={handleLogout} className="text-gray-700 hover:text-[#ff204e] transition">
               Cerrar sesión
             </button>
