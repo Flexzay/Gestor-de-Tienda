@@ -1,12 +1,23 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards,BringToFront } from "lucide-react";
+import {
+  Home,
+  Users,
+  Tags,
+  Boxes,
+  Wallet,
+  Coins,
+  BadgeDollarSign,
+  Menu,
+  Power,
+  WalletCards,
+  BringToFront
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { shopService } from "../../Services/shop.service";
 import { Button } from "./shop/Button";
 import Domiduck from "../../assets/img/horizontal-logo.svg";
 import domiduck from "../../assets/img/domiduck.svg";
 import { useShopStatus } from "../../hooks/bashboard/useShopStatus";
-
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,11 +31,9 @@ function Sidebar() {
       setShop({
         name: shopData.name,
         image: shopService.getShopImage() || domiduck
-
       });
     }
   }, []);
-
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -32,8 +41,9 @@ function Sidebar() {
     <>
       {/* Sidebar fijo */}
       <aside
-        className={`fixed top-0 left-0 w-72 min-h-screen bg-gray-900 text-white p-5 z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0`}
+        className={`fixed top-0 left-0 w-72 h-screen overflow-y-auto bg-gray-900 text-white p-5 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-5 z-50 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
       >
         <button
           className="md:hidden p-2 text-white bg-gray-700 absolute top-4 left-60 rounded-lg z-50"
@@ -54,7 +64,6 @@ function Sidebar() {
               className="h-20 w-20 rounded-full border-2 border-[#ff204e] shadow-lg bg-white object-cover object-center"
               onError={(e) => (e.currentTarget.src = domiduck)}
             />
-
             <span className="text-lg font-semibold text-white mt-2">{shop.name}</span>
             <Link to="/store-profile" className="text-sm text-[#ff204e] hover:underline mt-1">
               Ver perfil
@@ -73,15 +82,16 @@ function Sidebar() {
               { icon: Coins, label: "Gastos - Ingresos-API", path: "/Income" },
               { icon: BadgeDollarSign, label: "Ventas-API", path: "/Sales" },
               { icon: WalletCards, label: "Membresía", path: "/Membership" },
-              { icon: BringToFront , label: "Pedidos", path: "/Orders" },
+              { icon: BringToFront, label: "Pedidos", path: "/Orders" }
             ].map((item) => (
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out ${isActive(item.path)
-                    ? "bg-[#ff204e] text-white"
-                    : "hover:bg-[#ff204e] hover:shadow-lg"
-                    }`}
+                  className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out ${
+                    isActive(item.path)
+                      ? "bg-[#ff204e] text-white"
+                      : "hover:bg-[#ff204e] hover:shadow-lg"
+                  }`}
                   onClick={() => setIsOpen(false)}
                 >
                   <item.icon size={24} />
@@ -92,20 +102,20 @@ function Sidebar() {
           </ul>
         </nav>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex justify-center pb-10 md:pb-0">
           <Button
             variant="primary"
-            className={`w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 ${isShopOpen
-              ? "bg-[#ff204e] text-white hover:bg-[#ff3b60]"
-              : "bg-green-600 text-white hover:bg-green-700"
-              }`}
+            className={`w-full p-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-md transition-all duration-300 ${
+              isShopOpen
+                ? "bg-[#ff204e] text-white hover:bg-[#ff3b60]"
+                : "bg-green-600 text-white hover:bg-green-700"
+            }`}
             icon={Power}
             text={loading ? "Cargando..." : isShopOpen ? "Cerrar Tienda" : "Abrir Tienda"}
             onClick={toggleShopStatus}
             disabled={loading}
           />
         </div>
-
       </aside>
 
       {/* Botón de abrir menú en móvil */}
@@ -120,6 +130,5 @@ function Sidebar() {
     </>
   );
 }
-
 
 export default Sidebar;
