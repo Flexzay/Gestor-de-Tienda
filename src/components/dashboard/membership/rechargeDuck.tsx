@@ -241,7 +241,7 @@ export function RecargarCreditos({
           className="w-full rounded-md bg-rose-600 py-3 px-4 text-white font-medium hover:bg-rose-700 transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
         >
           <DollarSign className="h-5 w-5" />
-          <span>Recargar {formatCurrency(creditosSeleccionados)}</span>
+          <span>Recargar Ahora </span>
         </button>
       </div>
 
