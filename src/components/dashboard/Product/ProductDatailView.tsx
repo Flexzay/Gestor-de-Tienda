@@ -63,11 +63,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         <p>{error}</p>
         <button
           onClick={onBack}
-          className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center mx-auto"
+          className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center ml-[15px] sm:ml-0"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Volver
         </button>
+
       </div>
     )
   }
@@ -93,11 +94,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         <p className="text-gray-500">El producto que buscas no existe o ha sido eliminado.</p>
         <button
           onClick={onBack}
-          className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center mx-auto"
+          className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center ml-[15px] sm:ml-0"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Volver
         </button>
+
       </div>
     )
   }
@@ -116,11 +118,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         <div className="mb-6">
           <button
             onClick={onBack}
-            className="flex items-center text-gray-600 hover:text-gray-900 bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow transition-all"
+            className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center ml-[60px] sm:ml-0"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            <span>Volver</span>
+            Volver
           </button>
+
+
         </div>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
