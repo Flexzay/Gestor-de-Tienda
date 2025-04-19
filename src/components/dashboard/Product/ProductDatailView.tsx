@@ -24,7 +24,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const renderStatusContainer = (content: React.ReactNode) => (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
-      <div className="flex-1 p-4 md:p-8 md:ml-72">
+      <div className="flex-1 p-4 pb-20 md:p-20 md:ml-72">
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full">
           {content}
         </div>
