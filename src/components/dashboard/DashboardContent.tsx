@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddProductForm from "./Product/Product";
 import DashboardCard from "./DashboardCard";
 import DashboardImageCard from "./DashboardImageCard";
@@ -6,12 +6,12 @@ import ProductList from "./Product/ProductList";
 import { Package, Truck, Wallet, Plus } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
+import usePaymentMethods from "../../hooks/bashboard/usePaymentMethods";  
 
 const DashboardContent: React.FC = () => {
   const { products, createProduct, updateProduct, fetchProducts } = useProduct({});
+  const { paymentMethods } = usePaymentMethods(); // Getting paymentMethods
 
-
-  // deleteProduct debe ir despues de createProduct y updateProduct a la hora de implementar la funcion de eliminar producto
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
 
@@ -23,21 +23,13 @@ const DashboardContent: React.FC = () => {
         await createProduct(product);
       }
 
-      // ✅ Llamar a fetchProducts para recargar la lista
       await fetchProducts();
-
       setIsAdding(false);
       setSelectedProduct(null);
     } catch (error) {
       console.error("Error al guardar producto:", error);
     }
   };
-
-
-  // const handleDeleteProduct = async (productToDelete: ProductFormData) => {
-  //   if (!window.confirm(`¿Seguro que deseas desactivar "${productToDelete.name}"?`)) return;
-  //   await deleteProduct(productToDelete.id);
-  // };
 
   const handleEditProduct = (product: ProductFormData) => {
     setSelectedProduct(product);
@@ -46,8 +38,6 @@ const DashboardContent: React.FC = () => {
 
   return (
     <main className="p-6 bg-gray-100 min-h-screen overflow-x-hidden ml-0 lg:ml-72">
-
-
       <button
         onClick={() => setIsAdding(true)}
         className="group mb-6 flex items-center gap-3 px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-[#ff204e] to-[#ff4b70] rounded-xl shadow-md hover:shadow-xl transition-transform duration-300 transform hover:scale-105"
@@ -82,15 +72,13 @@ const DashboardContent: React.FC = () => {
         />
         <DashboardCard
           title="Métodos de Pago"
-          value="3"
+          value={paymentMethods.length.toString()} 
           icon={<Wallet size={20} />}
         />
         <DashboardImageCard />
       </div>
 
-
       <ProductList products={products} onEdit={handleEditProduct} />
-      {/* onDelete={handleDeleteProduct} debe ir despues de onEdit={handleEditProduct} a la hora de implementar la funcion de eliminar producto */}
     </main>
   );
 };

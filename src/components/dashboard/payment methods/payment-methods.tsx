@@ -1,6 +1,4 @@
-import type React from "react";
-import { useState } from "react";
-import { Plus } from "lucide-react";
+
 import Sidebar from "../Sidebar";
 import PaymentForm from "./PaymentForm";
 import PaymentList from "./PaymentList";
@@ -15,9 +13,7 @@ export function PaymentMethods() {
     formError,
     institutionOptions,
     accountTypes,
-    setFormData,
-    setImageSelected,
-    setEditingMethod,
+
     handleInputChange,
     handleFileChange,
     handleSubmit,
