@@ -1,33 +1,63 @@
-import { History, Clock } from "lucide-react"
+import  { useEffect, useState } from "react";
+import { membershipService } from "../../../Services/membership.service";
+import { History } from "lucide-react";  
 
 interface Compra {
-  id: number
-  fecha: string
-  cantidad: number
-  estado: string
+  id: string;
+  created_at: string;
+  ducks: number;
+  status: string;
 }
 
-interface HistorialComprasProps {
-  historialCompras: Compra[]
-}
+export function HistorialCompras() {
+  const [historialCompras, setHistorialCompras] = useState<Compra[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-export function HistorialCompras({ historialCompras }: HistorialComprasProps) {
+  useEffect(() => {
+    const fetchHistorial = async () => {
+      try {
+        const response = await membershipService.getHistoryCharges();
+        if (response.status === 200) {
+          setHistorialCompras(response.data.history || []); 
+        } else {
+          console.error("Error al cargar historial:", response.message);
+        }
+      } catch (error) {
+        console.error("Error en la carga del historial:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHistorial();
+  }, []);
+
+  if (isLoading) {
+    return <div>Cargando...</div>;
+  }
+
   return (
-    <div className="rounded-lg bg-white p-6 shadow-md">
-      <div className="flex items-center gap-3">
-        <History className="h-6 w-6 text-amber-500" />
-        <h2 className="text-xl font-semibold text-gray-800">Historial de Compras</h2>
+    <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+      <div className="px-4 py-5 sm:px-6">
+        <div className="flex items-center">
+          <History className="h-6 w-6 text-amber-500 mr-2" />
+          <h3 className="text-xl font-semibold text-gray-800">Historial de Compras</h3>
+        </div>
+        <p className="mt-1 max-w-2xl text-sm text-gray-500">Detalles de tus compras de créditos.</p>
       </div>
-
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full min-w-full divide-y divide-gray-200">
+      <div className="mt-5 overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Fecha</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Fecha
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                 Cantidad
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Estado</th>
+              <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Estado
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
@@ -35,14 +65,22 @@ export function HistorialCompras({ historialCompras }: HistorialComprasProps) {
               <tr key={compra.id}>
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4 text-gray-400" />
-                    <span>{compra.fecha}</span>
+                    <History className="mr-2 h-4 w-4 text-gray-400" />
+                    <span>
+                      {/* Convertir el formato de la fecha de created_at */}
+                      {new Date(compra.created_at).toLocaleDateString("es-CO", {
+                        year: "numeric", // 2024
+                        month: "2-digit", // 11 (noviembre)
+                        day: "2-digit",   // 08 (día con dos dígitos)
+                      }) || "Fecha no disponible"}
+                    </span>
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4">{compra.cantidad} créditos</td>
+                <td className="whitespace-nowrap px-6 py-4">{compra.ducks} créditos</td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                    {compra.estado}
+                    {/* Cambiar el texto de estado */}
+                    {compra.status === "accepted_company" ? "Aceptado" : compra.status || "Estado no disponible"}
                   </span>
                 </td>
               </tr>
@@ -50,11 +88,6 @@ export function HistorialCompras({ historialCompras }: HistorialComprasProps) {
           </tbody>
         </table>
       </div>
-
-      {historialCompras.length === 0 && (
-        <div className="mt-4 text-center text-gray-500">No hay historial de compras disponible</div>
-      )}
     </div>
-  )
+  );
 }
-
