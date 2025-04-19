@@ -15,6 +15,7 @@ import SalesPage from "../pages/dashboard/sales-page";
 import ProductDetail from "../components/dashboard/Product/ProductDatail"; 
 import MenbershipCreditos from "../components/dashboard/membership/membershiComponents"; 
 import ProfilePage from "../pages/dashboard/Profile-page";
+import OrdersPage from "../pages/dashboard/orders-page";
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
       <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
       <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos/></PrivateRoute>} />
       <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+      <Route path="orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />
 
       {/* 🆕 Ruta protegida para ver detalles de productos */}
       <Route path="/product/:id" element={<PrivateRoute><ProductDetail /></PrivateRoute>} />

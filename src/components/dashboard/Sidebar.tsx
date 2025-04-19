@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards } from "lucide-react";
+import { Home, Users, Tags, Boxes, Wallet, Coins, BadgeDollarSign, Menu, Power, WalletCards,BringToFront } from "lucide-react";
 import { useState, useEffect } from "react";
 import { shopService } from "../../Services/shop.service";
 import { Button } from "./shop/Button";
@@ -73,6 +73,7 @@ function Sidebar() {
               { icon: Coins, label: "Gastos - Ingresos-API", path: "/Income" },
               { icon: BadgeDollarSign, label: "Ventas-API", path: "/Sales" },
               { icon: WalletCards, label: "Membresía", path: "/Membership" },
+              { icon: BringToFront , label: "Pedidos", path: "/Orders" },
             ].map((item) => (
               <li key={item.path}>
                 <Link
