@@ -73,15 +73,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
           </div>
           <h3 className="text-xl font-medium text-gray-900 mb-2">No hay productos disponibles</h3>
           <p className="text-gray-500 text-center max-w-md mb-6">
-            No se encontraron productos para mostrar. Intenta agregar nuevos productos o cambiar los filtros de
-            búsqueda.
+            No se encontraron productos para mostrar. Intenta agregar nuevos productos 
           </p>
-          <button
-            onClick={() => navigate("/product/new")}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium"
-          >
-            Agregar Producto
-          </button>
+          
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -163,9 +157,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                   <div className="mt-auto">
                     <div className="flex items-baseline mb-2">
                       <span className="text-xl font-bold text-red-600">{formatCurrency(product.price)}</span>
-                      {product.oldPrice && product.oldPrice > product.price && (
+                      {product.price && product.price > product.price && (
                         <span className="ml-2 text-sm text-gray-500 line-through">
-                          {formatCurrency(product.oldPrice)}
+                          {formatCurrency(product.price)}
                         </span>
                       )}
                     </div>
