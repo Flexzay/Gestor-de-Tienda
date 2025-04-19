@@ -3,6 +3,7 @@ import ProductForm from "./Product";
 import ProductList from "./ProductList";
 import { ProductFormData } from "../../../interface/product";
 import useProduct from "../../../hooks/bashboard/useProduct";
+import ProductDetail from "./ProductDatail";
 
 const ProductComponents: React.FC = () => {
   const { products, loading, error, createProduct, updateProduct } = useProduct();
