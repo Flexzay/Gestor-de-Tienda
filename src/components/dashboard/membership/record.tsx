@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { membershipService } from "../../../Services/membership.service"
 import { History, ShoppingCart, AlertCircle } from "lucide-react"
@@ -34,7 +32,6 @@ export function HistorialCompras() {
     fetchHistorial()
   }, [])
 
-  // Función para determinar el color del estado
   const getStatusColor = (status: string) => {
     switch (status) {
       case "accepted_company":
@@ -48,7 +45,6 @@ export function HistorialCompras() {
     }
   }
 
-  // Función para traducir el estado
   const getStatusText = (status: string) => {
     switch (status) {
       case "accepted_company":
@@ -96,72 +92,71 @@ export function HistorialCompras() {
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Fecha
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Cantidad
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Estado
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {historialCompras.map((compra) => (
-                <tr key={compra.id} className="transition-colors hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-gray-100">
-                        <History className="h-4 w-4 text-gray-500" />
+        <div className="overflow-hidden">
+          {/* Tabla para pantallas medianas y grandes */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {historialCompras.map((compra) => (
+                  <tr key={compra.id} className="hover:bg-gray-50 transition">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {new Date(compra.created_at).toLocaleDateString("es-CO")}
                       </div>
-                      <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">
-                          {new Date(compra.created_at).toLocaleDateString("es-CO", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          })}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {new Date(compra.created_at).toLocaleTimeString("es-CO", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </div>
+                      <div className="text-xs text-gray-500">
+                        {new Date(compra.created_at).toLocaleTimeString("es-CO", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
+                    </td>
+                    <td className="px-6 py-4">
                       <span className="text-sm font-medium text-gray-900">{compra.ducks}</span>
                       <span className="ml-1 text-sm text-gray-500">créditos</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(compra.status)}`}
-                    >
-                      {getStatusText(compra.status)}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(compra.status)}`}>
+                        {getStatusText(compra.status)}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Tarjetas para pantallas pequeñas */}
+          <div className="md:hidden space-y-4 px-4 py-4">
+            {historialCompras.map((compra) => (
+              <div key={compra.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <History className="w-4 h-4 text-gray-400" />
+                    {new Date(compra.created_at).toLocaleDateString("es-CO")}
+                  </div>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(compra.status)}`}>
+                    {getStatusText(compra.status)}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-800 font-medium">
+                  {compra.ducks} <span className="text-gray-500 font-normal">créditos</span>
+                </div>
+                <div className="text-xs text-gray-400 mt-1">
+                  {new Date(compra.created_at).toLocaleTimeString("es-CO", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
