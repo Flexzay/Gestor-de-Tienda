@@ -53,7 +53,7 @@ const PaymentMethodsService = {
   createPaymentMethod: async (paymentMethod: FormData) => {
     const shopId = storageService.getShopData()?.id;
     if (!shopId) throw new Error("⚠️ No se encontró shopId en localStorage");
-
+  
     try {
       const response = await fetch(`${environment.baseUrl}/shop/${shopId}/methods`, {
         method: "POST",
@@ -104,7 +104,7 @@ const PaymentMethodsService = {
   updatePaymentMethod: async (paymentMethodId: string, paymentMethod: FormData) => {
     const shopId = storageService.getShopData()?.id;
     if (!shopId) throw new Error("⚠️ No se encontró shopId en localStorage");
-
+  
     try {
       const response = await fetch(`${environment.baseUrl}/shop/${shopId}/methods/${paymentMethodId}/update`, {
         method: "PUT",

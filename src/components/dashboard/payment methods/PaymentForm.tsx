@@ -1,5 +1,20 @@
-import type React from "react";
+import React, { useState } from "react";
 import { Plus, CreditCard } from "lucide-react";
+import { environment } from "../../../config/environmet";
+
+// Utiliza esta función para convertir Base64 a archivo
+const dataURLtoFile = (dataUrl: string, fileName: string) => {
+  const arr = dataUrl.split(",");
+  const mimeMatch = arr[0].match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : "";
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], fileName, { type: mime });
+};
 
 interface PaymentFormProps {
   formData: any;
@@ -44,21 +59,19 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Nombre de la cuenta */}
         {!isEfectivo && (
-        <div>
-          <label className="block font-medium text-gray-700 mb-1">Nombre de la Cuenta</label>
-          <input
-            name="name_account"
-            value={formData.name_account}
-            onChange={handleInputChange}
-            placeholder="Ej: Cuenta Personal"
-            className="w-full border border-gray-300 p-3 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            disabled={isEfectivo}
-            required={!isEfectivo}
-          />
-        </div>
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">Nombre de la Cuenta</label>
+            <input
+              name="name_account"
+              value={formData.name_account}
+              onChange={handleInputChange}
+              placeholder="Ej: Cuenta Personal"
+              className="w-full border border-gray-300 p-3 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              disabled={isEfectivo}
+              required={!isEfectivo}
+            />
+          </div>
         )}
-
-   
 
         {/* Entidad */}
         <div>
@@ -83,26 +96,24 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Tipo de cuenta */}
         {!isEfectivo && (
-        <div>
-          <label className="block font-medium text-gray-700 mb-1">Tipo de Cuenta</label>
-          <select
-            name="type_account"
-            value={formData.type_account}
-            onChange={handleInputChange}
-            className="w-full border border-gray-300 p-3 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            required
-          >
-            <option value="">Selecciona una opción</option>
-            {accountTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">Tipo de Cuenta</label>
+            <select
+              name="type_account"
+              value={formData.type_account}
+              onChange={handleInputChange}
+              className="w-full border border-gray-300 p-3 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              required
+            >
+              <option value="">Selecciona una opción</option>
+              {accountTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
         )}
-
-        
 
         {/* NIT / CC */}
         {!isEfectivo && (
@@ -120,9 +131,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         )}
       </div>
 
+      {/* Número de cuenta y Link de pago */}
       {!isEfectivo && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {/* Número de cuenta */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">Número de Cuenta</label>
             <input
@@ -134,7 +145,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             />
           </div>
 
-          {/* Link de pago */}
           <div>
             <label className="block font-medium text-gray-700 mb-1">Link de Pago</label>
             <input
@@ -149,16 +159,22 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         </div>
       )}
 
+      {/* QR */}
       {!isEfectivo && (
         <div className="flex flex-col items-center">
           <label className="block font-medium text-gray-700 mb-1">Código QR</label>
           <div className="w-36 h-36 flex items-center justify-center border rounded-lg overflow-hidden bg-gray-50">
             {imageSelected ? (
-              <img src={imageSelected} alt="QR Code" className="w-full h-full object-cover" />
+              <img
+                src={imageSelected} 
+                alt="Código QR"
+                className="w-full h-full object-cover"
+              />
             ) : (
               <CreditCard size={48} className="text-gray-400" />
             )}
           </div>
+
           <input
             type="file"
             onChange={handleFileChange}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PaymentMethodsService from "../../Services/paymentMethods.service";
 import type { PaymentMethod } from "../../interface/paymentMethod";
+import { environment } from "../../config/environmet";
 
 const usePaymentMethods = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -16,6 +17,7 @@ const usePaymentMethods = () => {
     link_payment: "",
   });
   const [imageSelected, setImageSelected] = useState<string | null>(null);
+  const [isNewImage, setIsNewImage] = useState(false); // ✅ Nuevo estado
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
@@ -28,14 +30,17 @@ const usePaymentMethods = () => {
       const response = await PaymentMethodsService.getPaymentMethods();
       setPaymentMethods(response.data || []);
     } catch (error) {
+      console.error("❌ Error al obtener métodos:", error);
     }
   };
+
   const fetchConfigurations = async () => {
     try {
       const config = await PaymentMethodsService.getConfigurations();
       setInstitutionOptions(config.data?.institutions || []);
       setAccountTypes(config.data?.types || []);
     } catch (error) {
+      console.error("❌ Error al obtener configuraciones:", error);
     }
   };
 
@@ -54,6 +59,7 @@ const usePaymentMethods = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImageSelected(reader.result as string);
+        setIsNewImage(true); // ✅ Ahora funciona
       };
       reader.readAsDataURL(file);
     }
@@ -79,39 +85,54 @@ const usePaymentMethods = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    console.log("Datos a enviar:", {
-      ...formData,
-      imageSelected: imageSelected ? "Imagen cargada" : "Sin imagen"
-    });
-
-    try {
-      const form = new FormData();
-      form.append("entidad", formData.entidad);
-      form.append("name_account", formData.name_account);
-      form.append("type_account", formData.type_account);
-      form.append("nit_cc", formData.nit_cc);
-
-      if (formData.entidad !== "Efectivo") {
-        if (formData.account) form.append("account", formData.account);
-        if (formData.link_payment) form.append("link_payment", formData.link_payment);
-        if (imageSelected) {
+  
+    console.log("✅ Enviando datos:", formData, imageSelected);
+  
+    const form = new FormData();
+    form.append("entidad", formData.entidad);
+    form.append("name_account", formData.name_account);
+    form.append("type_account", formData.type_account);
+    form.append("nit_cc", formData.nit_cc);
+  
+    if (formData.entidad !== "Efectivo") {
+      if (formData.account) form.append("account", formData.account);
+      if (formData.link_payment) form.append("link_payment", formData.link_payment);
+  
+      // Solo agregamos image_qr si es una imagen nueva
+      if (imageSelected && imageSelected.startsWith("data:image/")) {
+        try {
           const file = dataURLtoFile(imageSelected, "qr_code.png");
-          form.append("image", file);
+          form.append("image_qr", file);
+          console.log("🖼️ QR agregado al FormData");
+        } catch (err) {
+          console.error("❌ Error al convertir base64 a archivo:", err);
         }
+      } else {
+        console.log("⚠️ QR no agregado: no hay imagen nueva o no es base64.");
       }
-
+    }
+  
+    // Debug del FormData
+    console.log("📦 FormData enviado:");
+    for (let pair of form.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }
+  
+    try {
       if (editingMethod) {
         await PaymentMethodsService.updatePaymentMethod(editingMethod.id.toString(), form);
       } else {
         await PaymentMethodsService.createPaymentMethod(form);
       }
-
+  
       fetchPaymentMethods();
       resetForm();
     } catch (error) {
       setFormError("Hubo un problema al guardar el método de pago.");
+      console.error("❌ Error al guardar:", error);
     }
   };
+  
 
   const resetForm = () => {
     setFormData({
@@ -125,6 +146,7 @@ const usePaymentMethods = () => {
     setImageSelected(null);
     setEditingMethod(null);
     setFormError("");
+    setIsNewImage(false); // ✅ Reiniciar estado
   };
 
   const toggleActive = async (method: PaymentMethod) => {
@@ -132,6 +154,7 @@ const usePaymentMethods = () => {
       await PaymentMethodsService.changeStatusPaymentMethod(method.id);
       fetchPaymentMethods();
     } catch (error) {
+      console.error("❌ Error al cambiar estado:", error);
     }
   };
 
@@ -145,7 +168,10 @@ const usePaymentMethods = () => {
       account: method.account || "",
       link_payment: method.link_payment || "",
     });
-    setImageSelected(method.qr_code || null);
+    setImageSelected(
+      method.image_qr ? `${environment.s3Storage}${method.image_qr}` : null
+    );
+    setIsNewImage(false); // ✅ No es imagen nueva
   };
 
   const deletePaymentMethod = async (id: number) => {
@@ -153,6 +179,7 @@ const usePaymentMethods = () => {
       await PaymentMethodsService.deletePaymentMethod(id);
       fetchPaymentMethods();
     } catch (error) {
+      console.error("❌ Error al eliminar método:", error);
     }
   };
 
@@ -178,8 +205,11 @@ const usePaymentMethods = () => {
 
 export default usePaymentMethods;
 
+// ✅ Conversión de base64 a archivo
 const dataURLtoFile = (dataurl: string, filename: string): File => {
   const arr = dataurl.split(",");
+  if (arr.length < 2) throw new Error("Formato de base64 no válido");
+
   const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
   const bstr = atob(arr[1]);
   let n = bstr.length;
