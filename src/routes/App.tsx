@@ -36,7 +36,6 @@ const App = () => {
       <Route path="/Suppliers" element={<PrivateRoute><SuppliersPage /></PrivateRoute>} />
       <Route path="/Payment-methods" element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
       <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
-      <Route path="/Sales" element={<PrivateRoute><SalesPage /></PrivateRoute>} />
       <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos/></PrivateRoute>} />
       <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
       <Route path="orders" element={<PrivateRoute><OrdersPage /></PrivateRoute>} />

@@ -80,7 +80,7 @@ function Sidebar() {
               { icon: Boxes, label: "Proveedores-API", path: "/Suppliers" },
               { icon: Wallet, label: "Métodos de Pago", path: "/Payment-methods" },
               { icon: Coins, label: "Gastos - Ingresos-API", path: "/Income" },
-              { icon: BadgeDollarSign, label: "Ventas-API", path: "/Sales" },
+              // { icon: BadgeDollarSign, label: "Ventas-API", path: "/Sales" },
               { icon: WalletCards, label: "Membresía", path: "/Membership" },
               { icon: BringToFront, label: "Pedidos", path: "/Orders" }
             ].map((item) => (
