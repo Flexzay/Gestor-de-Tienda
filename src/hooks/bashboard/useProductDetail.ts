@@ -36,7 +36,8 @@ export const useProductDetail = () => {
           available: productData.available ?? true,
           brand: productData.brand || "",
           stock: productData.stock || 0,
-          expirationDate: productData.expirationDate
+          expirationDate: productData.expirationDate,
+          category_id: 0
         };
 
         setProduct(formattedProduct);
