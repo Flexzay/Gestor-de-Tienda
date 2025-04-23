@@ -11,7 +11,6 @@ import CategoryPage from "../pages/dashboard/category-page";
 import SuppliersPage from "../pages/dashboard/Providers";
 import PaymentMethodPage from "../pages/dashboard/paymentMetthod-page";
 import ExpensesIncomePage from "../pages/dashboard/receipts-page";
-import SalesPage from "../pages/dashboard/sales-page";
 import ProductDetail from "../components/dashboard/Product/ProductDatail"; 
 import MenbershipCreditos from "../components/dashboard/membership/membershiComponents"; 
 import ProfilePage from "../pages/dashboard/Profile-page";
