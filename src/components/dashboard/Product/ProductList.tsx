@@ -23,7 +23,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(8)
-  const [hoveredCard, setHoveredCard] = useState<string | number | null>(null)
+  const [, setHoveredCard] = useState<string | number | null>(null)
 
   useEffect(() => {
     const updateItemsPerPage = () => {
