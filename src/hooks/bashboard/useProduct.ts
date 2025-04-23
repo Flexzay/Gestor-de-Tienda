@@ -2,6 +2,14 @@ import { useState, useEffect, useReducer } from "react";
 import { productService } from "../../Services/product.service";
 import { ProductFormData, ProductImage, ProductIngredient } from "../../interface/product";
 
+// Tipos para las props del hook
+interface UseProductProps {
+  onSubmit: (data: ProductFormData) => Promise<void>;
+  onClose: () => void;
+  initialData?: Partial<ProductFormData>;
+}
+
+// Tipos para las acciones del reducer
 type Action =
   | { type: "CHANGE_INPUT"; field: string; value: any }
   | { type: "ADD_INGREDIENT"; ingredient: ProductIngredient }
@@ -61,7 +69,7 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
       return {
         ...state,
         existingImages: state.existingImages?.filter((_, i) => i !== action.index) || [],
-        deletedImages: [...(state.deletedImages || []), deleted],
+        deletedImages: deleted ? [...(state.deletedImages || []), deleted] : state.deletedImages || [],
       };
 
     default:
@@ -69,14 +77,14 @@ const formReducer = (state: ProductFormData, action: Action): ProductFormData =>
   }
 };
 
-const useProduct = ({ onSubmit, initialData, onClose }) => {
+const useProduct = ({ onSubmit, initialData, onClose }: UseProductProps) => {
   const [products, setProducts] = useState<ProductFormData[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [step, setStep] = useState(0);
-  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [step, setStep] = useState<number>(0);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const [formData, dispatch] = useReducer(formReducer, {
+  const initialState: ProductFormData = {
     id: initialData?.id,
     name: initialData?.name || "",
     description: initialData?.description || "",
@@ -88,12 +96,14 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     available: initialData?.available ?? true,
     images: [],
     previews: [],
-    existingImages: initialData?.images || [],
+    existingImages: (initialData?.images || []) as unknown as ProductImage[],
     deletedImages: [],
     data_table: initialData?.data_table || [],
-  });
+  };
 
-  const fetchProducts = async () => {
+  const [formData, dispatch] = useReducer(formReducer, initialState);
+
+  const fetchProducts = async (): Promise<void> => {
     setLoading(true);
     try {
       const response = await productService.getProducts();
@@ -102,7 +112,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
           ? response.data
           : response.data.data || []
         : [];
-      setProducts(data);
+      setProducts(data as ProductFormData[]);
     } catch (error) {
       console.error("Error al obtener productos:", error);
       setError("Error al obtener productos");
@@ -113,12 +123,12 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  ): void => {
     dispatch({ type: "CHANGE_INPUT", field: e.target.name, value: e.target.value });
     setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     if (files.length > 0) {
       try {
@@ -132,7 +142,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     }
   };
 
-  const removeImage = async (index: number, isExisting: boolean) => {
+  const removeImage = async (index: number, isExisting: boolean): Promise<void> => {
     try {
       if (isExisting) {
         const imageToRemove = formData.existingImages?.[index];
@@ -156,17 +166,15 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     }
   };
 
-  const handleNextStep = () => setStep((prev) => prev + 1);
-  const handlePrevStep = () => setStep((prev) => prev - 1);
+  const handleNextStep = (): void => setStep((prev) => prev + 1);
+  const handlePrevStep = (): void => setStep((prev) => prev - 1);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try { 
       await onSubmit({ ...formData });
-      console.log("🧪 ENVIANDO FORM DATA: ", formData);
-
       onClose();
     } catch (error) {
       setError("Hubo un error al guardar el producto. Inténtalo de nuevo.");
@@ -175,7 +183,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     }
   };
 
-  const createProduct = async (product: ProductFormData) => {
+  const createProduct = async (product: ProductFormData): Promise<void> => {
     setLoading(true);
     try {
       const response = await productService.createProduct(product);
@@ -188,7 +196,7 @@ const useProduct = ({ onSubmit, initialData, onClose }) => {
     }
   };
 
-  const updateProduct = async (id: number, product: ProductFormData) => {
+  const updateProduct = async (id: number, product: ProductFormData): Promise<void> => {
     setLoading(true);
     try {
       const response = await productService.updateProduct(id, product);
