@@ -1,7 +1,18 @@
 import { useState } from "react";
 import StoreCard from "./StoreCard";
 
-const StoreList = ({ stores, onSelect }) => {
+
+interface Store {
+  id: number;
+
+}
+
+interface StoreListProps {
+  stores: Store[];
+  onSelect: (store: Store) => void;
+}
+
+const StoreList = ({ stores, onSelect }: StoreListProps) => {
   const [hoveredStore, setHoveredStore] = useState<number | null>(null);
 
   return (
