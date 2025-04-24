@@ -25,8 +25,8 @@ export function StoreInfo({ storeData, updateStoreData }: StoreInfoProps) {
   // Type guard para verificar claves válidas de StoreData
   const isStoreDataKey = (key: string): key is keyof StoreData => {
     return [
-      'name', 'phone', 'whatsapp', 'location', 'description', 
-      'hours', 'mainImage', 'avatarImage', 'deliveryFee', 
+      'name', 'phone', 'whatsapp', 'location', 'description',
+      'hours', 'mainImage', 'avatarImage', 'deliveryFee',
       'minOrderValue', 'ownDelivery', 'latitud', 'longitud', 'timetable'
     ].includes(key);
   };
@@ -229,13 +229,16 @@ export function StoreInfo({ storeData, updateStoreData }: StoreInfoProps) {
         </label>
 
         {storeData.timetable?.map((item, index) => (
-          <div key={index} className="flex flex-col md:flex-row gap-2 items-stretch md:items-center">
+          <div
+            key={index}
+            className="flex flex-col md:flex-row gap-2 md:items-center w-full overflow-x-auto"
+          >
             <input
               type="text"
               value={item.day || ""}
               onChange={(e) => handleTimetableChange(index, "day", e.target.value)}
               placeholder="Día (ej: Lunes)"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
+              className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
               required
             />
             <input
@@ -243,7 +246,7 @@ export function StoreInfo({ storeData, updateStoreData }: StoreInfoProps) {
               value={item.open || ""}
               onChange={(e) => handleTimetableChange(index, "open", e.target.value)}
               placeholder="Hora apertura (ej: 9:00)"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
+              className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
               required
             />
             <input
@@ -251,7 +254,7 @@ export function StoreInfo({ storeData, updateStoreData }: StoreInfoProps) {
               value={item.close || ""}
               onChange={(e) => handleTimetableChange(index, "close", e.target.value)}
               placeholder="Hora cierre (ej: 18:00)"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
+              className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
               required
             />
             <button
@@ -272,6 +275,7 @@ export function StoreInfo({ storeData, updateStoreData }: StoreInfoProps) {
           + Agregar horario
         </button>
       </div>
+
 
       {/* Descripción */}
       <div className="space-y-2">
