@@ -1,37 +1,10 @@
 import { Clock, MapPin, Phone, Star, Truck } from "lucide-react";
-
-// Definir tipos para los datos de la tienda
-interface TimetableItem {
-  dia: string;
-  hora: string;
-}
-
-interface StoreData {
-  name?: string;
-  description?: string;
-  location?: string;
-  timetable?: TimetableItem[];
-  phone?: string;
-  whatsapp?: string;
-  latitud?: number | string;
-  longitud?: number | string;
-  ownDelivery?: boolean;
-  deliveryFee?: number | string;
-  minOrderValue?: number | string;
-}
-
-// Definir props del componente
-interface StorePreviewProps {
-  storeData: StoreData;
-  mainImagePreview?: string;
-  avatarImagePreview?: string;
-}
+import { StorePreviewProps } from "../../../../interface/profile";
 
 export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }: StorePreviewProps) {
-  // Formatear los horarios en una sola línea
   const formattedHours = (storeData.timetable || [])
-    .filter((item: TimetableItem) => item.dia && item.hora)
-    .map((item: TimetableItem) => `${item.dia}: ${item.hora}`)
+    .filter((item) => item.day && item.open && item.close)
+    .map((item) => `${item.day}: ${item.open} - ${item.close}`)
     .join(" • ");
 
   return (

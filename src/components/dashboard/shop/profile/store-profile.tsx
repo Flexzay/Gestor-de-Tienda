@@ -1,10 +1,10 @@
-import { Save, ArrowLeft } from "lucide-react"
-import { StoreInfo } from "./store-info"
-import { StoreImages } from "./store-images"
-import { OrderConfig } from "./order-config"
-import { StorePreview } from "./store-preview"
-import { Link } from "react-router-dom"
-import { useProfile } from "../../../../hooks/bashboard/useProfile"
+import { Save, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+import { StoreInfo } from "./store-info";
+import { StoreImages } from "./store-images";
+import { OrderConfig } from "./order-config";
+import { StorePreview } from "./store-preview";
+import { useProfile } from "../../../../hooks/bashboard/useProfile";
 
 export default function StoreProfile() {
   const {
@@ -19,18 +19,14 @@ export default function StoreProfile() {
     isLoading,
     saveMessage,
     saveProfile
-  } = useProfile()
-
-  // Convertir null a undefined para las imágenes preview
-  const safeMainImagePreview = mainImagePreview ?? undefined;
-  const safeAvatarImagePreview = avatarImagePreview ?? undefined;
+  } = useProfile();
 
   if (isLoading && !storeData?.name) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div>Cargando datos de la tienda...</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -105,8 +101,8 @@ export default function StoreProfile() {
                   <div className="space-y-6">
                     <StoreInfo storeData={storeData} updateStoreData={updateStoreData} />
                     <StoreImages
-                      mainImagePreview={safeMainImagePreview}
-                      avatarImagePreview={safeAvatarImagePreview}
+                      mainImagePreview={mainImagePreview}
+                      avatarImagePreview={avatarImagePreview}
                       setMainImagePreview={setMainImagePreview}
                       setAvatarImagePreview={setAvatarImagePreview}
                       updateStoreData={updateStoreData}
@@ -124,11 +120,11 @@ export default function StoreProfile() {
           {/* Vista previa */}
           <StorePreview
             storeData={storeData}
-            mainImagePreview={safeMainImagePreview}
-            avatarImagePreview={safeAvatarImagePreview}
+            mainImagePreview={mainImagePreview}
+            avatarImagePreview={avatarImagePreview}
           />
         </div>
       </main>
     </div>
-  )
+  );
 }

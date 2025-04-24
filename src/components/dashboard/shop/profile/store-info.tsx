@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 import { Clock, MapPin, Phone, MessageCircle } from "lucide-react";
 import { MapPicker } from "./MapPicker";
+import { StoreInfoProps, Location } from "../../../../interface/profile";
 
-const defaultCenter = {
+const defaultCenter: Location = {
   lat: 2.5686,
   lng: -72.6406
 };
 
-export function StoreInfo({ storeData, updateStoreData }) {
+export function StoreInfo({ storeData, updateStoreData }: StoreInfoProps) {
   const [showMap, setShowMap] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
 
   useEffect(() => {
-    const lat = parseFloat(storeData.latitud);
-    const lng = parseFloat(storeData.longitud);
+    const lat = parseFloat(storeData.latitud || '');
+    const lng = parseFloat(storeData.longitud || '');
     if (!isNaN(lat) && !isNaN(lng)) {
       setSelectedLocation({ lat, lng });
     } else {
@@ -21,42 +22,30 @@ export function StoreInfo({ storeData, updateStoreData }) {
     }
   }, [storeData.latitud, storeData.longitud]);
 
-  useEffect(() => {
-    if (showMap) {
-      const lat = parseFloat(storeData.latitud);
-      const lng = parseFloat(storeData.longitud);
-      if (!isNaN(lat) && !isNaN(lng)) {
-        setSelectedLocation({ lat, lng });
-      } else {
-        setSelectedLocation(defaultCenter);
-      }
-    }
-  }, [showMap]);
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    updateStoreData(name, value);
+    updateStoreData(name as keyof StoreData, value);
   };
 
-  const handleTimetableChange = (index, field, value) => {
-    const newTimetable = [...storeData.timetable];
-    newTimetable[index][field] = value;
+  const handleTimetableChange = (index: number, field: keyof TimetableItem, value: string) => {
+    const newTimetable = [...(storeData.timetable || [])];
+    newTimetable[index] = { ...newTimetable[index], [field]: value };
     updateStoreData("timetable", newTimetable);
   };
 
   const handleAddTimetable = () => {
     const newTimetable = [...(storeData.timetable || [])];
-    newTimetable.push({ dia: "", hora: "" });
+    newTimetable.push({ day: "", open: "", close: "" });
     updateStoreData("timetable", newTimetable);
   };
 
-  const handleRemoveTimetable = (index) => {
-    const newTimetable = [...storeData.timetable];
+  const handleRemoveTimetable = (index: number) => {
+    const newTimetable = [...(storeData.timetable || [])];
     newTimetable.splice(index, 1);
     updateStoreData("timetable", newTimetable);
   };
 
-  const handleLocationChange = (location: { lat: number; lng: number }) => {
+  const handleLocationChange = (location: Location) => {
     setSelectedLocation(location);
   };
 
@@ -232,17 +221,25 @@ export function StoreInfo({ storeData, updateStoreData }) {
           <div key={index} className="flex flex-col md:flex-row gap-2 items-stretch md:items-center">
             <input
               type="text"
-              value={item.dia || ""}
-              onChange={(e) => handleTimetableChange(index, "dia", e.target.value)}
+              value={item.day || ""}
+              onChange={(e) => handleTimetableChange(index, "day", e.target.value)}
               placeholder="Día (ej: Lunes)"
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
               required
             />
             <input
               type="text"
-              value={item.hora || ""}
-              onChange={(e) => handleTimetableChange(index, "hora", e.target.value)}
-              placeholder="Horario (ej: 9:00 - 18:00)"
+              value={item.open || ""}
+              onChange={(e) => handleTimetableChange(index, "open", e.target.value)}
+              placeholder="Hora apertura (ej: 9:00)"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
+              required
+            />
+            <input
+              type="text"
+              value={item.close || ""}
+              onChange={(e) => handleTimetableChange(index, "close", e.target.value)}
+              placeholder="Hora cierre (ej: 18:00)"
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rose-500 focus:border-rose-500"
               required
             />
@@ -261,7 +258,7 @@ export function StoreInfo({ storeData, updateStoreData }) {
           onClick={handleAddTimetable}
           className="mt-2 text-sm text-rose-600 font-semibold hover:underline"
         >
-          + Agregar día
+          + Agregar horario
         </button>
       </div>
 

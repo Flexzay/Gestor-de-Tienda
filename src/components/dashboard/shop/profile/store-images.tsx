@@ -1,52 +1,56 @@
-import { Camera, Upload } from "lucide-react"
+import { Camera, Upload } from "lucide-react";
+import { StoreImagesProps } from "../../../../interface/profile";
+
 export function StoreImages({
   mainImagePreview,
   avatarImagePreview,
   setMainImagePreview,
   setAvatarImagePreview,
-  updateStoreData,
-}) {
-  // Función para manejar cambios en las imágenes
-  const handleImageChange = (e, type) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      
-      // Validaciones básicas
-      if (!file.type.startsWith('image/')) {
-        alert('Por favor seleccione un archivo de imagen válido')
-        return
-      }
-
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        if (type === 'main') {
-          setMainImagePreview(event.target.result)
-          updateStoreData("mainImage", file) // Guardamos el File para el upload
-        } else {
-          setAvatarImagePreview(event.target.result)
-          updateStoreData("avatarImage", file) // Guardamos el File para el upload
-        }
-      }
-      reader.readAsDataURL(file)
+  updateStoreData
+}: StoreImagesProps) {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'avatar') => {
+    if (!e.target.files || !e.target.files[0]) return;
+    
+    const file = e.target.files[0];
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    
+    if (!validTypes.includes(file.type)) {
+      alert('Por favor sube una imagen válida (JPEG, PNG o WEBP)');
+      return;
     }
-  }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen no debe exceder los 5MB');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (type === 'main') {
+        setMainImagePreview(result);
+        updateStoreData("mainImage", file);
+      } else {
+        setAvatarImagePreview(result);
+        updateStoreData("avatarImage", file);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
-  // Función para eliminar imágenes
-  const removeImage = (type) => {
+  const removeImage = (type: 'main' | 'avatar') => {
     if (type === 'main') {
-      setMainImagePreview(null)
-      updateStoreData("mainImage", null)
-      // Limpiar input file
-      const input = document.getElementById("mainImage")
-      if (input) input.value = ""
+      setMainImagePreview(null);
+      updateStoreData("mainImage", null);
+      const input = document.getElementById("mainImage") as HTMLInputElement;
+      if (input) input.value = "";
     } else {
-      setAvatarImagePreview(null)
-      updateStoreData("avatarImage", null)
-      // Limpiar input file
-      const input = document.getElementById("avatarImage")
-      if (input) input.value = ""
+      setAvatarImagePreview(null);
+      updateStoreData("avatarImage", null);
+      const input = document.getElementById("avatarImage") as HTMLInputElement;
+      if (input) input.value = "";
     }
-  }
+  };
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -57,9 +61,7 @@ export function StoreImages({
           {mainImagePreview ? (
             <div className="relative w-full h-48">
               <img
-                src={typeof mainImagePreview === 'string' ? 
-                     mainImagePreview : 
-                     URL.createObjectURL(mainImagePreview)}
+                src={mainImagePreview}
                 alt="Imagen principal"
                 className="w-full h-full object-cover rounded-md"
               />
@@ -102,9 +104,7 @@ export function StoreImages({
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 mb-4">
                 <img
-                  src={typeof avatarImagePreview === 'string' ? 
-                       avatarImagePreview : 
-                       URL.createObjectURL(avatarImagePreview)}
+                  src={avatarImagePreview}
                   alt="Avatar"
                   className="w-32 h-32 object-cover rounded-full"
                 />
@@ -139,5 +139,5 @@ export function StoreImages({
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -22,7 +22,7 @@ export interface StoreData {
 }
 
 export interface StorePreviewProps {
-    storeData: StoreData;
+    storeData: Partial<StoreData>;
     mainImagePreview: string | null;
     avatarImagePreview: string | null;
 }
@@ -38,4 +38,15 @@ export interface StoreImagesProps {
 export interface Location {
     lat: number;
     lng: number;
+}
+
+export interface StoreInfoProps {
+    storeData: Partial<StoreData>;
+    updateStoreData: (field: keyof StoreData, value: any) => void;
+}
+
+// Añade esta nueva interfaz para OrderConfig
+export interface OrderConfigProps {
+    storeData: Partial<StoreData>;
+    updateStoreData: (field: keyof StoreData, value: any) => void;
 }
