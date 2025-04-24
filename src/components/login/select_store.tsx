@@ -13,10 +13,11 @@ function SelectStore() {
     { id: 4, name: "Sucursal Empresarial", type: "Business Center", location: "Distrito Financiero", hours: "8:00 - 18:00", image: "/placeholder.svg?height=200&width=300", color: "from-emerald-500 to-teal-600", icon: Building2 },
   ];
 
-  const handleSelectStore = (storeId: number) => {
-    localStorage.setItem("selectedStore", storeId.toString());
+  const handleSelectStore = (store: Store) => {
+    localStorage.setItem("selectedStore", store.id.toString());
     navigate("/dashboard");
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col items-center justify-center p-6">

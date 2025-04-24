@@ -6,30 +6,35 @@ import ProductList from "./Product/ProductList";
 import { Package, Truck, Wallet, Plus } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
-import usePaymentMethods from "../../hooks/bashboard/usePaymentMethods";  
+import usePaymentMethods from "../../hooks/bashboard/usePaymentMethods";
 
 const DashboardContent: React.FC = () => {
-  const { products, createProduct, updateProduct, fetchProducts } = useProduct({});
-  const { paymentMethods } = usePaymentMethods(); // Getting paymentMethods
-
   const [isAdding, setIsAdding] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductFormData | null>(null);
 
-  const handleAddProduct = async (product: ProductFormData) => {
-    try {
-      if (selectedProduct?.id !== undefined) {
-        await updateProduct(selectedProduct.id, product);
-      } else {
-        await createProduct(product);
-      }
-
-      await fetchProducts();
-      setIsAdding(false);
-      setSelectedProduct(null);
-    } catch (error) {
-      console.error("Error al guardar producto:", error);
-    }
+  const handleClose = () => {
+    setIsAdding(false);
+    setSelectedProduct(null);
   };
+
+  const handleAddProduct = async (product: ProductFormData) => {
+    if (selectedProduct?.id !== undefined) {
+      await updateProduct(selectedProduct.id, product);
+    } else {
+      await createProduct(product);
+    }
+    await fetchProducts();
+    handleClose();
+  };
+
+
+  const { products, createProduct, updateProduct, fetchProducts } = useProduct({
+    onSubmit: handleAddProduct,
+    onClose: handleClose,
+    initialData: selectedProduct || undefined,
+  });
+
+  const { paymentMethods } = usePaymentMethods();
 
   const handleEditProduct = (product: ProductFormData) => {
     setSelectedProduct(product);
@@ -49,12 +54,15 @@ const DashboardContent: React.FC = () => {
       {isAdding && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <button onClick={() => { setIsAdding(false); setSelectedProduct(null); }}
+            <button onClick={handleClose}
               className="absolute top-2 right-2 text-gray-500 hover:text-red-500">
               ✖
             </button>
-            <AddProductForm onClose={() => { setIsAdding(false); setSelectedProduct(null); }}
-              onSubmit={handleAddProduct} initialData={selectedProduct} />
+            <AddProductForm
+              onClose={handleClose}
+              onSubmit={handleAddProduct}
+              initialData={selectedProduct}
+            />
           </div>
         </div>
       )}
@@ -72,7 +80,7 @@ const DashboardContent: React.FC = () => {
         />
         <DashboardCard
           title="Métodos de Pago"
-          value={paymentMethods.length.toString()} 
+          value={paymentMethods.length.toString()}
           icon={<Wallet size={20} />}
         />
         <DashboardImageCard />
