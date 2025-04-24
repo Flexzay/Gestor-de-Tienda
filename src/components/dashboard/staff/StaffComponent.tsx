@@ -6,6 +6,12 @@ import Sidebar from "../Sidebar";
 import { useStaffLogic } from "../../../hooks/bashboard/useStaff";
 import { useCallback } from "react";
 
+// Definir tipos para los props del HeaderSection
+interface HeaderSectionProps {
+  onAddRole: () => void;
+  onAddStaff: () => void;
+}
+
 export function StaffComponent() {
   const {
     search,
@@ -27,7 +33,6 @@ export function StaffComponent() {
     handleAddRole,
     handleDeleteRole,
     handleImageChange,
-    handleGoToDashboard,
     handleDeleteMember,
     handleEditMember,
     handleCloseStaffModal,
@@ -88,7 +93,7 @@ export function StaffComponent() {
 }
 
 /* Header separado para mayor claridad */
-const HeaderSection = ({ onAddRole, onAddStaff }) => (
+const HeaderSection: React.FC<HeaderSectionProps> = ({ onAddRole, onAddStaff }) => (
   <div className="flex flex-col md:flex-row md:justify-between items-center mb-6">
     <h2 className="text-4xl font-bold text-[#301940] text-center md:text-left">
       Miembros del Personal
