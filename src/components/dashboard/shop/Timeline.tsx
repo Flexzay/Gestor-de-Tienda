@@ -8,7 +8,11 @@ const steps = [
   { label: "Imágenes del Producto", icon: <Image size={28} /> },
 ];
 
-const CustomTimeline = ({ currentStep }) => {
+interface CustomTimelineProps {
+  currentStep: number;
+}
+
+const CustomTimeline = ({ currentStep }: CustomTimelineProps) => {
   return (
     <div className="flex flex-col items-center w-full">
       {/* Logo */}
