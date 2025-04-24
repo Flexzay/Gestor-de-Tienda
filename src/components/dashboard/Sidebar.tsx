@@ -6,7 +6,6 @@ import {
   Boxes,
   Wallet,
   Coins,
-  BadgeDollarSign,
   Menu,
   Power,
   WalletCards,
