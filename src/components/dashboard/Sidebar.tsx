@@ -9,7 +9,6 @@ import {
   Menu,
   Power,
   WalletCards,
-  BringToFront
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { shopService } from "../../Services/shop.service";
@@ -81,7 +80,6 @@ function Sidebar() {
               { icon: Coins, label: "Gastos - Ingresos-API", path: "/Income" },
               // { icon: BadgeDollarSign, label: "Ventas-API", path: "/Sales" },
               { icon: WalletCards, label: "Membresía", path: "/Membership" },
-              { icon: BringToFront, label: "Pedidos", path: "/Orders" }
             ].map((item) => (
               <li key={item.path}>
                 <Link
