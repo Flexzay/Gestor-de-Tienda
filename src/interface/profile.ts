@@ -1,4 +1,4 @@
-export interface Timetable {
+export interface TimetableItem {
     day: string;
     open: string;
     close: string;
@@ -18,7 +18,7 @@ export interface StoreData {
     ownDelivery: boolean;
     latitud: string;
     longitud: string;
-    timetable: Timetable[];
+    timetable: TimetableItem[];
 }
 
 export interface StorePreviewProps {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Clock, MapPin, Phone, MessageCircle } from "lucide-react";
 import { MapPicker } from "./MapPicker";
-import { StoreInfoProps, Location } from "../../../../interface/profile";
+import { StoreInfoProps, Location, StoreData, TimetableItem } from "../../../../interface/profile";
 
 const defaultCenter: Location = {
   lat: 2.5686,
@@ -22,9 +22,20 @@ export function StoreInfo({ storeData, updateStoreData }: StoreInfoProps) {
     }
   }, [storeData.latitud, storeData.longitud]);
 
+  // Type guard para verificar claves válidas de StoreData
+  const isStoreDataKey = (key: string): key is keyof StoreData => {
+    return [
+      'name', 'phone', 'whatsapp', 'location', 'description', 
+      'hours', 'mainImage', 'avatarImage', 'deliveryFee', 
+      'minOrderValue', 'ownDelivery', 'latitud', 'longitud', 'timetable'
+    ].includes(key);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    updateStoreData(name as keyof StoreData, value);
+    if (isStoreDataKey(name)) {
+      updateStoreData(name, value);
+    }
   };
 
   const handleTimetableChange = (index: number, field: keyof TimetableItem, value: string) => {
