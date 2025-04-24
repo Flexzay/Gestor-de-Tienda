@@ -21,7 +21,11 @@ export default function StoreProfile() {
     saveProfile
   } = useProfile()
 
-  if (isLoading && !storeData.name) {
+  // Convertir null a undefined para las imágenes preview
+  const safeMainImagePreview = mainImagePreview ?? undefined;
+  const safeAvatarImagePreview = avatarImagePreview ?? undefined;
+
+  if (isLoading && !storeData?.name) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div>Cargando datos de la tienda...</div>
@@ -101,8 +105,8 @@ export default function StoreProfile() {
                   <div className="space-y-6">
                     <StoreInfo storeData={storeData} updateStoreData={updateStoreData} />
                     <StoreImages
-                      mainImagePreview={mainImagePreview}
-                      avatarImagePreview={avatarImagePreview}
+                      mainImagePreview={safeMainImagePreview}
+                      avatarImagePreview={safeAvatarImagePreview}
                       setMainImagePreview={setMainImagePreview}
                       setAvatarImagePreview={setAvatarImagePreview}
                       updateStoreData={updateStoreData}
@@ -120,8 +124,8 @@ export default function StoreProfile() {
           {/* Vista previa */}
           <StorePreview
             storeData={storeData}
-            mainImagePreview={mainImagePreview}
-            avatarImagePreview={avatarImagePreview}
+            mainImagePreview={safeMainImagePreview}
+            avatarImagePreview={safeAvatarImagePreview}
           />
         </div>
       </main>
