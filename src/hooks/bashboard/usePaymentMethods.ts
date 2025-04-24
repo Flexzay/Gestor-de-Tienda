@@ -17,7 +17,7 @@ const usePaymentMethods = () => {
     link_payment: "",
   });
   const [imageSelected, setImageSelected] = useState<string | null>(null);
-  const [isNewImage, setIsNewImage] = useState(false); // ✅ Nuevo estado
+  const [, setIsNewImage] = useState(false); // ✅ Nuevo estado
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
@@ -151,7 +151,7 @@ const usePaymentMethods = () => {
 
   const toggleActive = async (method: PaymentMethod) => {
     try {
-      await PaymentMethodsService.changeStatusPaymentMethod(method.id);
+      await PaymentMethodsService.changeStatusPaymentMethod(method.id.toString());
       fetchPaymentMethods();
     } catch (error) {
       console.error("❌ Error al cambiar estado:", error);
@@ -176,7 +176,7 @@ const usePaymentMethods = () => {
 
   const deletePaymentMethod = async (id: number) => {
     try {
-      await PaymentMethodsService.deletePaymentMethod(id);
+      await PaymentMethodsService.deletePaymentMethod(id.toString());
       fetchPaymentMethods();
     } catch (error) {
       console.error("❌ Error al eliminar método:", error);
