@@ -1,7 +1,28 @@
 import { motion } from "framer-motion";
-import { MapPin, Clock, ChevronRight } from "lucide-react";
+import { MapPin, Clock, ChevronRight, LucideIcon } from "lucide-react";
 
-const StoreCard = ({ store, isHovered, onHover, onSelect }) => {
+
+
+interface Store {
+  id: number;
+  name: string;
+  type: string;
+  location: string;
+  hours: string;
+  color: string;
+  image?: string;
+  icon: LucideIcon; 
+}
+
+
+interface StoreCardProps {
+  store: Store;
+  isHovered: boolean;
+  onHover: (id: number | null) => void;
+  onSelect: (id: number) => void;
+}
+
+const StoreCard = ({ store, isHovered, onHover, onSelect }: StoreCardProps) => {
   return (
     <motion.div
       key={store.id}
