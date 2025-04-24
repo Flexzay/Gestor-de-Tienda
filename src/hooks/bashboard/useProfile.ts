@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { shopService } from "../../Services/shop.service";
 import { environment } from "../../config/environmet";
-import { StoreData, Timetable, Location } from "../../interface/profile"
+import { StoreData, TimetableItem, Location } from "../../interface/profile"
 
 export function useProfile() {
   const [activeTab, setActiveTab] = useState("info");
@@ -28,7 +28,7 @@ export function useProfile() {
   const [saveMessage, setSaveMessage] = useState("");
   const [defaultLocation] = useState<Location>({ lat: 2.5686, lng: -72.6406 });
 
-  const formatTimetable = useCallback((timetable: Timetable[]): string => {
+  const formatTimetable = useCallback((timetable: TimetableItem[]): string => {
     if (!timetable || !Array.isArray(timetable)) return "";
     return timetable.map(time => `${time.day}: ${time.open} - ${time.close}`).join(", ");
   }, []);
