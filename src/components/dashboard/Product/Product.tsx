@@ -3,8 +3,16 @@ import { useCategories } from "../../../hooks/bashboard/useCategories";
 import useProduct from "../../../hooks/bashboard/useProduct";
 import CustomTimeline from "../shop/Timeline";
 import { useState } from "react";
+import { ProductIngredient } from "../../../interface/product";
 
-const ProductForm = ({ onClose, onSubmit, initialData }) => {
+// Definir tipos para las props
+interface ProductFormProps {
+  onClose: () => void;
+  onSubmit: (data: any) => Promise<void>; // Podés cambiar `any` por un tipo más específico si lo conocés
+  initialData?: any; // Lo mismo con `initialData`, si sabes qué tipo es, usa ese tipo en lugar de `any`
+}
+
+const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialData }) => {
   const { filteredCategories } = useCategories();
   const {
     formData,
@@ -36,10 +44,12 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
 
   const updateIngredient = (index: number, field: string, value: string) => {
     const updatedIngredient = {
-      ...formData.data_table[index],
+      ...formData.data_table?.[index],
       [field]: value,
-    };
-    dispatch({ type: "UPDATE_INGREDIENT", index, ingredient: updatedIngredient });
+    } as ProductIngredient; // Ensure it matches the required type
+    if (updatedIngredient.item && updatedIngredient.value) {
+      dispatch({ type: "UPDATE_INGREDIENT", index, ingredient: updatedIngredient });
+    }
   };
 
   return (
@@ -122,9 +132,15 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                         <input
                           type="checkbox"
                           checked={formData.available}
-                          onChange={(e) =>
-                            handleChange({ target: { name: "available", value: e.target.checked } })
-                          }
+                          onChange={(e) => {
+                            const event = {
+                              target: {
+                                name: "available",
+                                value: e.target.checked.toString(),
+                              },
+                            } as React.ChangeEvent<HTMLInputElement>;
+                            handleChange(event);
+                          }}
                           className="sr-only"
                         />
                         <div className={`block w-14 h-8 rounded-full transition-colors ${formData.available ? "bg-green-500" : "bg-red-400"}`} />
@@ -175,7 +191,7 @@ const ProductForm = ({ onClose, onSubmit, initialData }) => {
                         </button>
                       </div>
 
-                      {formData.data_table?.length > 0 && (
+                      {formData.data_table && formData.data_table.length > 0 && (
                         <div className="mt-4 space-y-2">
                           <p className="text-sm font-medium text-gray-700">Ingredientes agregados:</p>
                           {formData.data_table.map((ing, i) => (
