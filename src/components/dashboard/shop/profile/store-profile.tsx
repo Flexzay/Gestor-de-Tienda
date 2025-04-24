@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react"
 import { Save, ArrowLeft } from "lucide-react"
 import { StoreInfo } from "./store-info"
 import { StoreImages } from "./store-images"

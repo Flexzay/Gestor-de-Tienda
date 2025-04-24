@@ -1,11 +1,38 @@
-import { Clock, MapPin, Phone, Star, Truck } from "lucide-react"
+import { Clock, MapPin, Phone, Star, Truck } from "lucide-react";
 
-export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }) {
+// Definir tipos para los datos de la tienda
+interface TimetableItem {
+  dia: string;
+  hora: string;
+}
+
+interface StoreData {
+  name?: string;
+  description?: string;
+  location?: string;
+  timetable?: TimetableItem[];
+  phone?: string;
+  whatsapp?: string;
+  latitud?: number | string;
+  longitud?: number | string;
+  ownDelivery?: boolean;
+  deliveryFee?: number | string;
+  minOrderValue?: number | string;
+}
+
+// Definir props del componente
+interface StorePreviewProps {
+  storeData: StoreData;
+  mainImagePreview?: string;
+  avatarImagePreview?: string;
+}
+
+export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }: StorePreviewProps) {
   // Formatear los horarios en una sola línea
   const formattedHours = (storeData.timetable || [])
-    .filter(item => item.dia && item.hora)
-    .map(item => `${item.dia}: ${item.hora}`)
-    .join(" • ")
+    .filter((item: TimetableItem) => item.dia && item.hora)
+    .map((item: TimetableItem) => `${item.dia}: ${item.hora}`)
+    .join(" • ");
 
   return (
     <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
@@ -76,6 +103,7 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
                 <span>{formattedHours}</span>
               </div>
             )}
+
             {(storeData.phone?.trim() || storeData.whatsapp?.trim()) && (
               <div className="flex items-start text-sm">
                 <Phone className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
@@ -123,7 +151,7 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
             <div className="flex justify-between text-sm">
               {storeData.deliveryFee && (
                 <div>
-                  <span className="text-gray-500">Costo de envío:</span>{" "}
+                  <span className="text-gray-500">Costo de envío:</span>
                   <span className="font-medium">${storeData.deliveryFee}</span>
                 </div>
               )}
@@ -138,5 +166,5 @@ export function StorePreview({ storeData, mainImagePreview, avatarImagePreview }
         )}
       </div>
     </div>
-  )
+  );
 }
