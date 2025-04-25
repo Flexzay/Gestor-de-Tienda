@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Clock, MapPin, Phone, MessageCircle } from "lucide-react";
+import { MapPin, Phone, MessageCircle } from "lucide-react";
 import { MapPicker } from "./MapPicker";
 import { StoreInfoProps, Location, StoreData, TimetableItem } from "../../../../interface/profile";
 
