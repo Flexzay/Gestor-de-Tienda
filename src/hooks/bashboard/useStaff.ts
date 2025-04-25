@@ -1,20 +1,45 @@
 import { useState } from "react";
+import { StaffMember } from "../../interface/staff";
 
 export const useStaffLogic = () => {
-  const initialStaff = [
-    { id: 1, name: "Andres Duarte", role: "Contador", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2022/04/20240910_Polas_Persona00049-265x398.jpg" },
-    { id: 2, name: "Maycol Mendez", role: "Cajero", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2023/10/DSCF9644-17-5-265x398.jpg" },
-    { id: 3, name: "Charlie Brown", role: "Surtidor", phone: "3143920230", image: "https://personapersonapersona.com/wp-content/uploads/2024/07/DSCF1613-33-265x398.jpg" },
+  const initialStaff: StaffMember[] = [
+    {
+      id: 1,
+      name: "Andres Duarte",
+      role: "Contador",
+      phone: "3143920230",
+      image: "https://personapersonapersona.com/wp-content/uploads/2022/04/20240910_Polas_Persona00049-265x398.jpg"
+    },
+    {
+      id: 2,
+      name: "Maycol Mendez",
+      role: "Cajero",
+      phone: "3143920230",
+      image: "https://personapersonapersona.com/wp-content/uploads/2023/10/DSCF9644-17-5-265x398.jpg"
+    },
+    {
+      id: 3,
+      name: "Charlie Brown",
+      role: "Surtidor",
+      phone: "3143920230",
+      image: "https://personapersonapersona.com/wp-content/uploads/2024/07/DSCF1613-33-265x398.jpg"
+    },
   ];
 
   const initialRoles = ["Contador", "Cajero", "Surtidor"];
 
   const [search, setSearch] = useState("");
-  const [staff, setStaff] = useState(initialStaff);
-  const [roles, setRoles] = useState(initialRoles);
+  const [staff, setStaff] = useState<StaffMember[]>(initialStaff);
+  const [roles, setRoles] = useState<string[]>(initialRoles);
   const [showStaffModal, setShowStaffModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
-  const [newMember, setNewMember] = useState({ id: 0, name: "", role: "", image: "", phone: "" });
+  const [newMember, setNewMember] = useState<StaffMember>({
+    id: 0,
+    name: "",
+    role: "",
+    image: "",
+    phone: ""
+  });
   const [newRole, setNewRole] = useState("");
   const [error, setError] = useState("");
   const [roleError, setRoleError] = useState("");
@@ -57,7 +82,7 @@ export const useStaffLogic = () => {
     setStaff(staff.filter(member => member.id !== id));
   };
 
-  const handleEditMember = (member: { id: number; name: string; role: string; image: string; phone: string }) => {
+  const handleEditMember = (member: StaffMember) => {
     setNewMember(member);
     setImagePreview(member.image);
     setShowStaffModal(true);
@@ -91,8 +116,9 @@ export const useStaffLogic = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setNewMember({ ...newMember, image: URL.createObjectURL(file) });
-      setImagePreview(URL.createObjectURL(file));
+      const previewUrl = URL.createObjectURL(file);
+      setNewMember({ ...newMember, image: previewUrl });
+      setImagePreview(previewUrl);
     }
   };
 
@@ -124,6 +150,6 @@ export const useStaffLogic = () => {
     handleGoToDashboard,
     handleDeleteMember,
     handleEditMember,
-    handleCloseStaffModal, 
+    handleCloseStaffModal,
   };
 };

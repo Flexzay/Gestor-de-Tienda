@@ -3,7 +3,7 @@ export interface StaffMember {
     name: string;
     role: string;
     phone: string;
-    image?: string; 
+    image: string; 
   }
 
 export interface RoleModalProps {
@@ -21,18 +21,19 @@ export interface StaffModalProps {
     show: boolean;
     onClose: () => void;
     newMember: StaffMember;
-    setNewMember: (member: StaffMember) => void;
+    setNewMember: React.Dispatch<React.SetStateAction<StaffMember>>; 
     roles: string[];
     handleAddMember: () => void;
     handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     imagePreview: string | null;
     error?: string;
-}
+  }
+  
 
 export interface StaffListProps {
     staff: StaffMember[];
     onEdit: (member: StaffMember) => void;
-    onDelete: (id: string) => void;
+    onDelete: (id: number) => void;
 }
 
 export interface SearchBarProps {

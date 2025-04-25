@@ -41,7 +41,7 @@ export function StaffCard({ member, onEdit, onDelete }: StaffCardProps) {
           <Edit2 size={20} /> Editar
         </motion.button>
         <motion.button 
-          onClick={() => onDelete(member.id)}
+          onClick={() => onDelete(String(member.id))}
           whileTap={{ scale: 0.95 }}
           aria-label={`Eliminar a ${member.name}`}
           className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg 
