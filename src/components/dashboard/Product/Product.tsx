@@ -124,7 +124,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ onClose, onSubmit, initialDat
                         placeholder="0.00"
                       />
                     </div>
-                  </div>
+                  </div>    
+                  
 
                   <div className="flex items-center justify-between py-4">
                     <label className="flex items-center cursor-pointer">
