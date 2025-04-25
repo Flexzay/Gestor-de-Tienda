@@ -23,7 +23,7 @@ export interface ProductFormData {
   stock: number;
   expirationDate?: string;
   data_table?: ProductIngredient[]; 
-  images: (string | File)[];
+  images: (string |ProductImage| File)[];
   existingImages?: ProductImage[];
   deletedImages?: ProductImage[];
   previews?: string[];

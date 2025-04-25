@@ -1,7 +1,7 @@
 import type React from "react"
 import { useState, useEffect, useMemo } from "react"
 import { Pencil, Trash2, ListCollapse, Tag, ShoppingBag } from "lucide-react"
-import type { ProductFormData } from "../../../interface/product"
+import type { ProductFormData, ProductImage } from "../../../interface/product"
 import Paginator from "../shop/Paginator"
 import { useNavigate } from "react-router-dom"
 import Domiduck from "../../../assets/img/domiduck.svg"
@@ -19,6 +19,12 @@ const getImageUrl = (img?: string) => {
   return img.startsWith("http") ? img : `${environment.s3Storage}${img}`
 }
 
+const resolveImage = (image: string | ProductImage | File): string => {
+  if (typeof image === "string") return image
+  if ("path" in image && typeof image.path === "string") return image.path
+  return Domiduck
+}
+
 const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, showTitle = true }) => {
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
@@ -32,7 +38,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
 
     updateItemsPerPage()
     window.addEventListener("resize", updateItemsPerPage)
-
     return () => window.removeEventListener("resize", updateItemsPerPage)
   }, [])
 
@@ -42,7 +47,6 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
     return products.slice(indexOfFirstProduct, indexOfLastProduct)
   }, [products, currentPage, itemsPerPage])
 
-  // Formato de moneda colombiana
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
@@ -73,18 +77,13 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
           </div>
           <h3 className="text-xl font-medium text-gray-900 mb-2">No hay productos disponibles</h3>
           <p className="text-gray-500 text-center max-w-md mb-6">
-            No se encontraron productos para mostrar. Intenta agregar nuevos productos 
+            No se encontraron productos para mostrar. Intenta agregar nuevos productos
           </p>
-          
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {currentProducts.map((product) => {
-            const firstImage = product.images?.length
-              ? typeof product.images[0] === "string"
-                ? product.images[0]
-                : product.images[0].path
-              : Domiduck
+            const firstImage = product.images?.length ? resolveImage(product.images[0]) : Domiduck
 
             return (
               <div
@@ -93,16 +92,14 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                 onMouseEnter={() => setHoveredCard(product.id || null)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                {/* Imagen del producto con overlay de acciones */}
                 <div className="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden group">
                   <img
-                    src={getImageUrl(firstImage) || "/placeholder.svg"}
+                    src={getImageUrl(firstImage)}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     alt={product.name}
                     onError={(e) => (e.currentTarget.src = Domiduck)}
                   />
 
-                  {/* Overlay de acciones en hover */}
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <div className="flex gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                       <button
@@ -129,13 +126,11 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                     </div>
                   </div>
 
-                  {/* Categoría del producto */}
                   <div className="absolute top-3 left-3 bg-white bg-opacity-90 text-gray-800 text-xs font-medium py-1.5 px-3 rounded-full shadow-md flex items-center">
                     <Tag className="h-3.5 w-3.5 mr-1.5 text-red-500" />
                     {product.category?.name || "Sin categoría"}
                   </div>
 
-                  {/* Indicador de disponibilidad */}
                   <div
                     className={`absolute top-3 right-3 rounded-full h-8 w-8 flex items-center justify-center shadow-md ${
                       product.available ? "bg-green-500" : "bg-red-500"
@@ -146,22 +141,15 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                   </div>
                 </div>
 
-                {/* Información del producto */}
                 <div className="p-5 flex-1 flex flex-col">
                   <h4 className="text-lg font-semibold text-gray-900 mb-1.5 line-clamp-1 group-hover:text-red-600 transition-colors duration-200">
                     {product.name}
                   </h4>
                   <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-1">{product.description}</p>
 
-                  {/* Precio y stock */}
                   <div className="mt-auto">
                     <div className="flex items-baseline mb-2">
                       <span className="text-xl font-bold text-red-600">{formatCurrency(product.price)}</span>
-                      {product.price && product.price > product.price && (
-                        <span className="ml-2 text-sm text-gray-500 line-through">
-                          {formatCurrency(product.price)}
-                        </span>
-                      )}
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -171,7 +159,9 @@ const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, s
                         }`}
                       >
                         <span
-                          className={`h-2 w-2 rounded-full mr-1.5 ${product.available ? "bg-green-500" : "bg-red-500"}`}
+                          className={`h-2 w-2 rounded-full mr-1.5 ${
+                            product.available ? "bg-green-500" : "bg-red-500"
+                          }`}
                         ></span>
                         {product.available ? "Disponible" : "No disponible"}
                       </div>
