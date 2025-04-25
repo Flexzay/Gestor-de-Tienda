@@ -1,19 +1,6 @@
 import { motion } from "framer-motion";
-import { MapPin, Clock, ChevronRight, LucideIcon } from "lucide-react";
-
-
-
-interface Store {
-  id: number;
-  name: string;
-  type: string;
-  location: string;
-  hours: string;
-  color: string;
-  image?: string;
-  icon: LucideIcon; 
-}
-
+import { MapPin, Clock, ChevronRight } from "lucide-react";
+import Store from "../../../interface/store";
 
 interface StoreCardProps {
   store: Store;
