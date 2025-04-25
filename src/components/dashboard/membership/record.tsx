@@ -1,73 +1,36 @@
-import { useEffect, useState } from "react"
-import { membershipService } from "../../../Services/membership.service"
 import { History, ShoppingCart, AlertCircle } from "lucide-react"
+import { Compra } from "../../../interface/membership"
 
-interface Compra {
-  id: string
-  created_at: string
-  ducks: number
-  status: string
+interface HistorialComprasProps {
+  historialCompras: Compra[];
 }
 
-export function HistorialCompras() {
-  const [historialCompras, setHistorialCompras] = useState<Compra[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchHistorial = async () => {
-      try {
-        const response = await membershipService.getHistoryCharges()
-        if (response.status === 200) {
-          setHistorialCompras(response.data.history || [])
-        } else {
-          console.error("Error al cargar historial:", response.message)
-        }
-      } catch (error) {
-        console.error("Error en la carga del historial:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchHistorial()
-  }, [])
-
+export function HistorialCompras({ historialCompras }: HistorialComprasProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "accepted_company":
-        return "bg-emerald-100 text-emerald-800"
+        return "bg-emerald-100 text-emerald-800";
       case "pending":
-        return "bg-amber-100 text-amber-800"
+        return "bg-amber-100 text-amber-800";
       case "rejected":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   const getStatusText = (status: string) => {
     switch (status) {
       case "accepted_company":
-        return "Aceptado"
+        return "Aceptado";
       case "pending":
-        return "Pendiente"
+        return "Pendiente";
       case "rejected":
-        return "Rechazado"
+        return "Rechazado";
       default:
-        return status || "Estado no disponible"
+        return status || "Estado no disponible";
     }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64 bg-white shadow sm:rounded-lg">
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-t-2 border-b-2 border-amber-500 rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600">Cargando historial...</p>
-        </div>
-      </div>
-    )
-  }
+  };
 
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-lg border border-gray-200 transition-all duration-300 hover:shadow-md">
@@ -93,7 +56,6 @@ export function HistorialCompras() {
         </div>
       ) : (
         <div className="overflow-hidden">
-          {/* Tabla para pantallas medianas y grandes */}
           <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -132,7 +94,6 @@ export function HistorialCompras() {
             </table>
           </div>
 
-          {/* Tarjetas para pantallas pequeñas */}
           <div className="md:hidden space-y-4 px-4 py-4">
             {historialCompras.map((compra) => (
               <div key={compra.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
@@ -169,5 +130,5 @@ export function HistorialCompras() {
         </div>
       )}
     </div>
-  )
+  );
 }

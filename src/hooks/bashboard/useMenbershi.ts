@@ -1,55 +1,56 @@
-import { useEffect, useState } from "react";
-import { membershipService } from "../../Services/membership.service";
-import { Compra } from "../../interface/membership";
+import { useEffect, useState } from "react"
+import { membershipService } from "../../Services/membership.service"
+import { shopService } from "../../Services/shop.service"
+import { Compra } from "../../interface/membership"
 
 export function useMembership() {
-  const [creditos, setCreditos] = useState(0);
-  const [creditosSeleccionados, setCreditosSeleccionados] = useState(50000);
-  const [historialCompras, setHistorialCompras] = useState<Compra[]>([]);
-  const [isLoadingHistorial, setIsLoadingHistorial] = useState(true);
+  const [creditos, setCreditos] = useState(0)
+  const [creditosSeleccionados, setCreditosSeleccionados] = useState(50000)
+  const [historialCompras, setHistorialCompras] = useState<Compra[]>([])
+  const [isLoadingHistorial, setIsLoadingHistorial] = useState(true)
 
-  const fetchHistorial = async () => {
+  const fetchInitialData = async () => {
     try {
-      const response = await membershipService.getHistoryCharges();
-      console.log("📦 Respuesta completa de getHistoryCharges:", response);
-
+      // Cargar balance inicial
+      const balance = await shopService.getBalance()
+      if (balance !== null) setCreditos(balance)
+      
+      // Cargar historial
+      const response = await membershipService.getHistoryCharges()
       if (response.status === 200) {
-        const compras = response.data?.history || [];
-        console.log("🧾 Historial procesado:", compras);
-        setHistorialCompras(compras);
-      } else {
-        console.error("❌ Error en la respuesta:", response.message);
+        setHistorialCompras(response.data?.history || [])
       }
-    } catch (error: any) {
-      console.error("🚨 Error al cargar historial:", error.message);
+    } catch (error) {
+      console.error("Error loading initial data:", error)
     } finally {
-      setIsLoadingHistorial(false);
+      setIsLoadingHistorial(false)
     }
-  };
+  }
 
   const handleRecargar = async (comprobante: File | null) => {
     if (!comprobante) {
-      alert("Debes subir un comprobante antes de recargar.");
-      return;
+      alert("Debes subir un comprobante antes de recargar.")
+      return
     }
 
-    const formData = new FormData();
-    formData.append("amount", creditosSeleccionados.toString());
-    formData.append("receipt", comprobante); // ajusta según backend
+    const formData = new FormData()
+    formData.append("amount", creditosSeleccionados.toString())
+    formData.append("receipt", comprobante)
 
     try {
-      await membershipService.buyDucks(formData);
-      alert("Recarga enviada. Será revisada por un administrador.");
-      setCreditos((prev) => prev + creditosSeleccionados); // opcional, hasta que backend actualice
-      fetchHistorial(); // refrescar historial
-    } catch (error: any) {
-      alert("Tu recarga fue enviada. Podés verificar luego en el historial.");
+      await membershipService.buyDucks(formData)
+      alert("Recarga enviada. Será revisada por un administrador.")
+      // Actualización optimista
+      setCreditos(prev => prev + creditosSeleccionados)
+      fetchInitialData() // Refrescar datos
+    } catch (error) {
+      alert("Error al procesar recarga. Verifica en el historial más tarde.")
     }
-  };
+  }
 
   useEffect(() => {
-    fetchHistorial();
-  }, []);
+    fetchInitialData()
+  }, [])
 
   return {
     creditos,
@@ -59,5 +60,5 @@ export function useMembership() {
     historialCompras,
     isLoadingHistorial,
     handleRecargar,
-  };
+  }
 }

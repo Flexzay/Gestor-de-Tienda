@@ -1,18 +1,12 @@
 import { CheckCircle, CreditCard, DollarSign, ShoppingCart, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
-
-interface ResumenProps {
-  creditosSeleccionados: number;
-}
+import { ResumenProps } from "../../../interface/membership"; 
 
 export function Resumen({ creditosSeleccionados }: ResumenProps) {
   const [showAnimation, setShowAnimation] = useState(false);
   const precioPorCredito = 100;
+  const subtotal = creditosSeleccionados * precioPorCredito;
 
-
-  const subtotal = creditosSeleccionados 
-
-  // Formato de moneda colombiana
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
@@ -22,7 +16,6 @@ export function Resumen({ creditosSeleccionados }: ResumenProps) {
     }).format(value);
   };
 
-  // Efecto de animación cuando cambia el número de créditos
   useEffect(() => {
     setShowAnimation(true);
     const timer = setTimeout(() => setShowAnimation(false), 300);
