@@ -1,4 +1,3 @@
-// hooks/useProductDetail.ts
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ProductFormData } from "../../interface/product";
