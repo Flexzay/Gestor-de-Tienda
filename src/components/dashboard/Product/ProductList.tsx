@@ -11,8 +11,10 @@ interface ProductListProps {
   products: ProductFormData[]
   onEdit?: (product: ProductFormData) => void
   onDelete?: (productId: string | number) => void
+  onSelectProduct?: (product: ProductFormData) => void  
   showTitle?: boolean
 }
+
 
 const getImageUrl = (img?: string) => {
   if (!img) return Domiduck

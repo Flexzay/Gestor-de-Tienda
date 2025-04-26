@@ -1,31 +1,33 @@
-import type React from "react"
-import { ArrowLeft } from "lucide-react"
-import type { ProductFormData, ProductImage } from "../../../interface/product"
-import Sidebar from "../Sidebar"
-import Domiduck from "../../../assets/img/domiduck.svg"
+import type React from "react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import type { ProductFormData, ProductImage } from "../../../interface/product";
+import Sidebar from "../Sidebar";
+import Domiduck from "../../../assets/img/domiduck.svg";
 
 interface ProductDetailViewProps {
-  product: ProductFormData | null
-  loading: boolean
-  error: string | null
-  onDelete: () => void
-  onEdit: (id: string) => void
-  onBack: () => void
-  getImageUrl: (img?: string) => string
+  product: ProductFormData | null;
+  loading: boolean;
+  error: string | null;
+  onDelete: () => void;
+  onEdit: (id: string) => void;
+  onBack: () => void;
+  getImageUrl: (img?: string) => string;
 }
 
 const resolveImage = (image: string | ProductImage | File | undefined): string => {
-  if (!image) return Domiduck
-  if (typeof image === "string") return image
-  if ("path" in image && typeof image.path === "string") return image.path
-  return Domiduck
-}
+  if (!image) return Domiduck;
+  if (typeof image === "string") return image;
+  if ("path" in image && typeof image.path === "string") return image.path;
+  return Domiduck;
+};
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   product,
   loading,
   error,
   onBack,
+  onDelete,
+  onEdit,
   getImageUrl,
 }) => {
   const renderStatusContainer = (content: React.ReactNode) => (
@@ -37,7 +39,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         </div>
       </div>
     </div>
-  )
+  );
 
   if (loading) {
     return renderStatusContainer(
@@ -45,7 +47,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-800 mx-auto mb-4"></div>
         <p className="text-gray-700 font-medium">Cargando producto...</p>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -64,7 +66,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           Volver
         </button>
       </div>
-    )
+    );
   }
 
   if (!product) {
@@ -83,23 +85,39 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           Volver
         </button>
       </div>
-    )
+    );
   }
 
-  const firstImage = resolveImage(product.images?.[0])
+  const firstImage = resolveImage(product.images?.[0]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 p-4 md:p-8 md:ml-72">
-        <div className="mb-6">
-          <button
-            onClick={onBack}
-            className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center ml-[60px] sm:ml-0"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </button>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex gap-4">
+            <button
+              onClick={onBack}
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver
+            </button>
+            <button
+              onClick={() => onEdit(product.id?.toString() || "")}
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center"
+            >
+              <Pencil className="h-4 w-4 mr-2" />
+              Editar
+            </button>
+            <button
+              onClick={onDelete}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Eliminar
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -175,10 +193,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                           <h3 className="text-lg font-semibold mb-2 text-gray-800">Ingredientes</h3>
                           <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
                             {product.data_table.map((ing, i) => (
-                              <li key={i} className="flex justify-between">
-                                <span>
-                                  <span className="font-medium">{ing.item}</span>: {ing.value}
-                                </span>
+                              <li key={i}>
+                                <span className="font-medium">{ing.item}</span>: {ing.value}
                               </li>
                             ))}
                           </ul>
@@ -214,5 +230,5 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
