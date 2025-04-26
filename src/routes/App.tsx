@@ -11,7 +11,7 @@ import CategoryPage from "../pages/dashboard/category-page";
 import SuppliersPage from "../pages/dashboard/Providers";
 import PaymentMethodPage from "../pages/dashboard/paymentMetthod-page";
 import ExpensesIncomePage from "../pages/dashboard/receipts-page";
-import ProductDetail from "../components/dashboard/Product/ProductDatail"; 
+import ProductDetailPage from "../pages/dashboard/ProductDetail-page";
 import MenbershipCreditos from "../components/dashboard/membership/membershiComponents"; 
 import ProfilePage from "../pages/dashboard/Profile-page";
 
@@ -39,7 +39,7 @@ const App = () => {
       <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
 
       {/* 🆕 Ruta protegida para ver detalles de productos */}
-      <Route path="/product/:id" element={<PrivateRoute><ProductDetail /></PrivateRoute>} />
+      <Route path="/product/:id" element={<PrivateRoute><ProductDetailPage /></PrivateRoute>} />
     </Routes>
   );
 };
