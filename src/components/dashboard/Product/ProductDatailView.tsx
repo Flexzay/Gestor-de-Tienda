@@ -1,5 +1,5 @@
 import type React from "react";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil,  } from "lucide-react";
 import type { ProductFormData, ProductImage } from "../../../interface/product";
 import Sidebar from "../Sidebar";
 import Domiduck from "../../../assets/img/domiduck.svg";
@@ -26,7 +26,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   loading,
   error,
   onBack,
-  onDelete,
   onEdit,
   getImageUrl,
 }) => {
@@ -110,13 +109,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <Pencil className="h-4 w-4 mr-2" />
               Editar
             </button>
-            <button
-              onClick={onDelete}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Eliminar
-            </button>
+            
           </div>
         </div>
 
