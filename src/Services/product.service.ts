@@ -174,11 +174,10 @@ export const productService = {
           name: product.category_name || "Sin categoría",
           count_products: product.category_count
         },
-        data_table: product.data_table || []
-        
+        data_table: Array.isArray(product.data_table) ? product.data_table : [] // Más robusto
       }));
   
-      console.log("📦 Productos obtenidos:", processedData); // 👈 Aquí el log
+      console.log("📦 Productos obtenidos:", processedData);
   
       return {
         status: response.status,
@@ -191,7 +190,7 @@ export const productService = {
         message: error.message || "Error al obtener productos"
       };
     }
-  },
+},
   
 
   /**
@@ -286,11 +285,30 @@ export const productService = {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
 
-      return { status: response.status, data };
+      // Normalización consistente con getProducts()
+      const processedData = {
+        ...data.data,
+        data_table: Array.isArray(data.data?.data_table) ? data.data.data_table : [],
+        images: data.data?.images?.length
+          ? data.data.images.map((img: any) => ({
+              id: img.id,
+              url: img.url || `${S3_BUCKET_URL}${img.path}`,
+              path: img.path
+            }))
+          : []
+      };
+
+      return { 
+        status: response.status, 
+        data: processedData 
+      };
     } catch (error: any) {
-      return { status: 500, message: error.message || "Error al obtener el producto" };
+      return { 
+        status: 500, 
+        message: error.message || "Error al obtener el producto" 
+      };
     }
-  },
+},
 
   /**
    * Eliminar una imagen de un producto

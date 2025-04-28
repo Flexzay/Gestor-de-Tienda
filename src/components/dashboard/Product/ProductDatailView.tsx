@@ -1,5 +1,5 @@
 import type React from "react";
-import { ArrowLeft, Pencil,  } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import type { ProductFormData, ProductImage } from "../../../interface/product";
 import Sidebar from "../Sidebar";
 import Domiduck from "../../../assets/img/domiduck.svg";
@@ -26,7 +26,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   loading,
   error,
   onBack,
-  onEdit,
   getImageUrl,
 }) => {
   const renderStatusContainer = (content: React.ReactNode) => (
@@ -102,13 +101,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <ArrowLeft className="h-4 w-4 mr-2" />
               Volver
             </button>
-            <button
-              onClick={() => onEdit(product.id?.toString() || "")}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center"
-            >
-              <Pencil className="h-4 w-4 mr-2" />
-              Editar
-            </button>
             
           </div>
         </div>
@@ -158,44 +150,39 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         <span>{product.brand}</span>
                       </div>
                     )}
-
                     <div className="flex items-center">
                       <span className="font-medium text-gray-700 mr-2">Stock:</span>
                       <span className={`${product.stock > 0 ? "text-green-600" : "text-red-600"} font-medium`}>
                         {product.stock} {product.stock === 1 ? "unidad" : "unidades"}
                       </span>
                     </div>
-
                     {product.expirationDate && (
                       <div className="flex items-center">
                         <span className="font-medium text-gray-700 mr-2">Fecha de expiración:</span>
                         <span>{new Date(product.expirationDate).toLocaleDateString()}</span>
                       </div>
                     )}
-
                     <div className="flex items-center">
                       <span className="font-medium text-gray-700 mr-2">Disponibilidad:</span>
                       <span className={product.available ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
                         {product.available ? "Disponible 🟢" : "No disponible 🔴"}
                       </span>
                     </div>
-
-                    {product.data_table && product.data_table.length > 0 && (
-                      <div className="md:col-span-2">
-                        <div className="mt-4 space-y-2 border border-gray-200 p-4 rounded-md bg-gray-50">
-                          <h3 className="text-lg font-semibold mb-2 text-gray-800">Ingredientes</h3>
-                          <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                            {product.data_table.map((ing, i) => (
-                              <li key={i}>
-                                <span className="font-medium">{ing.item}</span>: {ing.value}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    )}
                   </div>
-                </div>
+                </div> 
+
+                {product.data_table && product.data_table.length > 0 && (
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                    <h3 className="text-lg font-semibold mb-3 text-gray-800">Ingredientes</h3>
+                    <ul className="list-disc list-inside space-y-2 text-gray-700">
+                      {product.data_table.map((ingredient, index) => (
+                        <li key={index}>
+                          <span className="font-semibold">{ingredient.item}</span>: {ingredient.value}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>

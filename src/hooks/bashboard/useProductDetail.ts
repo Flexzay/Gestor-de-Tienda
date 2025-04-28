@@ -14,13 +14,20 @@ export const useProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await productService.getProductById(id || "");
+        setError(null);
         
-        if (response.status !== 200 || !response.data?.data) {
-          throw new Error(response.data?.message || "Producto no encontrado");
+        if (!id) {
+          throw new Error("ID de producto no proporcionado");
         }
 
-        const productData = response.data.data;
+        const response = await productService.getProductById(id);
+        
+        // Corregido: Accedemos a response.data directamente
+        if (response.status !== 200 || !response.data) {
+          throw new Error(response.message || "Producto no encontrado");
+        }
+
+        const productData = response.data;
         
         const formattedProduct: ProductFormData = {
           id: productData.id,
@@ -31,29 +38,26 @@ export const useProductDetail = () => {
             id: productData.category_id,
             name: "Sin categoría"
           },
+          category_id: productData.category_id || productData.category?.id || 0,
           images: productData.images || [],
           available: productData.available ?? true,
           brand: productData.brand || "",
           stock: productData.stock || 0,
           expirationDate: productData.expirationDate,
-          category_id: 0
+          data_table: productData.data_table || [] // Asegurar que siempre sea array
         };
 
         setProduct(formattedProduct);
       } catch (error) {
         console.error("Error al cargar el producto:", error);
         setError(error instanceof Error ? error.message : "Error desconocido");
+        setProduct(null);
       } finally {
         setLoading(false);
       }
     };
   
-    if (id) {
-      fetchProduct();
-    } else {
-      setError("ID de producto no proporcionado");
-      setLoading(false);
-    }
+    fetchProduct();
   }, [id]);
 
   const handleDelete = async () => {
@@ -62,6 +66,9 @@ export const useProductDetail = () => {
     try {
       const confirmDelete = window.confirm("¿Estás seguro de eliminar este producto?");
       if (!confirmDelete) return;
+      
+      // Aquí deberías llamar al servicio de eliminación
+      // await productService.deleteProduct(product.id);
       
       navigate("/products", { replace: true });
     } catch (error) {
