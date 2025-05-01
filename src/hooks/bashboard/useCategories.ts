@@ -92,3 +92,5 @@ export function useCategories() {
     deleteCategory,
   };
 }
+
+export default useCategories;

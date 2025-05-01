@@ -3,10 +3,11 @@ import AddProductForm from "./Product/Product";
 import DashboardCard from "./DashboardCard";
 import DashboardImageCard from "./DashboardImageCard";
 import ProductList from "./Product/ProductList";
-import { Package, Truck, Wallet, Plus } from "lucide-react";
+import { Package, Tag, Wallet, Plus } from "lucide-react";
 import { ProductFormData } from "../../interface/product";
 import useProduct from "../../hooks/bashboard/useProduct";
 import usePaymentMethods from "../../hooks/bashboard/usePaymentMethods";
+import useCategories from "../../hooks/bashboard/useCategories";
 
 const DashboardContent: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
@@ -35,6 +36,7 @@ const DashboardContent: React.FC = () => {
   });
 
   const { paymentMethods } = usePaymentMethods();
+  const { categories } = useCategories();
 
   const handleEditProduct = (product: ProductFormData) => {
     setSelectedProduct(product);
@@ -74,9 +76,9 @@ const DashboardContent: React.FC = () => {
           icon={<Package size={20} />}
         />
         <DashboardCard
-          title="Total Proveedores"
-          value="2"
-          icon={<Truck size={20} />}
+          title="Total de Categorias"
+          value= {categories.length.toString()}
+          icon={<Tag size={20} />}
         />
         <DashboardCard
           title="Métodos de Pago"
