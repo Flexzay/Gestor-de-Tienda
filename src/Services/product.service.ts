@@ -43,7 +43,6 @@ export const productService = {
 
       return uploadedImages;
     } catch (error) {
-      console.error("Error al subir las imágenes:", error);
       return [];
     }
   },
@@ -60,7 +59,6 @@ export const productService = {
     }
 
     try {
-      // 1. Preparar los datos para el producto principal
       const productPayload = {
         name: productData.name,
         description: productData.description,
@@ -76,9 +74,6 @@ export const productService = {
         })) || []
       };
 
-      console.log("Creating product with payload:", productPayload);
-
-      // 2. Crear el producto principal
       const createResponse = await fetch(`${API_URL}/${shopId}`, {
         method: "POST",
         headers: {
@@ -94,27 +89,15 @@ export const productService = {
       }
 
       const createdProduct = await createResponse.json();
-      console.log("Product created successfully:", createdProduct);
 
-      // 3. Manejar las imágenes si existen
       if (productData.images && productData.images.length > 0) {
         try {
           const filesToUpload = productData.images.filter(img => img instanceof File) as File[];
           
           if (filesToUpload.length > 0) {
-            console.log("Uploading product images...");
-            const uploadedImages = await this.uploadImages(createdProduct.data.id, filesToUpload);
-            console.log("Images uploaded successfully:", uploadedImages);
-            
-            // Actualizar el producto con las nuevas imágenes
-            createdProduct.data.images = [
-              ...(productData.existingImages || []),
-              ...uploadedImages
-            ];
+            await this.uploadImages(createdProduct.data.id, filesToUpload);
           }
          } catch (uploadError) {
-          console.error("Error uploading images, but product was created:", uploadError);
-          // Continuar aunque falle la subida de imágenes
         }
       }
 
@@ -126,7 +109,6 @@ export const productService = {
       };
 
     } catch (error) {
-      console.error("Error in createProduct service:", error);
       return {
         success: false,
         status: 500,
@@ -174,17 +156,14 @@ export const productService = {
           name: product.category_name || "Sin categoría",
           count_products: product.category_count
         },
-        data_table: Array.isArray(product.data_table) ? product.data_table : [] // Más robusto
+        data_table: Array.isArray(product.data_table) ? product.data_table : []
       }));
-  
-      console.log("📦 Productos obtenidos:", processedData);
   
       return {
         status: response.status,
         data: processedData,
       };
     } catch (error: any) {
-      console.error("Error obteniendo productos:", error);
       return {
         status: 500,
         message: error.message || "Error al obtener productos"
@@ -201,13 +180,11 @@ export const productService = {
       const token = storageService.getToken();
       if (!token) throw new Error("No hay un token válido.");
 
-      // 1. Eliminar imágenes marcadas como borradas
       const deleted = productData.deletedImages || [];
       for (const img of deleted) {
         if (img?.id) await this.deleteImage(img.id);
       }
 
-      // 2. Actualizar producto base
       const response = await fetch(`${API_URL}/${productId}`, {
         method: "PUT",
         headers: {
@@ -232,7 +209,6 @@ export const productService = {
 
       if (!response.ok) throw new Error("Error al actualizar el producto.");
 
-      // 3. Subir nuevas imágenes
       const filesToUpload = productData.images.filter((img) => img instanceof File) as File[];
       let uploadedImages: ProductImage[] = [];
 
@@ -258,14 +234,12 @@ export const productService = {
         }
       };
     } catch (error: any) {
-      console.error("Error actualizando producto:", error);
       return {
         status: 500,
         message: error.message || "Error al actualizar producto"
       };
     }
   },
-
 
   /**
    * Obtener detalles de un producto
@@ -285,7 +259,6 @@ export const productService = {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
 
-      // Normalización consistente con getProducts()
       const processedData = {
         ...data.data,
         data_table: Array.isArray(data.data?.data_table) ? data.data.data_table : [],
@@ -326,7 +299,6 @@ export const productService = {
         },
       });
   
-      // Si la respuesta es exitosa pero no tiene contenido
       if (response.status === 204 || response.status === 200) {
         return { 
           success: true, 
@@ -334,7 +306,6 @@ export const productService = {
         };
       }
   
-      // Si hay contenido, intentar parsearlo
       try {
         const data = await response.json();
         if (!response.ok) {
@@ -342,14 +313,12 @@ export const productService = {
         }
         return { success: true, message: "Imagen eliminada correctamente", data };
       } catch (e) {
-        // Si falla el JSON pero la respuesta fue exitosa
         if (response.ok) {
           return { success: true, message: "Imagen eliminada correctamente" };
         }
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
     } catch (error: any) {
-      console.error("Error en deleteImage:", error);
       return {
         success: false,
         message: error.message || "Error al eliminar la imagen"

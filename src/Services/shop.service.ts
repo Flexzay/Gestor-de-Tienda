@@ -34,7 +34,7 @@ export const shopService = {
     const avatarPath = shopData.media.avatar?.path;
     const frontPath = shopData.media.front?.path;
   
-    if (avatarPath) {;
+    if (avatarPath) {
       return `${environment.s3Storage}${avatarPath}`;
     }
   
@@ -43,7 +43,6 @@ export const shopService = {
     }
     return undefined;
   },
-  
   
   /**
    * Obtener el balance actual de la tienda.
@@ -62,7 +61,6 @@ export const shopService = {
       const balance = parseFloat(response.data?.data?.balance);
       return isNaN(balance) ? null : balance;
     } catch (error) {
-      console.error("Error obteniendo balance de la tienda:", error);
       return null;
     }
   },
@@ -90,14 +88,12 @@ export const shopService = {
       },
     });
   
-    // 🔥 Importante: actualizar datos en localStorage después del cambio
     const updatedShop = await this.getShop();
     storageService.setShopData(updatedShop.data.data);
   
     return res;
   },
   
-
   /**
    * Subir imagen de la tienda.
    * @param imageType - puede ser 'front', 'banner', etc.
@@ -112,8 +108,6 @@ export const shopService = {
     });
   
     const updatedShop = await this.getShop();
-  
-    
     storageService.setShopData(updatedShop.data.data);
   
     return uploadRes; 
