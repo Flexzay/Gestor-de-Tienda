@@ -1,22 +1,20 @@
 import type React from "react";
-import { Edit2, Trash2, Check,CreditCard } from "lucide-react";
+import { Edit2, Trash2, Check, CreditCard } from "lucide-react";
 import type { PaymentMethod } from "../../../interface/paymentMethod";
 
 interface PaymentListProps {
-  shopData: { methods?: PaymentMethod[] }; 
+  methods: PaymentMethod[]; 
   toggleActive: (method: PaymentMethod) => void;
   editPaymentMethod: (method: PaymentMethod) => void;
   deletePaymentMethod: (id: number) => void;
 }
 
 const PaymentList: React.FC<PaymentListProps> = ({
-  shopData,
+  methods,
   toggleActive,
   editPaymentMethod,
   deletePaymentMethod,
 }) => {
-  const paymentMethods = shopData?.methods || [];
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -39,8 +37,8 @@ const PaymentList: React.FC<PaymentListProps> = ({
             </tr>
           </thead>
           <tbody>
-            {paymentMethods.length > 0 ? (
-              paymentMethods.map((method) => (
+            {methods.length > 0 ? (
+              methods.map((method) => (
                 <tr key={method.id} className="border-t hover:bg-gray-50 transition">
                   <td className="p-3 text-gray-900 font-medium">{method.entidad}</td>
                   <td className="p-3 text-gray-700">{method.name_account}</td>
@@ -53,7 +51,8 @@ const PaymentList: React.FC<PaymentListProps> = ({
                         src={method.qr_code} 
                         alt="QR" 
                         className="w-10 h-10 object-cover cursor-pointer"
-                        onClick={() => window.open(method.qr_code, '_blank')}
+                        onClick={() => window.open(method.qr_code, '_blank', 'noopener,noreferrer')}
+
                       />
                     )}
                   </td>
@@ -106,8 +105,8 @@ const PaymentList: React.FC<PaymentListProps> = ({
 
       {/* Vista móvil */}
       <div className="md:hidden space-y-4">
-        {paymentMethods.length > 0 ? (
-          paymentMethods.map((method) => (
+        {methods.length > 0 ? (
+          methods.map((method) => (
             <div key={method.id} className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="flex justify-between items-start">
                 <div>

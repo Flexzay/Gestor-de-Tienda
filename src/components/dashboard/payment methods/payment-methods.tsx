@@ -1,4 +1,3 @@
-
 import Sidebar from "../Sidebar";
 import PaymentForm from "./PaymentForm";
 import PaymentList from "./PaymentList";
@@ -6,7 +5,7 @@ import usePaymentMethods from "../../../hooks/bashboard/usePaymentMethods";
 
 export function PaymentMethods() {
   const {
-    paymentMethods, 
+    paymentMethods,
     editingMethod,
     formData,
     imageSelected,
@@ -46,12 +45,13 @@ export function PaymentMethods() {
         />
 
         <div className="mt-4">
-        <PaymentList
-            shopData={{ methods: paymentMethods }} 
+          <PaymentList
+            methods={paymentMethods}
             toggleActive={toggleActive}
             editPaymentMethod={editPaymentMethod}
             deletePaymentMethod={deletePaymentMethod}
           />
+
         </div>
       </div>
     </div>
