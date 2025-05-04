@@ -5,7 +5,7 @@ import type { ProductFormData, ProductImage } from "../../../interface/product"
 import Paginator from "../shop/Paginator"
 import { useNavigate } from "react-router-dom"
 import Domiduck from "../../../assets/img/domiduck.svg"
-import { environment } from "../../../config/environment"
+import { environment } from "../../../config/environmet"
 
 interface ProductListProps {
   products: ProductFormData[]

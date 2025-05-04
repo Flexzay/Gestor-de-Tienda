@@ -1,7 +1,7 @@
 import { ProductDetailView } from "./ProductDatailView";
 import { ProductFormData } from "../../../interface/product";
 import Domiduck from "../../../assets/img/domiduck.svg";
-import { environment } from "../../../config/environment";
+import { environment } from "../../../config/environmet";
 
 interface Props {
   product: ProductFormData;

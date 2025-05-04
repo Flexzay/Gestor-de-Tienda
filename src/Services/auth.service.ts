@@ -1,4 +1,4 @@
-import { environment } from "../config/environment";
+import { environment } from "../config/environmet";
 import { storageService } from "./storage.service";
 
 const API_URL = environment.baseUrl;

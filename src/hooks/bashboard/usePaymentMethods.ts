@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PaymentMethodsService from "../../Services/paymentMethods.service";
 import type { PaymentMethod } from "../../interface/paymentMethod";
-import { environment } from "../../config/environment";
+import { environment } from "../../config/environmet";
 
 const usePaymentMethods = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
