@@ -17,7 +17,7 @@ const usePaymentMethods = () => {
     link_payment: "",
   });
   const [imageSelected, setImageSelected] = useState<string | null>(null);
-  const [, setIsNewImage] = useState(false); // ✅ Nuevo estado
+  const [, setIsNewImage] = useState(false); 
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const usePaymentMethods = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImageSelected(reader.result as string);
-        setIsNewImage(true); // ✅ Ahora funciona
+        setIsNewImage(true); 
       };
       reader.readAsDataURL(file);
     }
@@ -98,7 +98,7 @@ const usePaymentMethods = () => {
       if (formData.account) form.append("account", formData.account);
       if (formData.link_payment) form.append("link_payment", formData.link_payment);
   
-      // Solo agregamos image_qr si es una imagen nueva
+     
       if (imageSelected && imageSelected.startsWith("data:image/")) {
         try {
           const file = dataURLtoFile(imageSelected, "qr_code.png");
@@ -112,7 +112,7 @@ const usePaymentMethods = () => {
       }
     }
   
-    // Debug del FormData
+  
     console.log("📦 FormData enviado:");
     for (let pair of form.entries()) {
       console.log(pair[0] + ": " + pair[1]);
@@ -146,7 +146,7 @@ const usePaymentMethods = () => {
     setImageSelected(null);
     setEditingMethod(null);
     setFormError("");
-    setIsNewImage(false); // ✅ Reiniciar estado
+    setIsNewImage(false); 
   };
 
   const toggleActive = async (method: PaymentMethod) => {
