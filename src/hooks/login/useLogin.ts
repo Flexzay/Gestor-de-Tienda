@@ -29,7 +29,7 @@ function useLogin() {
         localStorage.setItem("userId", String(userId));
         navigate("/verify-code");
       } else {
-        setError(response.message || "Número de celular inválido o no tienes tienda");
+        setError(response.data?.message || "Número de celular inválido o no tienes tienda");
       }
     } catch (error) {
       setError("Error en la autenticación. Inténtalo de nuevo.");

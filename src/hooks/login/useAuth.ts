@@ -1,4 +1,4 @@
-// src/hooks/useAuth.ts
+
 import { authService } from "../../Services/auth.service";
 
 const useAuth = () => {
