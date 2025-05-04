@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PaymentMethodsService from "../../Services/paymentMethods.service";
 import type { PaymentMethod } from "../../interface/paymentMethod";
-import { environment } from "../../config/environmet";
+import { environment } from "../../config/environment";
 
 const usePaymentMethods = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -102,7 +102,7 @@ const usePaymentMethods = () => {
       if (imageSelected && imageSelected.startsWith("data:image/")) {
         try {
           const file = dataURLtoFile(imageSelected, "qr_code.png");
-          form.append("image_qr", file);
+          form.append("image", file);
           console.log("🖼️ QR agregado al FormData");
         } catch (err) {
           console.error("❌ Error al convertir base64 a archivo:", err);
