@@ -3,63 +3,113 @@ import { storageService } from "./storage.service";
 
 const API_URL = `${environment.baseUrl}/categories`;
 
-const handleRequest = async (url: string, options: RequestInit) => {
-  const response = await fetch(url, options);
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
-  return { status: response.status, data };
-};
+
+
+
+
+
+
 
 export const categoriesService = {
+  /**
+   *  Obtener categorías
+   */
   async getCategories() {
-    const token = storageService.getToken();
-    const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
-    const shopId = shop.id;
-    if (!token || !shopId) throw new Error("Missing token or shop_id");
+    try {
+      const token = storageService.getToken();
+      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
+      const shopId = shop.id;
+      if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
 
-    return handleRequest(`${API_URL}/${shopId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+
+      const response = await fetch(`${API_URL}/${shopId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+
+      return { status: response.status, data };
+    } catch (error: any) {
+      return { status: 500, message: error.message || "Error al obtener categorías" };
+    }
   },
 
+  /**
+   *  Crear una nueva categoría
+   */
   async createCategory(name: string) {
-    const token = storageService.getToken();
-    const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
-    const shopId = shop.id;
-    if (!token || !shopId) throw new Error("Missing token or shop_id");
+    try {
+      const token = storageService.getToken();
+      const shop = JSON.parse(localStorage.getItem("shop_data") || "{}");
+      const shopId = shop.id;
+      if (!token || !shopId) throw new Error("Falta el token o el shop_id.");
 
-    return handleRequest(`${API_URL}/${shopId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ name }),
-    });
+
+      const response = await fetch(`${API_URL}/${shopId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+
+      return { status: response.status, data };
+    } catch (error: any) {
+      return { status: 500, message: error.message || "Error al crear la categoría" };
+    }
   },
 
+  /**
+   *  Actualizar una categoría
+   */
   async updateCategory(categoryId: number, name: string) {
-    const token = storageService.getToken();
-    if (!token) throw new Error("No valid authentication token");
+    try {
+      const token = storageService.getToken();
+      if (!token) throw new Error("No hay un token de autenticación válido.");
 
-    return handleRequest(`${API_URL}/${categoryId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ name }),
-    });
+      const response = await fetch(`${API_URL}/${categoryId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+
+      return { status: response.status, data };
+    } catch (error: any) {
+      return { status: 500, message: error.message || "Error al actualizar la categoría" };
+    }
   },
 
+  /**
+   *  Eliminar una categoría
+   */
   async deleteCategory(categoryId: number) {
-    const token = storageService.getToken();
-    if (!token) throw new Error("No valid authentication token");
+    try {
+      const token = storageService.getToken();
+      if (!token) throw new Error("No hay un token de autenticación válido.");
 
-    return handleRequest(`${API_URL}/${categoryId}/delete`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const response = await fetch(`${API_URL}/${categoryId}/delete`, {
+        method: "GET", // Según Postman, la eliminación usa `GET`
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
+
+      return { status: response.status, data };
+    } catch (error: any) {
+      return { status: 500, message: error.message || "Error al eliminar la categoría" };
+    }
   },
 };
