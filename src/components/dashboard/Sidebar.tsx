@@ -9,6 +9,7 @@ import {
   Menu,
   Power,
   WalletCards,
+  Webhook
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { shopService } from "../../Services/shop.service";
@@ -78,7 +79,7 @@ function Sidebar() {
              { icon: Boxes, label: "Proveedores-API", path: "/Suppliers" },
               { icon: Wallet, label: "Métodos de Pago", path: "/Payment-methods" },
               { icon: Coins, label: "Gastos - Ingresos-API", path: "/Income" },
-              
+              {icon: Webhook,  label: "pedidos en Sitio",path: "/onsine"},
               { icon: WalletCards, label: "Membresía", path: "/Membership" },
             ].map((item) => (
               <li key={item.path}>
