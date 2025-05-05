@@ -1,4 +1,3 @@
-// hooks/usePedidos.ts
 import { useState } from "react"
 import { Mesa, Producto } from "../../interface/onsine"
 
