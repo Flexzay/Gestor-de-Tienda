@@ -1,9 +1,10 @@
-
 import { useState } from "react"
 import usePedidos from "../../hooks/bashboard/useOnsite"
 import ListaMesas from "../../components/dashboard/onsine/tableList"
 import CrearPedidoModal from "../../components/dashboard/onsine/CreateOrderModal"
 import { PlusCircle } from "lucide-react"
+
+
 
 export function PedidosPage() {
   const { mesas, mesaActual, productos, crearMesa, eliminarMesa, editarMesa, actualizarMesa } = usePedidos()
@@ -13,7 +14,7 @@ export function PedidosPage() {
   return (
     <div className="container mx-auto py-6 px-4">
       <div className="bg-white shadow-lg rounded-xl overflow-hidden">
-        <div className="bg-gradient-to-r from-rose-600 to-rose-700 p-6">
+        <div className="bg-gradient-to-r from-rose-600 to-yellow-300 p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h2 className="text-2xl font-bold text-white">Sistema de Pedidos</h2>

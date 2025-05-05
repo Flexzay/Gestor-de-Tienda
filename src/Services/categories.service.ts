@@ -3,13 +3,6 @@ import { storageService } from "./storage.service";
 
 const API_URL = `${environment.baseUrl}/categories`;
 
-
-
-
-
-
-
-
 export const categoriesService = {
   /**
    *  Obtener categorías
