@@ -14,6 +14,7 @@ import ExpensesIncomePage from "../pages/dashboard/receipts-page";
 import ProductDetailPage from "../pages/dashboard/ProductDetail-page";
 import MenbershipCreditos from "../components/dashboard/membership/membershiComponents"; 
 import ProfilePage from "../pages/dashboard/Profile-page";
+import PedidosPage from "../pages/dashboard/onsine-page"; 
 
 
 const App = () => {
@@ -36,7 +37,10 @@ const App = () => {
       <Route path="/Payment-methods" element={<PrivateRoute><PaymentMethodPage /></PrivateRoute>} />
       <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
       <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos/></PrivateRoute>} />
-      <Route path="store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+      <Route path="/store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+      <Route path="/onsine" element={<PrivateRoute><PedidosPage /></PrivateRoute>} />
+
+      {/* Rutas protegidas para ver detalles de productos */}
 
       {/* 🆕 Ruta protegida para ver detalles de productos */}
       <Route path="/product/:id" element={<PrivateRoute><ProductDetailPage /></PrivateRoute>} />
