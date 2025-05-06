@@ -119,10 +119,9 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
         status: updatedStatus
       });
 
-      // Validar respuesta
-      if (!updated || updated.id !== table.id) {
-        throw new Error("Respuesta de actualización inválida");
-      }
+      console.log("Respuesta de actualización:", updated); // 👈 Agrega esto
+
+      
 
       // Actualizar con datos reales del servidor
       setTables(prev => prev.map(t => 

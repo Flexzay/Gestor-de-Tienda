@@ -8,7 +8,7 @@ export const spacesService = {
     try {
       const token = storageService.getToken();
       if (!token) throw new Error("Token no encontrado. Por favor inicia sesión.");
-      
+  
       const response = await fetch(`${API_URL}/${shopId}/spaces`, {
         method: "POST",
         headers: {
@@ -17,18 +17,22 @@ export const spacesService = {
         },
         body: JSON.stringify(data),
       });
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Error al crear espacio: ${errorText}`);
       }
-
-      return await response.json();
+  
+      const result = await response.json();
+  
+      // ✅ Devuelve directamente el objeto de la mesa creada
+      return result.data ?? result;
     } catch (error: any) {
       console.error("Error en CreateSpace:", error.message || error);
       throw error;
     }
   },
+  
 
   async GetSpaces(shopId: string) {
     const token = storageService.getToken();
