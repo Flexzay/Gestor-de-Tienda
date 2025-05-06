@@ -1,4 +1,4 @@
-import { environment } from "../config/environmet";
+import { environment } from "../config/environment";
 import { storageService } from "./storage.service";
 
 const handleResponse = async (response: Response) => {

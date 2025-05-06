@@ -34,7 +34,7 @@ interface Table {
     const addTable = async (e: React.FormEvent) => {
       e.preventDefault();
       if (!newTableName.trim()) return;
-  
+   
       setIsLoader(true);
       try {
         const newSpace = {

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { storageService } from "./storage.service";
-import { environment } from "../config/environmet";
+import { environment } from "../config/environment";
 
 const BASE_URL = environment.baseUrl;
 

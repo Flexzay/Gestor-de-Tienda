@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { shopService } from "../../Services/shop.service";
-import { environment } from "../../config/environmet";
+import { environment } from "../../config/environment";
 import { StoreData, TimetableItem, Location } from "../../interface/profile"
 
 export function useProfile() {
