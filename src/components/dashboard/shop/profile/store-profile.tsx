@@ -77,8 +77,8 @@ export default function StoreProfile() {
                 <button
                   onClick={() => setActiveTab("info")}
                   className={`flex-1 py-3 px-4 text-center font-medium ${activeTab === "info"
-                      ? "text-rose-600 border-b-2 border-rose-600"
-                      : "text-gray-600 hover:text-gray-800"
+                    ? "text-rose-600 border-b-2 border-rose-600"
+                    : "text-gray-600 hover:text-gray-800"
                     }`}
                 >
                   Información
@@ -86,8 +86,8 @@ export default function StoreProfile() {
                 <button
                   onClick={() => setActiveTab("config")}
                   className={`flex-1 py-3 px-4 text-center font-medium ${activeTab === "config"
-                      ? "text-rose-600 border-b-2 border-rose-600"
-                      : "text-gray-600 hover:text-gray-800"
+                    ? "text-rose-600 border-b-2 border-rose-600"
+                    : "text-gray-600 hover:text-gray-800"
                     }`}
                 >
                   Configuración
@@ -95,8 +95,8 @@ export default function StoreProfile() {
                 <button
                   onClick={() => setActiveTab("tables")}
                   className={`flex-1 py-3 px-4 text-center font-medium ${activeTab === "tables"
-                      ? "text-rose-600 border-b-2 border-rose-600"
-                      : "text-gray-600 hover:text-gray-800"
+                    ? "text-rose-600 border-b-2 border-rose-600"
+                    : "text-gray-600 hover:text-gray-800"
                     }`}
                 >
                   Mesas
@@ -122,8 +122,10 @@ export default function StoreProfile() {
                   <OrderConfig storeData={storeData} updateStoreData={updateStoreData} />
                 )}
 
-                {activeTab ==="tables" && (
-                  <TableManagement shopId={storeData.id} />)}
+                {activeTab === "tables" && storeData?.id && (
+                  <TableManagement shopId={storeData.id} />
+                )}
+
               </div>
             </div>
           </div>
@@ -135,7 +137,7 @@ export default function StoreProfile() {
             avatarImagePreview={avatarImagePreview}
           />
 
-          {storeData?.id && <TableManagement shopId={storeData.id} />}
+
 
         </div>
       </main>

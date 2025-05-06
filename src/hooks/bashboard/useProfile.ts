@@ -40,6 +40,7 @@ export function useProfile() {
       if (response.data?.data) {
         const shop = response.data.data;
         const newStoreData: StoreData = {
+          id: shop.id ,
           name: shop.name || "",
           phone: shop.phone || "",
           whatsapp: shop.whatsapp || "",

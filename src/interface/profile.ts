@@ -5,6 +5,7 @@ export interface TimetableItem {
 }
 
 export interface StoreData {
+    id?: string;
     name: string;
     phone: string;
     whatsapp: string;
