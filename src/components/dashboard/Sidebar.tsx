@@ -80,6 +80,7 @@ function Sidebar() {
               { icon: Wallet, label: "Métodos de Pago", path: "/Payment-methods" },
               { icon: Coins, label: "Gastos - Ingresos-API", path: "/Income" },
               { icon: WalletCards, label: "Membresía", path: "/Membership" },
+              { icon: Webhook, label: "En Sitio ", path: "/Onsite" }
             ].map((item) => (
               <li key={item.path}>
                 <Link

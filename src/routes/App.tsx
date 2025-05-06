@@ -14,6 +14,7 @@ import ExpensesIncomePage from "../pages/dashboard/receipts-page";
 import ProductDetailPage from "../pages/dashboard/ProductDetail-page";
 import MenbershipCreditos from "../components/dashboard/membership/membershiComponents"; 
 import ProfilePage from "../pages/dashboard/Profile-page";
+import OnsitePage from "../pages/dashboard/onsite-page";
 
 
 
@@ -38,6 +39,7 @@ const App = () => {
       <Route path="/Income" element={<PrivateRoute><ExpensesIncomePage /></PrivateRoute>} />
       <Route path="/Membership" element={<PrivateRoute>< MenbershipCreditos/></PrivateRoute>} />
       <Route path="/store-profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+      <Route path="/Onsite" element={<PrivateRoute><OnsitePage /></PrivateRoute>} />
 
 
       {/* Rutas protegidas para ver detalles de productos */}
