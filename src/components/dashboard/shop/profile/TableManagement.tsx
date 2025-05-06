@@ -17,7 +17,10 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
   const [newTableName, setNewTableName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [actionLoading, setActionLoading] = useState<string | null>(null); // Para acciones específicas
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  const [editingTableId, setEditingTableId] = useState<string | null>(null);
+  const [editedTableName, setEditedTableName] = useState<string>('');
 
   useEffect(() => {
     if (!shopId) {
@@ -31,11 +34,8 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await spacesService.GetSpaces(shopId);
-      console.log("Respuesta completa:", response); // Depuración
-      
-      // Manejar diferentes formatos de respuesta
       let tablesData = response;
       if (response && response.data) {
         tablesData = response.data;
@@ -45,7 +45,6 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
         throw new Error("La respuesta no es un array de mesas");
       }
 
-      // Validar cada mesa
       const validTables = tablesData.map(table => ({
         id: table.id?.toString() || Math.random().toString(36).substr(2, 9),
         name: table.name || "Mesa sin nombre",
@@ -78,8 +77,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
       };
 
       const created = await spacesService.CreateSpace(shopId, newTable);
-      
-      // Validar respuesta de creación
+
       if (!created || !created.id) {
         throw new Error("La mesa creada no tiene un ID válido");
       }
@@ -90,7 +88,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
         status: created.status ?? true,
         delivery: created.delivery ?? false
       }]);
-      
+
       setNewTableName('');
     } catch (err: any) {
       console.error("Error al agregar mesa:", err);
@@ -101,30 +99,18 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
   };
 
   const toggleStatus = async (table: Table) => {
-    if (!table?.id) {
-      console.error("No se puede actualizar mesa sin ID", table);
-      return;
-    }
+    if (!table?.id) return;
 
     setActionLoading(`status-${table.id}`);
     try {
       const updatedStatus = !table.status;
-      
-      // Optimistic update
-      setTables(prev => prev.map(t => 
-        t.id === table.id ? {...t, status: updatedStatus} : t
-      ));
+      setTables(prev => prev.map(t => t.id === table.id ? { ...t, status: updatedStatus } : t));
 
       const updated = await spacesService.UpdateSpace(shopId, table.id, {
         status: updatedStatus
       });
 
-      console.log("Respuesta de actualización:", updated); // 👈 Agrega esto
-
-      
-
-      // Actualizar con datos reales del servidor
-      setTables(prev => prev.map(t => 
+      setTables(prev => prev.map(t =>
         t.id === table.id ? {
           ...t,
           status: typeof updated.status === 'boolean' ? updated.status : updatedStatus,
@@ -132,46 +118,27 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
           delivery: typeof updated.delivery === 'boolean' ? updated.delivery : t.delivery
         } : t
       ));
-
     } catch (err: any) {
-      console.error("Error al actualizar estado:", err);
+      setTables(prev => prev.map(t => t.id === table.id ? { ...t, status: table.status } : t));
       setError(err.message || "Error al actualizar el estado");
-      
-      // Revertir cambios si falla
-      setTables(prev => prev.map(t => 
-        t.id === table.id ? {...t, status: table.status} : t
-      ));
     } finally {
       setActionLoading(null);
     }
   };
 
   const toggleDelivery = async (table: Table) => {
-    if (!table?.id) {
-      console.error("No se puede actualizar mesa sin ID", table);
-      return;
-    }
+    if (!table?.id) return;
 
     setActionLoading(`delivery-${table.id}`);
     try {
       const updatedDelivery = !table.delivery;
-      
-      // Optimistic update
-      setTables(prev => prev.map(t => 
-        t.id === table.id ? {...t, delivery: updatedDelivery} : t
-      ));
+      setTables(prev => prev.map(t => t.id === table.id ? { ...t, delivery: updatedDelivery } : t));
 
       const updated = await spacesService.UpdateSpace(shopId, table.id, {
         delivery: updatedDelivery
       });
 
-      // Validar respuesta
-      if (!updated || updated.id !== table.id) {
-        throw new Error("Respuesta de actualización inválida");
-      }
-
-      // Actualizar con datos reales del servidor
-      setTables(prev => prev.map(t => 
+      setTables(prev => prev.map(t =>
         t.id === table.id ? {
           ...t,
           delivery: typeof updated.delivery === 'boolean' ? updated.delivery : updatedDelivery,
@@ -179,15 +146,34 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
           status: typeof updated.status === 'boolean' ? updated.status : t.status
         } : t
       ));
-
     } catch (err: any) {
-      console.error("Error al actualizar domicilio:", err);
+      setTables(prev => prev.map(t => t.id === table.id ? { ...t, delivery: table.delivery } : t));
       setError(err.message || "Error al actualizar domicilio");
-      
-      // Revertir cambios si falla
-      setTables(prev => prev.map(t => 
-        t.id === table.id ? {...t, delivery: table.delivery} : t
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const saveEditedTableName = async (table: Table) => {
+    if (!editedTableName.trim()) return;
+
+    setActionLoading(`edit-${table.id}`);
+    try {
+      const updated = await spacesService.UpdateSpace(shopId, table.id, {
+        name: editedTableName.trim()
+      });
+
+      setTables(prev => prev.map(t =>
+        t.id === table.id ? {
+          ...t,
+          name: updated.name || editedTableName.trim()
+        } : t
       ));
+
+      setEditingTableId(null);
+      setEditedTableName('');
+    } catch (err: any) {
+      setError(err.message || "Error al editar nombre de la mesa");
     } finally {
       setActionLoading(null);
     }
@@ -208,12 +194,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
       {error && (
         <div className="p-3 bg-red-100 text-red-700 rounded-md mb-4">
           {error}
-          <button 
-            onClick={() => setError(null)} 
-            className="float-right font-bold"
-          >
-            ×
-          </button>
+          <button onClick={() => setError(null)} className="float-right font-bold">×</button>
         </div>
       )}
 
@@ -232,9 +213,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
           disabled={!!actionLoading}
         >
           {actionLoading === 'add' ? (
-            <span className="flex items-center">
-              <span className="animate-spin mr-2">↻</span> Agregando...
-            </span>
+            <span className="flex items-center"><span className="animate-spin mr-2">↻</span> Agregando...</span>
           ) : 'Agregar Mesa'}
         </button>
       </form>
@@ -247,18 +226,56 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {tables.map((table) => (
-            <div
-              key={`table-${table.id}`}
-              className="bg-gray-50 rounded-lg shadow p-4 hover:shadow-md transition-all"
-            >
+            <div key={`table-${table.id}`} className="bg-gray-50 rounded-lg shadow p-4 hover:shadow-md transition-all">
               <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold text-gray-800">{table.name}</h3>
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                  table.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {table.status ? 'Activa' : 'Inactiva'}
-                </span>
+                {editingTableId === table.id ? (
+                  <div className="flex w-full gap-2">
+                    <input
+                      value={editedTableName}
+                      onChange={(e) => setEditedTableName(e.target.value)}
+                      className="flex-grow px-2 py-1 border border-gray-300 rounded"
+                      autoFocus
+                    />
+                    <button
+                      onClick={() => saveEditedTableName(table)}
+                      className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                      disabled={!!actionLoading}
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingTableId(null);
+                        setEditedTableName('');
+                      }}
+                      className="px-2 py-1 text-gray-500 hover:text-gray-800 text-sm"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex justify-between w-full items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">{table.name}</h3>
+                    <button
+                      onClick={() => {
+                        setEditingTableId(table.id);
+                        setEditedTableName(table.name);
+                      }}
+                      className="text-blue-600 text-sm hover:underline"
+                      disabled={!!actionLoading}
+                    >
+                      Editar
+                    </button>
+                  </div>
+                )}
               </div>
+
+              <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                table.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {table.status ? 'Activa' : 'Inactiva'}
+              </span>
+
               <div className="flex flex-wrap gap-2 mt-4">
                 <button
                   onClick={() => toggleStatus(table)}
@@ -274,6 +291,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
                     </span>
                   ) : table.status ? 'Desactivar' : 'Activar'}
                 </button>
+
                 <button
                   onClick={() => toggleDelivery(table)}
                   className={`flex-1 px-3 py-1 text-sm rounded-md ${
@@ -295,9 +313,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ shopId }) => {
       )}
 
       {tables.length === 0 && !isLoading && !error && (
-        <div className="text-center py-8 text-gray-500">
-          No hay mesas registradas aún
-        </div>
+        <div className="text-center py-8 text-gray-500">No hay mesas registradas aún</div>
       )}
     </div>
   );
