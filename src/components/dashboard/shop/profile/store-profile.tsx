@@ -5,6 +5,7 @@ import { StoreImages } from "./store-images";
 import { OrderConfig } from "./order-config";
 import { StorePreview } from "./store-preview";
 import { useProfile } from "../../../../hooks/bashboard/useProfile";
+import TableManagement from "./TableManagement";
 
 export default function StoreProfile() {
   const {
@@ -60,11 +61,10 @@ export default function StoreProfile() {
 
       <main className="flex-1 max-w-7xl mx-auto py-6 px-4">
         {saveMessage && (
-          <div className={`mb-4 p-3 rounded-md ${
-            saveMessage.includes("Error") 
-              ? "bg-red-100 text-red-700" 
-              : "bg-green-100 text-green-700"
-          }`}>
+          <div className={`mb-4 p-3 rounded-md ${saveMessage.includes("Error")
+            ? "bg-red-100 text-red-700"
+            : "bg-green-100 text-green-700"
+            }`}>
             {saveMessage}
           </div>
         )}
@@ -76,25 +76,33 @@ export default function StoreProfile() {
               <div className="flex border-b">
                 <button
                   onClick={() => setActiveTab("info")}
-                  className={`flex-1 py-3 px-4 text-center font-medium ${
-                    activeTab === "info"
+                  className={`flex-1 py-3 px-4 text-center font-medium ${activeTab === "info"
                       ? "text-rose-600 border-b-2 border-rose-600"
                       : "text-gray-600 hover:text-gray-800"
-                  }`}
+                    }`}
                 >
                   Información
                 </button>
                 <button
                   onClick={() => setActiveTab("config")}
-                  className={`flex-1 py-3 px-4 text-center font-medium ${
-                    activeTab === "config"
+                  className={`flex-1 py-3 px-4 text-center font-medium ${activeTab === "config"
                       ? "text-rose-600 border-b-2 border-rose-600"
                       : "text-gray-600 hover:text-gray-800"
-                  }`}
+                    }`}
                 >
                   Configuración
                 </button>
+                <button
+                  onClick={() => setActiveTab("tables")}
+                  className={`flex-1 py-3 px-4 text-center font-medium ${activeTab === "tables"
+                      ? "text-rose-600 border-b-2 border-rose-600"
+                      : "text-gray-600 hover:text-gray-800"
+                    }`}
+                >
+                  Mesas
+                </button>
               </div>
+
 
               <div className="p-6">
                 {activeTab === "info" && (
@@ -113,6 +121,9 @@ export default function StoreProfile() {
                 {activeTab === "config" && (
                   <OrderConfig storeData={storeData} updateStoreData={updateStoreData} />
                 )}
+
+                {activeTab ==="tables" && (
+                  <TableManagement shopId={storeData.id} />)}
               </div>
             </div>
           </div>
@@ -123,6 +134,9 @@ export default function StoreProfile() {
             mainImagePreview={mainImagePreview}
             avatarImagePreview={avatarImagePreview}
           />
+
+          {storeData?.id && <TableManagement shopId={storeData.id} />}
+
         </div>
       </main>
     </div>
