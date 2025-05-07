@@ -1,6 +1,6 @@
-import Onsite from "../../components/dashboard/onsite/onsite";
+import CreateOrderComponent from "../../components/dashboard/onsite/formOnsite";
 
 function OnsitePage() {
-  return <Onsite />;
+  return <CreateOrderComponent orderCreated={undefined} />;
 }
 export default OnsitePage;

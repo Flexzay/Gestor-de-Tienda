@@ -105,14 +105,14 @@ export const productService = {
             console.log("Uploading product images...");
             const uploadedImages = await this.uploadImages(createdProduct.data.id, filesToUpload);
             console.log("Images uploaded successfully:", uploadedImages);
-            
+
             // Actualizar el producto con las nuevas imágenes
             createdProduct.data.images = [
               ...(productData.existingImages || []),
               ...uploadedImages
             ];
           }
-         } catch (uploadError) {
+        } catch (uploadError) {
           console.error("Error uploading images, but product was created:", uploadError);
           // Continuar aunque falle la subida de imágenes
         }
@@ -164,10 +164,10 @@ export const productService = {
         ...product,
         images: product.images?.length
           ? product.images.map((img: any) => ({
-              id: img.id, 
-              url: `${S3_BUCKET_URL}${img.path}`,
-              path: img.path
-            }))
+            id: img.id,
+            url: `${S3_BUCKET_URL}${img.path}`,
+            path: img.path
+          }))
           : [],
         category: product.category || {
           id: product.category_id,
@@ -178,7 +178,7 @@ export const productService = {
       }));
 
       console.log("📦 Productos obtenidos:", processedData);
-  
+
       return {
         status: response.status,
         data: processedData,
@@ -190,7 +190,7 @@ export const productService = {
         message: error.message || "Error al obtener productos"
       };
     }
-},
+  },
 
 
   /**
@@ -291,24 +291,24 @@ export const productService = {
         data_table: Array.isArray(data.data?.data_table) ? data.data.data_table : [],
         images: data.data?.images?.length
           ? data.data.images.map((img: any) => ({
-              id: img.id,
-              url: img.url || `${S3_BUCKET_URL}${img.path}`,
-              path: img.path
-            }))
+            id: img.id,
+            url: img.url || `${S3_BUCKET_URL}${img.path}`,
+            path: img.path
+          }))
           : []
       };
 
-      return { 
-        status: response.status, 
-        data: processedData 
+      return {
+        status: response.status,
+        data: processedData
       };
     } catch (error: any) {
-      return { 
-        status: 500, 
-        message: error.message || "Error al obtener el producto" 
+      return {
+        status: 500,
+        message: error.message || "Error al obtener el producto"
       };
     }
-},
+  },
 
   /**
    * Eliminar una imagen de un producto
@@ -328,9 +328,9 @@ export const productService = {
 
       // Si la respuesta es exitosa pero no tiene contenido
       if (response.status === 204 || response.status === 200) {
-        return { 
-          success: true, 
-          message: "Imagen eliminada correctamente" 
+        return {
+          success: true,
+          message: "Imagen eliminada correctamente"
         };
       }
 

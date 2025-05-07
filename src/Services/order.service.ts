@@ -5,7 +5,7 @@ import { NewOrder as NewOrderOnSite } from '../interface/onsiteOrder';
 import { Response} from '../interface/response';
 
 
-class OrderService {
+export class OrderService {
   private shopId: string;
   private orderSource = new Subject<any>();
   private alertSource = new Subject<any>();
