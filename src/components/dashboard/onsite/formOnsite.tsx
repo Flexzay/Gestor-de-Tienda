@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { userService } from '../../../Services/user.Service';
 
-const ClientSearchForm = () => {
+interface ClientSearchFormProps {
+  onUserFound: (userId: number) => void;
+}
+
+const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
   const [clientForm, setClientForm] = useState({ phoneNumber: '', name: '', birthDate: '' });
   const [userId, setUserId] = useState(0);
   const [showRegisterButton, setShowRegisterButton] = useState(false);
@@ -16,10 +20,12 @@ const ClientSearchForm = () => {
       if (res.status === 200 && res.data) {
         if (res.data.name) {
           setUserId(res.data.id);
+          onUserFound(res.data.id);
           setClientForm({ ...clientForm, name: res.data.name, birthDate: res.data.birth_date });
         } else if (res.data.id) {
           setShowRegisterButton(true);
           setUserId(res.data.id);
+          onUserFound(res.data.id);
         }
       }
     } catch (err) {
