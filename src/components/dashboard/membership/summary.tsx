@@ -5,7 +5,7 @@ import { ResumenProps } from "../../../interface/membership";
 export function Resumen({ creditosSeleccionados }: ResumenProps) {
   const [showAnimation, setShowAnimation] = useState(false);
   const precioPorCredito = 100;
-  const subtotal = creditosSeleccionados * precioPorCredito;
+  const subtotal = creditosSeleccionados ;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("es-CO", {
