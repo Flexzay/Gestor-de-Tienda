@@ -1,67 +1,133 @@
-import React, { useState } from "react";
-import useTable from "../../../hooks/bashboard/useTable";
-import type { Table } from "../../../interface/table";
-import { Loader2 } from "lucide-react";
+import type React from "react"
+import { useState, useEffect } from "react"
+import { Loader2, AlertCircle, CheckCircle2, Coffee, Search } from "lucide-react"
+import useTable from "../../../hooks/bashboard/useTable"
+import type { Table } from "../../../interface/table"
 
 interface SelectTableProps {
-  shopId: string;
-  onSelect: (table: Table) => void;
-  selectedTableId?: string;
+  shopId: string
+  onSelect: (table: Table) => void
+  selectedTableId?: string
 }
 
 const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTableId }) => {
-  const { tables, isLoading, error } = useTable(shopId);
-  const [selected, setSelected] = useState<string | null>(selectedTableId || null);
+  const { tables, isLoading, error } = useTable(shopId)
+  const [selected, setSelected] = useState<string | null>(selectedTableId || null)
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [filteredTables, setFilteredTables] = useState<Table[]>([])
+
+  // Filter tables based on search term and active status
+  useEffect(() => {
+    if (!tables) return
+
+    const filtered = tables
+      .filter((t) => t.status) // Only active tables
+      .filter((t) => t.name.toLowerCase().includes(searchTerm.toLowerCase())) // Search filter
+
+    setFilteredTables(filtered)
+  }, [tables, searchTerm])
 
   const handleSelect = (table: Table) => {
-    setSelected(table.id);
-    onSelect(table);
-  };
+    setSelected(table.id)
+    onSelect(table)
+  }
 
   if (!shopId) {
     return (
-      <div className="text-red-600 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-        Debes proporcionar un ID de tienda válido.
+      <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm">
+        <div className="flex items-center">
+          <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+          <p className="text-red-700 font-medium">Debes proporcionar un ID de tienda válido.</p>
+        </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <h3 className="text-lg font-semibold mb-4">Selecciona una mesa</h3>
+    <div className="bg-white rounded-lg shadow-md border border-gray-100">
+      <div className="p-4 border-b border-gray-100">
+        <h3 className="text-lg font-semibold text-gray-800">Selecciona una mesa</h3>
+        <p className="text-sm text-gray-500 mt-1">Elige una mesa para continuar con la orden</p>
+      </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center py-6">
-          <Loader2 className="h-6 w-6 text-gray-500 animate-spin" />
-          <span className="ml-2 text-gray-600">Cargando mesas...</span>
-        </div>
-      ) : error ? (
-        <div className="text-red-600 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-          {error}
-        </div>
-      ) : tables.length === 0 ? (
-        <p className="text-gray-500">No hay mesas disponibles.</p>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          {tables
-            .filter((t) => t.status) // mostrar solo mesas activas
-            .map((table) => (
-              <button
-                key={table.id}
-                onClick={() => handleSelect(table)}
-                className={`px-4 py-2 rounded-md transition-all ${
-                  selected === table.id
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                }`}
-              >
-                {table.name}
-              </button>
-            ))}
+      {/* Search input */}
+      {tables && tables.length > 0 && (
+        <div className="px-4 py-3 border-b border-gray-100">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Buscar mesa..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-full py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+            />
+          </div>
         </div>
       )}
-    </div>
-  );
-};
 
-export default SelectTable;
+      <div className="p-4">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-2" />
+            <span className="text-gray-600">Cargando mesas...</span>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+              <p className="text-red-700">{error}</p>
+            </div>
+          </div>
+        ) : filteredTables.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Coffee className="h-12 w-12 text-gray-300 mb-2" />
+            <p className="text-gray-500 font-medium">No hay mesas disponibles{searchTerm ? " con ese nombre" : ""}.</p>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="mt-2 text-blue-500 hover:text-blue-700 text-sm font-medium"
+              >
+                Limpiar búsqueda
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            {searchTerm && (
+              <p className="text-sm text-gray-500 mb-3">
+                {filteredTables.length} {filteredTables.length === 1 ? "resultado" : "resultados"} encontrados
+              </p>
+            )}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {filteredTables.map((table) => (
+                <button
+                  key={table.id}
+                  onClick={() => handleSelect(table)}
+                  className={`
+                    flex flex-col items-center justify-center p-3 rounded-lg border transition-all duration-200
+                    ${
+                      selected === table.id
+                        ? "bg-blue-50 border-blue-500 ring-2 ring-blue-200"
+                        : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                    }
+                  `}
+                  aria-pressed={selected === table.id}
+                >
+                  <span className={`text-lg font-medium ${selected === table.id ? "text-blue-700" : "text-gray-700"}`}>
+                    {table.name}
+                  </span>
+                  {selected === table.id && <CheckCircle2 className="h-5 w-5 text-blue-500 mt-1" />}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default SelectTable
