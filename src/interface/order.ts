@@ -1,12 +1,13 @@
 export interface Product {
-    id: number;
-    name: string;
-    observations: string | null;
-    price: string;
-    amount: number;
-    total: number;
-    images : any[];
-  }
+  id: number;
+  name: string;
+  observation: string | null; // corregido de observations
+  price: number | string;
+  amount: number;
+  total: number;
+  images: any[];
+}
+
   
   export interface OrderState {
     id: number;
@@ -21,9 +22,10 @@ export interface Product {
   }
   
   export interface StatusAvailable {
-    lable: string;
-    status:number;
-  }
+  label: string;
+  status: number;
+}
+
 
   interface Delivery {
     name: string;
@@ -59,9 +61,10 @@ export interface Product {
   }
 
   export interface NewOrder {
-    phone?: number;
-    value?: number;
-  }
+  phone?: number;
+  value?: number;
+}
+
 
   export interface TypeBill {
     label : string;

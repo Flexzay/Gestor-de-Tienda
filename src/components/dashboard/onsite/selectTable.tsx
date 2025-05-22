@@ -1,12 +1,11 @@
-import type React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Loader2, AlertCircle, CheckCircle2, Coffee, Search } from "lucide-react"
 import useTable from "../../../hooks/bashboard/useTable"
 import type { Table } from "../../../interface/table"
 
 interface SelectTableProps {
   shopId: string
-  onSelect: (table: Table) => void
+  onSelect: (table: Table | null) => void
   selectedTableId?: string
 }
 
@@ -16,13 +15,18 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filteredTables, setFilteredTables] = useState<Table[]>([])
 
-  // Filter tables based on search term and active status
+  // Sincroniza selección externa si cambia
+  useEffect(() => {
+    if (selectedTableId) setSelected(selectedTableId)
+  }, [selectedTableId])
+
+  // Filtro por nombre y estado activo
   useEffect(() => {
     if (!tables) return
 
     const filtered = tables
-      .filter((t) => t.status) // Only active tables
-      .filter((t) => t.name.toLowerCase().includes(searchTerm.toLowerCase())) // Search filter
+      .filter((t) => t.status) // Solo mesas activas
+      .filter((t) => t.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     setFilteredTables(filtered)
   }, [tables, searchTerm])
@@ -30,6 +34,11 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
   const handleSelect = (table: Table) => {
     setSelected(table.id)
     onSelect(table)
+  }
+
+  const handleClearSelection = () => {
+    setSelected(null)
+    onSelect(null)
   }
 
   if (!shopId) {
@@ -45,6 +54,7 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-100">
+      {/* Header */}
       <div className="p-4 border-b border-gray-100">
         <h3 className="text-lg font-semibold text-gray-800">Selecciona una mesa</h3>
         <p className="text-sm text-gray-500 mt-1">Elige una mesa para continuar con la orden</p>
@@ -68,6 +78,7 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
         </div>
       )}
 
+      {/* Body */}
       <div className="p-4">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-8">
@@ -101,19 +112,17 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
                 {filteredTables.length} {filteredTables.length === 1 ? "resultado" : "resultados"} encontrados
               </p>
             )}
+
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {filteredTables.map((table) => (
                 <button
                   key={table.id}
                   onClick={() => handleSelect(table)}
-                  className={`
-                    flex flex-col items-center justify-center p-3 rounded-lg border transition-all duration-200
-                    ${
-                      selected === table.id
-                        ? "bg-blue-50 border-blue-500 ring-2 ring-blue-200"
-                        : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
-                    }
-                  `}
+                  className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all duration-200 ${
+                    selected === table.id
+                      ? "bg-blue-50 border-blue-500 ring-2 ring-blue-200"
+                      : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                  }`}
                   aria-pressed={selected === table.id}
                 >
                   <span className={`text-lg font-medium ${selected === table.id ? "text-blue-700" : "text-gray-700"}`}>
@@ -123,6 +132,18 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
                 </button>
               ))}
             </div>
+
+            {/* Clear selection option */}
+            {selected && (
+              <div className="mt-4 text-right">
+                <button
+                  onClick={handleClearSelection}
+                  className="text-sm text-gray-500 hover:underline"
+                >
+                  Quitar selección
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

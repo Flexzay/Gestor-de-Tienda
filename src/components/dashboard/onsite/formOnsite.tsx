@@ -1,5 +1,4 @@
-import type React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Search, UserPlus, Calendar, Loader } from "lucide-react"
 import { userService } from "../../../Services/user.Service"
 
@@ -20,9 +19,19 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
     setClientForm((prev) => ({ ...prev, [name]: value }))
   }
 
+  const resetForm = () => {
+    setClientForm({ phoneNumber: "", name: "", birthDate: "" })
+    setUserId(null)
+    setShowRegisterButton(false)
+    setAlertMessage("")
+    setAlertType(null)
+  }
+
   const searchClient = async () => {
-    if (!clientForm.phoneNumber.trim()) {
-      setAlertMessage("Por favor ingrese un número telefónico")
+    const phone = clientForm.phoneNumber.trim()
+
+    if (!/^\d{10}$/.test(phone)) {
+      setAlertMessage("Ingrese un número telefónico válido (10 dígitos)")
       setAlertType("error")
       return
     }
@@ -34,38 +43,35 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
     setUserId(null)
 
     try {
-      const res = await userService.consultUser(clientForm.phoneNumber)
+      const res = await userService.consultUser(phone)
       if (res.status === 200 && res.data) {
-        if (res.data.name) {
-          setUserId(res.data.id)
-          onUserFound(res.data.id)
-          setClientForm({
-            ...clientForm,
-            name: res.data.name,
-            birthDate: res.data.birth_date || "",
-          })
+        const user = res.data
+
+        setUserId(user.id)
+        onUserFound(user.id)
+
+        setClientForm({
+          phoneNumber: phone,
+          name: user.name || "",
+          birthDate: user.birth_date || "",
+        })
+
+        if (user.name) {
           setAlertMessage("Cliente encontrado")
           setAlertType("success")
-          setShowRegisterButton(false)
-        } else if (res.data.id) {
+        } else {
           setShowRegisterButton(true)
-          setUserId(res.data.id)
-          onUserFound(res.data.id)
           setAlertMessage("Cliente encontrado pero requiere completar información")
           setAlertType("success")
         }
       } else {
         setAlertMessage("No se encontró ningún cliente con ese número")
         setAlertType("error")
-        setShowRegisterButton(false)
-        setUserId(null)
       }
     } catch (err) {
       console.error(err)
       setAlertMessage("Error al buscar cliente")
       setAlertType("error")
-      setShowRegisterButton(false)
-      setUserId(null)
     } finally {
       setLoading(false)
     }
@@ -100,104 +106,87 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-      {/* Header */}
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
         <h2 className="text-xl font-bold text-gray-800">Buscar Cliente</h2>
         <p className="text-sm text-gray-600 mt-1">Busque un cliente por número telefónico o registre uno nuevo</p>
       </div>
 
-      {/* Content */}
-      <div className="p-6">
-        <div className="space-y-6">
-          {/* Phone Number Search */}
-          <div className="space-y-2">
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-              Teléfono
-            </label>
-            <div className="flex">
-              <div className="relative flex-grow">
-                <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  value={clientForm.phoneNumber}
-                  onChange={handleInputChange}
-                  placeholder="Ingrese número telefónico"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-l-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={searchClient}
-                disabled={loading}
-                className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {loading ? <Loader className="h-4 w-4 animate-spin mr-2" /> : <Search className="h-4 w-4 mr-2" />}
-                Buscar
-              </button>
-            </div>
-            <p className="text-xs text-gray-500">Ingrese el número telefónico del cliente</p>
-          </div>
-
-          {/* Form Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Name */}
-            <div className="space-y-2">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Nombre
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={clientForm.name}
-                onChange={handleInputChange}
-                placeholder="Nombre completo"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-              />
-            </div>
-
-            {/* Birth Date */}
-            <div className="space-y-2">
-              <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700">
-                Fecha de Nacimiento
-              </label>
-              <div className="relative">
-                <input
-                  id="birthDate"
-                  name="birthDate"
-                  type="date"
-                  value={clientForm.birthDate}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                />
-                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-          </div>
-
-          {/* Alert Message */}
-          {alertMessage && (
-            <div
-              className={`p-4 rounded-md ${
-                alertType === "error"
-                  ? "bg-red-50 text-red-800 border border-red-200"
-                  : "bg-green-50 text-green-800 border border-green-200"
-              }`}
+      <div className="p-6 space-y-6">
+        <div className="space-y-2">
+          <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">Teléfono</label>
+          <div className="flex">
+            <input
+              id="phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              value={clientForm.phoneNumber}
+              onChange={handleInputChange}
+              placeholder="Ingrese número telefónico"
+              className="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+            <button
+              type="button"
+              onClick={searchClient}
+              disabled={loading}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition-colors disabled:opacity-70"
             >
-              <p className="text-sm">{alertMessage}</p>
-            </div>
-          )}
+              {loading ? <Loader className="h-4 w-4 animate-spin mr-2" /> : <Search className="h-4 w-4 mr-2" />}
+              Buscar
+            </button>
+          </div>
+          <p className="text-xs text-gray-500">Ingrese el número telefónico del cliente</p>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={clientForm.name}
+              onChange={handleInputChange}
+              placeholder="Nombre completo"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+            <div className="relative">
+              <input
+                id="birthDate"
+                name="birthDate"
+                type="date"
+                value={clientForm.birthDate}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              />
+              <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            </div>
+          </div>
+        </div>
+
+        {alertMessage && (
+          <div className={`p-4 rounded-md text-sm border ${alertType === "error" ? "bg-red-50 text-red-800 border-red-200" : "bg-green-50 text-green-800 border-green-200"}`}>
+            {alertMessage}
+          </div>
+        )}
       </div>
 
-      {/* Footer */}
-      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between">
+        <button
+          onClick={resetForm}
+          className="text-sm text-gray-600 hover:underline"
+        >
+          Limpiar
+        </button>
+
         {showRegisterButton && (
           <button
             onClick={registerUser}
             disabled={loading}
-            className="flex items-center justify-center w-full md:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-70"
           >
             {loading ? <Loader className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
             Registrar Cliente
