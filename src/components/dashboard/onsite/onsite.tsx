@@ -14,7 +14,11 @@ interface OrderItem extends ProductFormData {
   quantity: number;
 }
 
-const Onsite: React.FC = () => {
+interface OnsiteProps {
+  onCancel?: () => void;
+}
+
+const Onsite: React.FC<OnsiteProps> = ({ onCancel }) => {
   const [userId, setUserId] = useState<number | null>(null);
   const [clientData, setClientData] = useState<{ name: string; phone?: string } | null>(null);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
@@ -65,7 +69,7 @@ const Onsite: React.FC = () => {
     try {
       const orderData: NewOrderOnSite = {
         client_id: userId,
-        space_id: Number(selectedTable.id), // 🔧 convierte a number aquí
+        space_id: Number(selectedTable.id),
         products: orderItems.map((item) => ({
           id: item.id!,
           amount: item.quantity,
@@ -103,13 +107,7 @@ const Onsite: React.FC = () => {
   };
 
   const handleNewOrder = () => {
-    setUserId(null);
-    setClientData(null);
-    setSelectedTable(null);
-    setOrderItems([]);
-    setOrderConfirmed(false);
-    setCurrentOrder(null);
-    setError(null);
+    if (onCancel) onCancel();
   };
 
   if (!shopId) {
@@ -122,10 +120,19 @@ const Onsite: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Nuevo Pedido en Sitio</h1>
+        <button
+          onClick={onCancel}
+          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+        >
+          Volver a la lista
+        </button>
+      </div>
+
       <ClientSearchForm
-        onUserFound={(id: React.SetStateAction<number | null>, data: React.SetStateAction<{ name: string; phone?: string; } | null>) => {
+        onUserFound={(id: number) => {
           setUserId(id);
-          setClientData(data); // ← guarda el cliente real
         }}
       />
 
@@ -151,7 +158,7 @@ const Onsite: React.FC = () => {
                 <div className="text-right space-y-4">
                   {error && <div className="text-red-500 text-center">{error}</div>}
                   <button
-                    className="mt-4 px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400"
+                    className="mt-4 px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors"
                     onClick={handleConfirmOrder}
                     disabled={loading}
                   >

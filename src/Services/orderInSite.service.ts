@@ -16,21 +16,14 @@ const getHeaders = () => {
 
   return {
     "Content-Type": "application/json",
-    "Accept": "application/json",
+    Accept: "application/json",
     Authorization: `Bearer ${token}`,
   };
-};
-
-const handleResponse = async (response: Response) => {
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.message || `Error ${response.status}`);
-  return data;
 };
 
 export const orderService = {
   /**
    * Crea una orden en sitio
-   * @param orderData - Datos de la orden in-site
    */
   createOnsiteOrder: async (orderData: NewOrderOnSite) => {
     const shopId = getShopId();
@@ -61,31 +54,43 @@ export const orderService = {
     };
   },
 
-
   /**
    * Obtiene todas las órdenes en sitio
    */
   getOnSiteOrders: async () => {
     const shopId = getShopId();
-    const res = await fetch(`${BASE_URL}/${shopId}/bills/in-site`, {
+    const response = await fetch(`${BASE_URL}/${shopId}/bills/in-site`, {
       method: "GET",
       headers: getHeaders(),
     });
-    return handleResponse(res);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al obtener pedidos en sitio");
+    }
+
+    return data; // incluye { message, data: [], status }
   },
 
-    /**
-     * Asigna un cliente a una orden en sitio
-     * @param clientId - ID del cliente
-     * @param orderId - ID de la orden
-     */
-    assignClientToOnsiteOrder: async (clientId: number, orderId: string | number) => {
-      const shopId = getShopId();
-      const res = await fetch(`${BASE_URL}/${shopId}/bills/in-site/${orderId}/add-client`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({ client_id: clientId }),
-      });
-      return handleResponse(res);
-    },
+  /**
+   * Asigna un cliente a una orden en sitio
+   */
+  assignClientToOnsiteOrder: async (clientId: number, orderId: string | number) => {
+    const shopId = getShopId();
+
+    const response = await fetch(`${BASE_URL}/${shopId}/bills/in-site/${orderId}/add-client`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ client_id: clientId }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || `Error ${response.status}`);
+    }
+
+    return data;
+  },
 };
