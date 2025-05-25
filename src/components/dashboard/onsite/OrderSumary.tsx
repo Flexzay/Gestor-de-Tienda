@@ -1,6 +1,6 @@
-import type React from "react"
-import { useState } from "react"
+import React from "react"
 import { Trash2, Minus, Plus, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react"
+import { useOrderSummary } from "../../../hooks/bashboard/useOrderSummary"
 import type { ProductFormData } from "../../../interface/product"
 
 interface OrderItem extends ProductFormData {
@@ -15,20 +15,7 @@ interface OrderSummaryProps {
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onUpdateQuantity, onRemove }) => {
-  const [expandedItem, setExpandedItem] = useState<number | null>(null)
-  const total = items.reduce((sum, item) => sum + Number(item.price ?? 0) * item.quantity, 0)
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("es-MX", {
-      style: "currency",
-      currency: "MXN",
-      minimumFractionDigits: 2,
-    }).format(price)
-  }
-
-  const toggleItem = (itemId: number) => {
-    setExpandedItem(expandedItem === itemId ? null : itemId)
-  }
+  const { total, expandedItem, formatPrice, toggleItem } = useOrderSummary(items)
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
