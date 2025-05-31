@@ -20,7 +20,7 @@ interface OnsiteProps {
 
 const Onsite: React.FC<OnsiteProps> = ({ onCancel }) => {
   const [userId, setUserId] = useState<number | null>(null);
-  const [clientData, setClientData] = useState<{ name: string; phone?: string } | null>(null);
+  const [clientData] = useState<{ name: string; phone?: string } | null>(null);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [shopId, setShopId] = useState<string | null>(null);

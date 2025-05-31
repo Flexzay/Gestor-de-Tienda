@@ -6,7 +6,7 @@ interface UseOnsiteTableProps {
   selectedTableId?: string;
 }
 
-export const useOnsiteTable = ({ shopId, selectedTableId }: UseOnsiteTableProps) => {
+export const useOnsiteTable = ({ selectedTableId }: UseOnsiteTableProps) => {
   const [selected, setSelected] = useState<string | null>(selectedTableId || null);
   const [searchTerm, setSearchTerm] = useState<string>("");
 

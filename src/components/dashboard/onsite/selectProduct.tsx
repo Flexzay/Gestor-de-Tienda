@@ -9,7 +9,6 @@ interface SelectProductProps {
 
 const SelectProduct: React.FC<SelectProductProps> = ({ onAddProduct }) => {
   const {
-    products,
     filteredProducts,
     loading,
     error,

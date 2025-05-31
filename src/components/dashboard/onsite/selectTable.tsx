@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Loader2, AlertCircle, CheckCircle2, Coffee, Search } from "lucide-react";
-import {useTable} from "../../../hooks/bashboard/useTable";
+import useTable from "../../../hooks/bashboard/useTable";
 import { useOnsiteTable } from "../../../hooks/bashboard/useOnsiteTable";
 import type { Table } from "../../../interface/table";
 

@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import useTable from "../../../../hooks/bashboard/useTable"
 import type { TableManagementProps } from "../../../../interface/table"
