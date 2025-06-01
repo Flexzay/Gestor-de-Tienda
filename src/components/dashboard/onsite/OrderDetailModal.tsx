@@ -24,7 +24,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ isOpen, onClose, 
       <div className="flex items-center justify-center min-h-screen px-4 py-6">
         <div className="fixed inset-0 bg-white bg-opacity-100 transition-opacity" aria-hidden="true" />
 
-        <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden">
+        <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] flex flex-col">
           {/* Header */}
           <div className="bg-gradient-to-br from-rose-600 to-rose-700 px-6 py-5">
             <div className="flex justify-between items-center">
@@ -44,7 +44,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ isOpen, onClose, 
           </div>
 
           {/* Content */}
-          <div className="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+          <div className="p-6 overflow-y-auto flex-1">
             {/* Order Summary Card */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 mb-6 border border-blue-100">
               <div className="flex items-center justify-between mb-4">
