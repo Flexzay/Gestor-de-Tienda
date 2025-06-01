@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Onsite from "../../components/dashboard/onsite/onsite";
 import OrderList from "../../components/dashboard/onsite/Orderlist";
-import Sidebar from "../../components/dashboard/Sidebar"; 
+import Sidebar from "../../components/dashboard/Sidebar";
 
 function OnsitePage() {
   const [showNewOrder, setShowNewOrder] = useState(false);
@@ -9,7 +9,7 @@ function OnsitePage() {
 
   const handleNewOrderCreated = () => {
     setShowNewOrder(false);
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
