@@ -23,7 +23,7 @@ const SelectProduct: React.FC<SelectProductProps> = ({ onAddProduct }) => {
   } = useSelectProduct()
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-100">
+    <div className="bg-white rounded-lg shadow-md border border-gray-100 mb-8">
       {/* Header */}
       <div className="p-4 border-b border-gray-100">
         <div className="flex justify-between items-center">

@@ -18,7 +18,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ items, onUpdateQuantity, on
   const { total, expandedItem, formatPrice, toggleItem } = useOrderSummary(items)
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden ">
       {/* Header */}
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
         <div>

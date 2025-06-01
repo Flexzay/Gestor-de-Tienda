@@ -1,8 +1,8 @@
-import { Search, UserPlus, Calendar, Loader } from "lucide-react"
-import { useFormOnsite } from "../../../hooks/bashboard/useFromOnsite"
+import { Search, UserPlus, Calendar, Loader } from "lucide-react";
+import { useFormOnsite } from "../../../hooks/bashboard/useFromOnsite";
 
 interface ClientSearchFormProps {
-  onUserFound: (userId: number) => void
+  onUserFound: (userId: number) => void;
 }
 
 const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
@@ -16,18 +16,26 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
     resetForm,
     searchClient,
     registerUser
-  } = useFormOnsite({ onUserFound })
+  } = useFormOnsite({ onUserFound });
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="w-full bg-white rounded-lg shadow-md overflow-hidden mb-8">
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
         <h2 className="text-xl font-bold text-gray-800">Buscar Cliente</h2>
-        <p className="text-sm text-gray-600 mt-1">Busque un cliente por número telefónico o registre uno nuevo</p>
+        <p className="text-sm text-gray-600 mt-1">
+          Busque un cliente por número telefónico o registre uno nuevo.
+        </p>
       </div>
 
       <div className="p-6 space-y-6">
+        {/* Teléfono */}
         <div className="space-y-2">
-          <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">Teléfono</label>
+          <label
+            htmlFor="phoneNumber"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Teléfono
+          </label>
           <div className="flex">
             <input
               id="phoneNumber"
@@ -44,16 +52,28 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
               disabled={loading}
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition-colors disabled:opacity-70"
             >
-              {loading ? <Loader className="h-4 w-4 animate-spin mr-2" /> : <Search className="h-4 w-4 mr-2" />}
+              {loading ? (
+                <Loader className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Search className="h-4 w-4 mr-2" />
+              )}
               Buscar
             </button>
           </div>
-          <p className="text-xs text-gray-500">Ingrese el número telefónico del cliente</p>
+          <p className="text-xs text-gray-500">
+            Ingrese el número telefónico del cliente
+          </p>
         </div>
 
+        {/* Nombre y Fecha de nacimiento */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre</label>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Nombre
+            </label>
             <input
               id="name"
               name="name"
@@ -66,7 +86,12 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+            <label
+              htmlFor="birthDate"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Fecha de Nacimiento
+            </label>
             <div className="relative">
               <input
                 id="birthDate"
@@ -81,13 +106,21 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
           </div>
         </div>
 
+        {/* Alertas */}
         {alertMessage && (
-          <div className={`p-4 rounded-md text-sm border ${alertType === "error" ? "bg-red-50 text-red-800 border-red-200" : "bg-green-50 text-green-800 border-green-200"}`}>
+          <div
+            className={`p-4 rounded-md text-sm border ${
+              alertType === "error"
+                ? "bg-red-50 text-red-800 border-red-200"
+                : "bg-green-50 text-green-800 border-green-200"
+            }`}
+          >
             {alertMessage}
           </div>
         )}
       </div>
 
+      {/* Botones de acción */}
       <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between">
         <button
           onClick={resetForm}
@@ -102,13 +135,17 @@ const ClientSearchForm = ({ onUserFound }: ClientSearchFormProps) => {
             disabled={loading}
             className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-70"
           >
-            {loading ? <Loader className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
+            {loading ? (
+              <Loader className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <UserPlus className="h-4 w-4 mr-2" />
+            )}
             Registrar Cliente
           </button>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ClientSearchForm
+export default ClientSearchForm;

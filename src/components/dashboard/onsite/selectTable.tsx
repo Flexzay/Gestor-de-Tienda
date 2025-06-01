@@ -27,7 +27,7 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
 
   if (!shopId) {
     return (
-      <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm">
+      <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm ">
         <div className="flex items-center">
           <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
           <p className="text-red-700 font-medium">Debes proporcionar un ID de tienda válido.</p>
@@ -37,7 +37,7 @@ const SelectTable: React.FC<SelectTableProps> = ({ shopId, onSelect, selectedTab
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-100">
+    <div className="bg-white rounded-lg shadow-md border border-gray-100 mb-8">
       <div className="p-4 border-b border-gray-100">
         <h3 className="text-lg font-semibold text-gray-800">Selecciona una mesa</h3>
         <p className="text-sm text-gray-500 mt-1">Elige una mesa para continuar con la orden</p>

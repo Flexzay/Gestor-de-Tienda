@@ -79,7 +79,6 @@ const Onsite: React.FC<OnsiteProps> = ({ onCancel }) => {
       };
 
       const response = await orderService.createOnsiteOrder(orderData);
-
       const rawData = response.data;
 
       setCurrentOrder({
@@ -94,7 +93,9 @@ const Onsite: React.FC<OnsiteProps> = ({ onCancel }) => {
           price: item.price,
           quantity: item.quantity,
         })),
-        total: rawData.total || orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        total:
+          rawData.total ||
+          orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
       });
 
       setOrderConfirmed(true);
@@ -119,8 +120,8 @@ const Onsite: React.FC<OnsiteProps> = ({ onCancel }) => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Nuevo Pedido en Sitio</h1>
         <button
           onClick={onCancel}
@@ -130,11 +131,7 @@ const Onsite: React.FC<OnsiteProps> = ({ onCancel }) => {
         </button>
       </div>
 
-      <ClientSearchForm
-        onUserFound={(id: number) => {
-          setUserId(id);
-        }}
-      />
+      <ClientSearchForm onUserFound={(id: number) => setUserId(id)} />
 
       {userId && (
         <>
