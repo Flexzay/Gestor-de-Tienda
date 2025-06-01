@@ -12,7 +12,7 @@ interface Order {
   code?: string;
   user?: { name: string };
   space?: { name: string };
-  items?: Array<any>;
+  items?: Array<any>; // <- usado por tu modal
 }
 
 type StatusColorClass = 
@@ -29,7 +29,7 @@ export const useOrderList = (refreshKey?: number) => {
   const [error, setError] = useState<string | null>(null);
 
   const getStatusText = useCallback((status: any): string => {
-    if (typeof status === 'string') return status;
+    if (typeof status === "string") return status;
     if (status?.label) return status.label;
     return "pendiente";
   }, []);
@@ -38,7 +38,15 @@ export const useOrderList = (refreshKey?: number) => {
     setLoading(true);
     try {
       const response = await orderService.getOnSiteOrders();
-      setOrders(response.data || []);
+      const rawOrders = response.data || [];
+
+      // 🔁 Mapear los productos a 'items'
+      const formattedOrders: Order[] = rawOrders.map((order: any) => ({
+        ...order,
+        items: order.items || order.products || [], // 💡 mapear 'products' a 'items'
+      }));
+
+      setOrders(formattedOrders);
       setError(null);
     } catch (err) {
       console.error("Error fetching orders:", err);
@@ -54,7 +62,7 @@ export const useOrderList = (refreshKey?: number) => {
 
   const getStatusColor = useCallback((status: any): StatusColorClass => {
     const statusText = getStatusText(status).toLowerCase();
-    
+
     if (statusText.includes("completado") || statusText.includes("entregado")) {
       return "bg-green-100 text-green-800 border-green-200";
     }
@@ -69,7 +77,7 @@ export const useOrderList = (refreshKey?: number) => {
 
   const getStatusIconComponent = useCallback((status: any): IconComponent => {
     const statusText = getStatusText(status).toLowerCase();
-    
+
     if (statusText.includes("completado") || statusText.includes("entregado")) {
       return CheckCircle;
     }
@@ -91,6 +99,8 @@ export const useOrderList = (refreshKey?: number) => {
 
   const formatDate = useCallback((dateString: string): string => {
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Fecha inválida";
+
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
 
@@ -98,9 +108,10 @@ export const useOrderList = (refreshKey?: number) => {
     if (diffInMinutes < 60) return `Hace ${diffInMinutes} min`;
     if (diffInMinutes < 1440) {
       const hours = Math.floor(diffInMinutes / 60);
-      return `Hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+      return `Hace ${hours} ${hours === 1 ? "hora" : "horas"}`;
     }
-    return date.toLocaleDateString("es-MX", {
+
+    return date.toLocaleString("es-MX", {
       day: "2-digit",
       month: "2-digit",
       hour: "2-digit",
@@ -113,9 +124,9 @@ export const useOrderList = (refreshKey?: number) => {
     loading,
     error,
     getStatusColor,
-    getStatusIconComponent, // Devuelve el componente, no el elemento JSX
+    getStatusIconComponent,
     formatCurrency,
     formatDate,
-    refetch: fetchOrders
+    refetch: fetchOrders,
   };
 };

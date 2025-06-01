@@ -1,7 +1,18 @@
-import { User, MapPin, DollarSign, Printer, Eye, RefreshCw, Package, Loader, AlertCircle } from "lucide-react";
+import {
+  User,
+  MapPin,
+  DollarSign,
+  Printer,
+  Eye,
+  RefreshCw,
+  Package,
+  Loader,
+  AlertCircle
+} from "lucide-react";
 import { useOrderList } from "../../../hooks/bashboard/useOrderList";
+import OrderDetailsModal from "./OrderDetailModal";
+import { useState } from "react";
 import domiduck from "../../../assets/img/domiduck.svg";
-
 
 interface OrderListProps {
   refreshKey?: number;
@@ -24,6 +35,20 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
     formatDate,
     refetch
   } = useOrderList(refreshKey);
+
+  // ✅ Hooks deben estar aquí, al inicio del componente
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleOpenDetails = (order: any) => {
+    setSelectedOrder(order);
+    setModalOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setModalOpen(false);
+    setSelectedOrder(null);
+  };
 
   if (loading) {
     return (
@@ -100,46 +125,36 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
 
                 {/* Content */}
                 <div className="p-6 space-y-4">
-                  {/* Customer Info */}
                   <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-blue-600" />
-                      </div>
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-blue-600" />
                     </div>
-                    <div className="flex-grow">
+                    <div>
                       <p className="text-sm font-medium text-gray-900">Cliente</p>
                       <p className="text-sm text-gray-600">{order.user?.name || "Cliente no registrado"}</p>
                     </div>
                   </div>
 
-                  {/* Table Info */}
                   <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <MapPin className="w-5 h-5 text-green-600" />
-                      </div>
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-green-600" />
                     </div>
-                    <div className="flex-grow">
+                    <div>
                       <p className="text-sm font-medium text-gray-900">Mesa</p>
                       <p className="text-sm text-gray-600">{order.space?.name || "No asignada"}</p>
                     </div>
                   </div>
 
-                  {/* Total */}
                   <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                        <DollarSign className="w-5 h-5 text-yellow-600" />
-                      </div>
+                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <DollarSign className="w-5 h-5 text-yellow-600" />
                     </div>
-                    <div className="flex-grow">
+                    <div>
                       <p className="text-sm font-medium text-gray-900">Total</p>
                       <p className="text-lg font-bold text-gray-900">{formatCurrency(order.total)}</p>
                     </div>
                   </div>
 
-                  {/* Order Items Count */}
                   {order.items && order.items.length > 0 && (
                     <div className="bg-gray-50 rounded-lg p-3">
                       <p className="text-sm text-gray-600">
@@ -159,7 +174,10 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
                     <Printer className="w-4 h-4 mr-1" />
                     Imprimir
                   </button>
-                  <button className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md hover:bg-blue-600 transition-colors">
+                  <button
+                    onClick={() => handleOpenDetails(order)}
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md hover:bg-blue-600 transition-colors"
+                  >
                     <Eye className="w-4 h-4 mr-1" />
                     Detalles
                   </button>
@@ -169,6 +187,9 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
           })}
         </div>
       )}
+
+      {/* Modal de Detalles */}
+      <OrderDetailsModal isOpen={modalOpen} onClose={handleCloseDetails} order={selectedOrder} />
     </div>
   );
 };
