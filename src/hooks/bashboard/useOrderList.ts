@@ -12,7 +12,7 @@ interface Order {
   code?: string;
   user?: { name: string };
   space?: { name: string };
-  items?: Array<any>; // <- usado por tu modal
+  items?: Array<any>; 
 }
 
 type StatusColorClass = 

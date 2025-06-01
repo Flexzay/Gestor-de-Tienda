@@ -9,11 +9,14 @@ import {
   Loader,
   AlertCircle
 } from "lucide-react";
+
 import { useOrderList } from "../../../hooks/bashboard/useOrderList";
+import { useOrderPrint } from "../../../hooks/bashboard/useOrderPrint"; 
+
 import OrderDetailsModal from "./OrderDetailModal";
 import { useState, useEffect } from "react";
 import domiduck from "../../../assets/img/domiduck.svg";
-import Paginator from "../shop/Paginator"; 
+import Paginator from "../shop/Paginator";
 
 interface OrderListProps {
   refreshKey?: number;
@@ -37,22 +40,24 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
     refetch
   } = useOrderList(refreshKey);
 
-  // Estados de paginación
+  const { cardRefs, handlePrintCard } = useOrderPrint(); // ✅ Usamos el hook
+
+  const [localOrders, setLocalOrders] = useState(orders);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
-
-  // Estados para modal
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Calcula los pedidos visibles según paginación
-  const totalItems = orders.length;
-  const pagedOrders = orders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  useEffect(() => {
+    setLocalOrders(orders);
+  }, [orders]);
 
-  // Resetea página si cambian itemsPerPage o la lista
   useEffect(() => {
     setCurrentPage(1);
-  }, [itemsPerPage, orders]);
+  }, [itemsPerPage, localOrders]);
+
+  const totalItems = localOrders.length;
+  const pagedOrders = localOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleOpenDetails = (order: any) => {
     setSelectedOrder(order);
@@ -117,9 +122,9 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
               return (
                 <div
                   key={order.id}
+                  ref={(el) => (cardRefs.current[order.id] = el)} // ✅ Asignamos el ref al hook
                   className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden"
                 >
-                  {/* Header */}
                   <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-gray-100">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
@@ -138,7 +143,6 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6 space-y-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -180,10 +184,13 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
                     )}
                   </div>
 
-                  {/* Actions */}
                   <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-3">
                     <button
-                      onClick={() => window.print()}
+                      onClick={() =>
+                        handlePrintCard(order.id, () =>
+                          setLocalOrders((prev) => prev.filter((o) => o.id !== order.id))
+                        )
+                      }
                       className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                     >
                       <Printer className="w-4 h-4 mr-1" />
@@ -206,13 +213,12 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
             currentPage={currentPage}
             totalItems={totalItems}
             itemsPerPage={itemsPerPage}
-            onPageChange={(page) => setCurrentPage(page)}
-            onItemsPerPageChange={(num) => setItemsPerPage(num)}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
           />
         </>
       )}
 
-      {/* Modal de Detalles */}
       <OrderDetailsModal isOpen={modalOpen} onClose={handleCloseDetails} order={selectedOrder} />
     </div>
   );
