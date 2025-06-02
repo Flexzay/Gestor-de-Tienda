@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 import { useOrderList } from "../../../hooks/bashboard/useOrderList";
-import { useOrderPrint } from "../../../hooks/bashboard/useOrderPrint"; 
+import { useOrderPrint } from "../../../hooks/bashboard/useOrderPrint";
 
 import OrderDetailsModal from "./OrderDetailModal";
 import { useState, useEffect } from "react";
@@ -40,8 +40,7 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
     refetch
   } = useOrderList(refreshKey);
 
-  const { cardRefs, handlePrintCard } = useOrderPrint(); // ✅ Usamos el hook
-
+  const { cardRefs, handlePrintCard } = useOrderPrint();
   const [localOrders, setLocalOrders] = useState(orders);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
@@ -131,7 +130,13 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
                         <CompanyLogo />
                         <div>
                           <h3 className="font-bold text-gray-900 text-lg">{order.code || order.id}</h3>
-                          <p className="text-sm text-gray-500">{formatDate(order.created_at)}</p>
+                          <p className="text-sm text-gray-500">
+                            {formatDate(
+                              (order.states?.[0] as { created_at?: string })?.created_at
+                            )}
+                          </p>
+
+
                         </div>
                       </div>
                       <div

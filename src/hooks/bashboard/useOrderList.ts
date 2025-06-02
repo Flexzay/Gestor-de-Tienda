@@ -40,10 +40,9 @@ export const useOrderList = (refreshKey?: number) => {
       const response = await orderService.getOnSiteOrders();
       const rawOrders = response.data || [];
 
-      // 🔁 Mapear los productos a 'items'
       const formattedOrders: Order[] = rawOrders.map((order: any) => ({
         ...order,
-        items: order.items || order.products || [], // 💡 mapear 'products' a 'items'
+        items: order.items || order.products || [],
       }));
 
       setOrders(formattedOrders);
@@ -97,18 +96,28 @@ export const useOrderList = (refreshKey?: number) => {
     }).format(amount);
   }, []);
 
-  const formatDate = useCallback((dateString: string): string => {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Fecha inválida";
+  const formatDate = useCallback((dateString: string | null | undefined): string => {
+    if (!dateString) return "Fecha no disponible";
 
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    let date: Date | null = null;
 
-    if (diffInMinutes < 1) return "Ahora mismo";
-    if (diffInMinutes < 60) return `Hace ${diffInMinutes} min`;
-    if (diffInMinutes < 1440) {
-      const hours = Math.floor(diffInMinutes / 60);
-      return `Hace ${hours} ${hours === 1 ? "hora" : "horas"}`;
+    // Primer intento
+    date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      // Segundo intento: cambiar espacio por T
+      const fixed = dateString.replace(" ", "T");
+      date = new Date(fixed);
+    }
+
+    // Tercer intento: usar timestamp
+    if (isNaN(date.getTime())) {
+      const parsed = Date.parse(dateString);
+      if (!isNaN(parsed)) date = new Date(parsed);
+    }
+
+    if (!date || isNaN(date.getTime())) {
+      console.warn("Fecha inválida recibida:", dateString);
+      return "Fecha inválida";
     }
 
     return date.toLocaleString("es-MX", {
