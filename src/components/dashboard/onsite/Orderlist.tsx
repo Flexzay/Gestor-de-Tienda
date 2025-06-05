@@ -191,11 +191,9 @@ const OrderList = ({ refreshKey }: OrderListProps) => {
 
                   <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-3">
                     <button
-                      onClick={() =>
-                        handlePrintCard(order.id, () =>
-                          setLocalOrders((prev) => prev.filter((o) => o.id !== order.id))
-                        )
-                      }
+                      onClick={() => handlePrintCard(order, () =>
+                        setLocalOrders(prev => prev.filter(o => o.id !== order.id))
+                      )}
                       className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                     >
                       <Printer className="w-4 h-4 mr-1" />
