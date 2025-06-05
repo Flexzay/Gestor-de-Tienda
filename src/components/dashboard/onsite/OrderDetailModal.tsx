@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { Dialog } from "@headlessui/react"
 import { X, Package, User, MapPin, ShoppingBag, Clock } from "lucide-react"
