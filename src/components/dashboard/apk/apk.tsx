@@ -1,8 +1,7 @@
-
 import Sidebar from "../Sidebar";
-import CardsDePedidos from "./cardOrdes"; 
+import CardsDePedidos from "./OrdersApk";
 
-export function apk() {
+export default function Apk() {
   return (
     <div className="flex">
       <Sidebar />
@@ -12,5 +11,3 @@ export function apk() {
     </div>
   );
 }
-
-export default apk;
